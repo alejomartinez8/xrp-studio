@@ -11,6 +11,7 @@ import { BluetoothConnection } from '@/connections/bluetoothconnection';
 import { CommandToXRPMgr } from './commandstoxrpmgr';
 import PluginMgr from './pluginmgr';
 import { getRememberedXrp, saveRememberedXrp } from '@/utils/rememberedxrp';
+import { isOfflineBuild } from '@/utils/offline';
 
 /**
  * ConnectionMgr - manages USB and Bluetooth connection to the XRP Robot
@@ -270,9 +271,9 @@ export default class ConnectionMgr {
                 XRPType: xrpType,
             };
 
-            // Send this information back to the WPI server
+            // Send this information back to the WPI server (skipped in offline builds)
             try {
-                fetch('https://xrpid-464879733234.us-central1.run.app/data', {
+                if (!isOfflineBuild) fetch('https://xrpid-464879733234.us-central1.run.app/data', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

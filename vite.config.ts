@@ -50,9 +50,9 @@ function devPublicPrefixPlugin(): PluginOption {
 }
 
 // https://vite.dev/config/
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ mode, command }) => {
     const env = loadEnv(mode, process.cwd(), '');
-    const isDev = mode === 'development';
+    const isDev = mode === 'development' || command === 'serve';
     return {
         base: './',
         esbuild: {
