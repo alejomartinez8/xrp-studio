@@ -1,24 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import {
-    cleanProjectName,
-    newProjectData,
-    nextProjectName,
-    projectNameProblem,
-} from '@/utils/new-project';
+import { cleanProjectName, newProjectData, projectNameProblem } from '@/utils/new-project';
 import { FileType } from '@/utils/types';
 
 describe('new project', () => {
-    it('suggests the first free numbered name, ignoring case and other extensions', () => {
-        expect(nextProjectName('my-project', '.blocks', [])).toBe('my-project-1.blocks');
-        expect(
-            nextProjectName('my-project', '.blocks', [
-                'My-Project-1.blocks',
-                'my-project-2.py',
-                'my-project-3.blocks',
-            ]),
-        ).toBe('my-project-2.blocks');
-    });
-
     it('drops accents from typed names', () => {
         expect(cleanProjectName('mi robot ñandú')).toBe('mi robot nandu');
     });

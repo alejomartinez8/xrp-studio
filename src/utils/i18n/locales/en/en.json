@@ -310,12 +310,12 @@
         "newPythonHint": "Write Python code for your robot",
         "openHint": "Or open one of your projects from the Folders panel.",
         "signInFirst": "Sign in with Google (top right) to save your projects.",
-        "projectBaseName": "my-project",
         "nameTitle": "Name your project",
         "nameHint": "Pick a name you will remember.",
         "nameExists": "You already have a project with that name.",
         "nameInvalid": "Use letters, numbers, spaces, - or _. It must start and end with a letter or number.",
         "create": "Create",
-        "back": "Back"
+        "back": "Back",
+        "namePlaceholder": "Type a name"
     }
 }

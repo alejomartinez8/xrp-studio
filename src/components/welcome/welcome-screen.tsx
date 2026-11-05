@@ -6,7 +6,6 @@ import { getUsernameFromEmail } from '@/utils/google-utils';
 import {
     cleanProjectName,
     newProjectData,
-    nextProjectName,
     ProjectKind,
     projectExtension,
     projectNameProblem,
@@ -26,9 +25,9 @@ const welcomeLogger = logger.child({ module: 'welcome' });
 
 /**
  * Welcome screen shown in the editor area when no tab is open, so the app never starts on an
- * empty space. Like MakeCode, the child picks blocks or Python, names the project (a numbered name
- * is suggested, so it can be created in one more tap) and it is saved right away in the user's
- * projects (My projects or Google Drive) and opened, without the New File dialog. Without a place
+ * empty space. Like MakeCode, the child picks blocks or Python and names the project (no name is
+ * suggested, so the child thinks of one that is easy to find later); it is saved right away in the
+ * user's projects (My projects or Google Drive) and opened, without the New File dialog. Without a place
  * to save projects (signed out of Google), it asks to sign in first.
  */
 function WelcomeScreen() {
@@ -42,11 +41,10 @@ function WelcomeScreen() {
     useEffect(() => {
         if (draft) {
             nameInputRef.current?.focus();
-            nameInputRef.current?.select();
         }
     }, [draft]);
 
-    /** Look up the projects folder and suggest a numbered name for a new project of `kind`. */
+    /** Look up the projects folder and the names already in it, then ask for a name. */
     const startProject = async (kind: ProjectKind) => {
         const appMgr = AppMgr.getInstance();
         if (!appMgr.authService.isLogin) {
@@ -62,13 +60,7 @@ function WelcomeScreen() {
             }
             const files = await driveService.getFileListByFolderId(folder.id);
             const existingNames = files.map((file) => file.name);
-            const extension = projectExtension(kind);
-            const suggested = nextProjectName(
-                t('welcome.projectBaseName'),
-                extension,
-                existingNames,
-            );
-            setName(suggested.slice(0, -extension.length));
+            setName('');
             setDraft({ kind, folderId: folder.id, existingNames });
         } catch (error) {
             welcomeLogger.error(
@@ -131,6 +123,7 @@ function WelcomeScreen() {
                             maxLength={60}
                             autoComplete="off"
                             spellCheck={false}
+                            placeholder={t('welcome.namePlaceholder')}
                             aria-invalid={problem !== null}
                             aria-describedby="welcome-project-name-hint"
                             className="min-w-0 flex-1 border-0 bg-shark-50 p-0 text-lg text-shark-800 outline-none focus:ring-0 dark:bg-shark-800 dark:text-mountain-mist-100"

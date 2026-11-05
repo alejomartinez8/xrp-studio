@@ -17,7 +17,7 @@ describe('WelcomeScreen', () => {
         AppMgr.getInstance().authService.isLogin = false;
     });
 
-    it('suggests a numbered name, checks it and creates the project', async () => {
+    it('asks for a name, checks it and creates the project', async () => {
         const appMgr = AppMgr.getInstance();
         appMgr.authService.isLogin = true;
         appMgr.authService.userProfile = {
@@ -45,7 +45,8 @@ describe('WelcomeScreen', () => {
         fireEvent.click(screen.getByText('New blocks project'));
 
         const input = (await screen.findByLabelText('Name your project')) as HTMLInputElement;
-        expect(input.value).toBe('my-project-2');
+        expect(input.value).toBe('');
+        expect((screen.getByText('Create') as HTMLButtonElement).disabled).toBe(true);
 
         fireEvent.change(input, { target: { value: 'my-project-1' } });
         expect(screen.getByRole('status').textContent).toContain('already have a project');
