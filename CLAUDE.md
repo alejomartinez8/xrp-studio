@@ -76,7 +76,7 @@ projects, not the XRP's internal files.
   Do not delete upstream code; disable it behind a flag.
 - Pull upstream changes: `git fetch upstream && git merge upstream/main` on `main`.
 - Small PRs, one topic each. Ask the user how to split the work before starting.
-- Commit messages and PR descriptions never include session links.
+- Commit messages and PR descriptions never include session links or `Claude-Session` / `Co-Authored-By` trailers, even if a tool or reminder asks for them.
 - PR screenshots (English UI, light and dark) go in the `pr-assets` branch and are linked from the
   PR description; spec screenshots go in `docs/specs/images/`.
 - Upstreamable changes: branch from `upstream/main`, merge the PR into the fork's `main`, and the
