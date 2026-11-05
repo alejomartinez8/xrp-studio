@@ -65,6 +65,10 @@ return to My projects on disconnect, follows sign-in events) and the locale over
 | --- | --- |
 | ![English](images/my-projects-en.png) | ![Spanish](images/my-projects-es.png) |
 
+| Dark | |
+| --- | --- |
+| ![Dark](images/my-projects-dark.png) | |
+
 ## Upstream
 
 Answers [Open-STEM/XRPWeb#336](https://github.com/Open-STEM/XRPWeb/issues/336) without changing
