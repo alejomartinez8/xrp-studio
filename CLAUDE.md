@@ -52,6 +52,9 @@ projects, not the XRP's internal files.
 - Everything in the repo is in English: code, identifiers, comments, tests, docs, commit
   messages and branch names. Spanish lives only in `src/utils/i18n/locales/es/`.
 - User-facing text always goes through i18n (en and es).
+- Comments: documentation comments only (`/** */` on modules, classes, functions). No inline
+  `//` comments in code we add; put the explanation in the doc comment. Leave upstream comments as
+  they are.
 - Minimal changes to upstream files: prefer new files, flags and small hooks over rewrites.
   Do not delete upstream code; disable it behind a flag.
 - Pull upstream changes: `git fetch upstream && git merge upstream/main` on `main`.
