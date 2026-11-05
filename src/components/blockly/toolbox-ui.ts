@@ -26,7 +26,8 @@ import {
     TbWorld,
 } from 'react-icons/tb';
 import i18n from '@/utils/i18n';
-import { vividToolbox } from '@components/blockly/vivid-colours';
+import { colourBlocksByCategory, themeToolbox } from '@components/blockly/block-theme';
+import { activeBlockTheme } from '@/theme';
 import '@components/blockly/toolbox-ui.css';
 
 /**
@@ -70,7 +71,6 @@ export const ADVANCED_CATEGORY_IDS = [
 ];
 
 const ADVANCED_CATEGORY_ID = 'advanced';
-const ADVANCED_COLOUR = '#5c6670';
 const TEXT_SHADE = 0.8;
 const DARK_THEME_LIGHTEN = 0.45;
 
@@ -103,15 +103,21 @@ function textShade(colour: string): string {
 }
 
 /**
- * Colour a category's label and icon with a shade of the category colour, or white while selected
- * (the row background then takes the category colour).
+ * Colour a category's own label and icon with a shade of the category colour, or white while
+ * selected (the row background then takes the category colour). Only the category's own elements
+ * are painted, never those of nested categories.
  */
-function paintCategory(category: Blockly.ToolboxCategory, colour: string, isSelected: boolean) {
+function paintCategory(
+    label: Element | null,
+    icon: Element | null,
+    colour: string,
+    isSelected: boolean,
+) {
     const tint = isSelected ? '#fff' : textShade(colour);
-    const label = category.getDiv()?.querySelector<HTMLElement>('.blocklyToolboxCategoryLabel');
-    const icon = category.getDiv()?.querySelector<HTMLElement>('.xrpToolboxIcon');
-    if (label) label.style.color = tint;
-    if (icon) icon.style.color = tint;
+    if (label instanceof HTMLElement) label.style.color = tint;
+    if (icon instanceof HTMLElement && icon.classList.contains('xrpToolboxIcon')) {
+        icon.style.color = tint;
+    }
 }
 
 /** Toolbox category with an icon and coloured label. */
@@ -129,12 +135,12 @@ class XrpToolboxCategory extends Blockly.ToolboxCategory {
 
     override init(): void {
         super.init();
-        paintCategory(this, this.colour_, false);
+        paintCategory(this.labelDom_, this.iconDom_, this.colour_, false);
     }
 
     override setSelected(isSelected: boolean): void {
         super.setSelected(isSelected);
-        paintCategory(this, this.colour_, isSelected);
+        paintCategory(this.labelDom_, this.iconDom_, this.colour_, isSelected);
     }
 }
 
@@ -142,12 +148,12 @@ class XrpToolboxCategory extends Blockly.ToolboxCategory {
 class XrpCollapsibleToolboxCategory extends Blockly.CollapsibleToolboxCategory {
     override init(): void {
         super.init();
-        paintCategory(this, this.colour_, false);
+        paintCategory(this.labelDom_, this.iconDom_, this.colour_, false);
     }
 
     override setSelected(isSelected: boolean): void {
         super.setSelected(isSelected);
-        paintCategory(this, this.colour_, isSelected);
+        paintCategory(this.labelDom_, this.iconDom_, this.colour_, isSelected);
     }
 }
 
@@ -187,7 +193,6 @@ export function groupAdvancedCategories<T extends Toolbox>(toolbox: T, name: str
                 kind: 'CATEGORY',
                 categoryId: ADVANCED_CATEGORY_ID,
                 name,
-                colour: ADVANCED_COLOUR,
                 expanded: 'false',
                 contents: advanced,
             },
@@ -200,9 +205,17 @@ export function addSearch<T extends Toolbox>(toolbox: T, name: string): T {
     return { ...toolbox, contents: [{ kind: 'search', name, contents: [] }, ...toolbox.contents] };
 }
 
-/** Build the kid-friendly toolbox (search, advanced group, vivid colours) from the XRP one. */
+/**
+ * Build the kid-friendly toolbox (search, advanced group, theme colours) from the XRP one, and
+ * colour each block type with the colour of its category.
+ */
 export function kidFriendlyToolbox<T>(toolbox: T): T {
     const base = toolbox as unknown as Toolbox;
     const grouped = groupAdvancedCategories(base, i18n.t('blockly.toolbox.advanced'));
-    return vividToolbox(addSearch(grouped, i18n.t('blockly.toolbox.search'))) as unknown as T;
+    const themed = themeToolbox(
+        addSearch(grouped, i18n.t('blockly.toolbox.search')),
+        activeBlockTheme,
+    );
+    colourBlocksByCategory(themed);
+    return themed as unknown as T;
 }

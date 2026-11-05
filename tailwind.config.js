@@ -1,5 +1,5 @@
 const flowbiteReact = require("flowbite-react/plugin/tailwindcss");
-const githubTheme = require("./src/theme/github-theme.cjs");
+const githubTheme = require("./src/theme/github/tailwind.cjs");
 
 /** @type {import('tailwindcss').Config} */
 const config = {

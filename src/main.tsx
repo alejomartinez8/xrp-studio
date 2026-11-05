@@ -1,7 +1,7 @@
 import { StrictMode, useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import '@/index.css';
-import '@/theme/github.css';
+import '@/theme/github/app.css';
 import '@/utils/i18n';
 import { applyBlocklyLocale } from '@/utils/blockly-locales';
 import i18n from '@/utils/i18n';
