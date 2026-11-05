@@ -27,8 +27,6 @@ i18n
         fallbackLng: 'en',
         supportedLngs: ['en', 'es'],
         detection: {
-            // Browsers report regional codes (es-ES, es-419, en-US). Keep only the base language
-            // so i18n.language matches the Blockly locales and the language picker options.
             convertDetectedLanguage: (lng: string) => lng.split('-')[0],
         },
         interpolation: {

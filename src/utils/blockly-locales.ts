@@ -36,10 +36,10 @@ function getCustomBlocklyMessages(language: string): Record<string, string> {
 
 /**
  * Apply Blockly core locale plus custom XRP block messages from i18n.
+ * Accepts regional codes such as es-ES or es-419 by using their base language.
  */
 export function applyBlocklyLocale(language: string): void {
     const defaultLanguage = 'en';
-    // accept regional codes such as es-ES or es-419
     const baseLanguage = language.split('-')[0];
     const targetLanguage = isLanguageSupported(baseLanguage) ? baseLanguage : defaultLanguage;
     const coreMessages = localeMessages[targetLanguage];
