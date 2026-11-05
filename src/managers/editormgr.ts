@@ -121,6 +121,10 @@ export default class EditorMgr {
 
     /**
      * RemoveEditor - Remove an editor session
+     *
+     * Theme listeners are kept: `eventOff` drops every listener of an event, and the layout and
+     * the shell also listen to theme changes, so closing a tab used to leave them stuck on the
+     * old theme. A closed editor's theme listener finds no session and does nothing.
      * @param session - Editor session object
      */
     public RemoveEditor(id: string): string | undefined {
@@ -129,7 +133,6 @@ export default class EditorMgr {
             const sesion = this.editorSessions.get(id);
             // clean up the event subscriptions
             const appMgr = AppMgr.getInstance();
-            appMgr.eventOff(EventType.EVENT_THEME);
             appMgr.eventOff(EventType.EVENT_EDITOR_LOAD);
             if (sesion?.type === EditorType.BLOCKLY) {
                 appMgr.eventOff(EventType.EVENT_GENPYTHON);
