@@ -49,6 +49,14 @@ the base translations only in offline builds (Drive wording → "My projects", H
 "online"). Driver installation is allowed offline. With the robot connected the tree shows local
 projects, not the XRP's internal files.
 
+## Google sign-in server
+
+`server/google-auth/` implements XRPWeb's `GOOGLE_AUTH_URL` endpoints (stateless, encrypted
+refresh token in an HttpOnly cookie); `api/google-auth/` wraps them as Vercel functions and a Vite
+plugin serves them in dev. Server variables: `OAUTH_CLIENT_ID`, `OAUTH_CLIENT_SECRET`,
+`AUTH_SESSION_SECRET` (never `GOOGLE_`/`VITE_`, which Vite exposes to the browser); the app uses
+`GOOGLE_AUTH_URL=/api`. Setup in `docs/specs/008-google-auth-server.md`.
+
 ## Themes
 
 - `src/theme/<name>/`: `tailwind.ts` (app palette applied over the named Tailwind palettes, used

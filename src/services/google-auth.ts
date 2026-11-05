@@ -1,6 +1,7 @@
 import logger from "@/utils/logger";
 import { googleLogout } from "@react-oauth/google";
 import { isOfflineBuild } from "@/utils/offline";
+import { StorageKeys } from "@/utils/localstorage";
 
 export type UserProfile = {
     id: string;
@@ -24,6 +25,12 @@ export type UserInfo = {
  * GoogleAuthService is a service to handle Google authentication,
  * including obtaining access tokens and refreshing them.
  */
+/**
+ * Marker for a session restored after a reload: the real refresh token stays in the backend's
+ * cookie, but the refresh timer needs a non-empty value to keep refreshing the access token.
+ */
+const RESTORED_REFRESH_TOKEN = 'restored-session';
+
 class GoogleAuthService {
     private _googleAuthBackendUrl: string;
     private _handshakeToken: string | null = null;
@@ -37,6 +44,7 @@ class GoogleAuthService {
     private _userProfile: UserProfile;
     private _modeLogger = logger.child({ module: 'googleapi' });
     private _tokenExpiryTime: number = 0;
+    private _restore: Promise<string | null> | undefined;
     
     constructor() {
         this._googleAuthBackendUrl = import.meta.env.GOOGLE_AUTH_URL;
@@ -201,6 +209,7 @@ class GoogleAuthService {
       // Logic to handle Google logout
       googleLogout();
       this._isLogin = false;
+      localStorage.removeItem(StorageKeys.GOOGLE_SESSION);
       // Also notify backend to clean up session
       if (this._handshakeToken) {
         try {
@@ -296,6 +305,7 @@ class GoogleAuthService {
                 this._timeoutId = setTimeout(() => this.refreshToken(), 1000);
                 this._accessToken = data.access_token;
                 this._refreshToken = data.refresh_token; // Backend returns refresh token on first exchange
+                localStorage.setItem(StorageKeys.GOOGLE_SESSION, 'true');
                 this._expiresIn = data.expires_in;
                 this._tokenExpiryTime = Date.now() + (data.expires_in * 1000);
                 return { access_token: data.access_token, refresh_token: data.refresh_token, expires_in: data.expires_in };
@@ -309,6 +319,47 @@ class GoogleAuthService {
             }
             throw error;
         }   
+    }
+
+    /** Whether the last Google sign-in in this browser did not end with a sign-out. */
+    get hasSavedSession(): boolean {
+        return localStorage.getItem(StorageKeys.GOOGLE_SESSION) === 'true';
+    }
+
+    /**
+     * Restores the saved session once per page load (see `tryRestoreSession`).
+     * @returns The new access token, or null when there is no session to restore.
+     */
+    restoreSession(): Promise<string | null> {
+        this._restore ??= this.tryRestoreSession();
+        return this._restore;
+    }
+
+    /**
+     * Restores the previous session after a page reload. Only tried when the last sign-in in this
+     * browser did not end with a sign-out. The backend keeps the refresh token in its own
+     * HttpOnly cookie, so the app only asks for a new access token; when the backend cannot give
+     * one (no stored session, or a backend that keys sessions by handshake), the hint is cleared
+     * and the user signs in as usual.
+     */
+    private async tryRestoreSession(): Promise<string | null> {
+        if (!this.hasSavedSession) {
+            return null;
+        }
+        try {
+            await this.ensureHandshakeReady();
+            this._refreshToken = RESTORED_REFRESH_TOKEN;
+            const token = await this.getAccessToken();
+            this._timeoutId = setTimeout(
+                this.refreshToken.bind(this),
+                this._expiresIn ? this._expiresIn * 1000 * 0.95 : 3600000,
+            );
+            return token;
+        } catch {
+            this._refreshToken = null;
+            localStorage.removeItem(StorageKeys.GOOGLE_SESSION);
+            return null;
+        }
     }
 }
 
