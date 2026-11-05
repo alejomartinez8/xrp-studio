@@ -14,7 +14,8 @@ be proposed to XRPWeb.
 | 003 | [Spanish translation fixes](003-spanish-translations.md) | Done | Sent ([Open-STEM/XRPWeb#337](https://github.com/Open-STEM/XRPWeb/pull/337)) |
 | 004 | [Friendly theme and block editor](004-friendly-theme.md) | Done | Block editor parts possible; app theme is fork-specific |
 | 005 | [Maintenance: lockfile, Tailwind config, minor updates](005-maintenance.md) | Done | Possible |
-| — | [Pending upgrades](pending-upgrades.md) | Backlog | Each one as its own change |
+| 006 | [Top bar](006-navbar.md) | Done | Fork-specific layout |
+| — | [Pending upgrades and backlog](pending-upgrades.md) | Backlog | Each one as its own change |
 
 ## Principles
 

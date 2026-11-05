@@ -31,7 +31,6 @@ import gamepad from '@assets/images/gamepad.svg';
 import bugs from '@assets/images/bugs.svg';
 import { TiArrowSortedDown } from 'react-icons/ti';
 import { IoPlaySharp } from 'react-icons/io5';
-import { MdMoreVert } from 'react-icons/md';
 import { IoStop } from 'react-icons/io5';
 import { IoArrowUpCircle } from 'react-icons/io5';
 import { IoBluetooth, IoChevronDown } from 'react-icons/io5';
@@ -72,6 +71,15 @@ import {
     saveRememberedXrp,
 } from '@/utils/rememberedxrp';
 import { isAiBuddyMenuEnabled } from '@/utils/aiBuddyAccess';
+import ConnectionStatus from '@components/navbar/connection-status';
+import NavDropdown from '@components/navbar/nav-dropdown';
+import QuickSettings from '@components/navbar/quick-settings';
+import LanguageDialog from '@components/dialogs/language-dlg';
+import ThemeDialog from '@components/dialogs/theme-dlg';
+import Login from '@/widgets/login';
+import { UserProfile } from '@/services/google-auth';
+import { handleSignedIn, handleSignedOut } from '@/utils/session';
+import { TbEye, TbFile, TbHelpCircle, TbSettings } from 'react-icons/tb';
 import { isOfflineBuild } from '@/utils/offline';
 import FileSaver from 'file-saver';
 import PowerSwitchAlert from '@/components/dialogs/power-switchdlg';
@@ -1588,9 +1596,48 @@ function NavBar({ layoutref }: NavBarProps) {
                 },
             ],
         },
-        {
-            label: t('help'),
-            children: [
+    ];
+
+    const navIcons = [<TbFile key="file" size={18} />, <TbEye key="view" size={18} />];
+
+    /**
+     * onSignInSuccess - sign-in from the top bar; shows the Google Drive notice the first time.
+     */
+    const onSignInSuccess = async (profile: UserProfile) => {
+        if (await handleSignedIn(profile)) {
+            setDialogContent(
+                <AlertDialog toggleDialog={toggleDialog} alertMessage={t('googleDriveNotification')} />,
+            );
+            toggleDialog();
+        }
+    };
+
+    /**
+     * onChooseLanguage - open the language picker from the settings menu.
+     */
+    const onChooseLanguage = () => {
+        setMoreMenuOpen(false);
+        setDialogContent(<LanguageDialog toggleDialog={toggleDialog} />);
+        toggleDialog();
+    };
+
+    /**
+     * onChooseTheme - open the theme picker from the settings menu.
+     */
+    const onChooseTheme = () => {
+        setMoreMenuOpen(false);
+        setDialogContent(<ThemeDialog toggleDialog={toggleDialog} />);
+        toggleDialog();
+    };
+
+    /**
+     * onSignOut - sign-out from the top bar.
+     */
+    const onSignOut = () => {
+        void handleSignedOut();
+    };
+
+    const helpItems: MenuDataItem[] = [
                 {
                     label: t('userGuide'),
                     iconImage: userguide,
@@ -1626,8 +1673,6 @@ function NavBar({ layoutref }: NavBarProps) {
                     iconImage: privacy,
                     link: 'https://www.experiential.bot/privacy',
                 },
-            ],
-        },
     ];
 
     const moreMenu: MenuDataItem[] = [
@@ -1674,7 +1719,8 @@ function NavBar({ layoutref }: NavBarProps) {
                 <img src={logo} alt="logo" width="100" height="50" />
                 {navItems.map((item, index) => (
                     <div key={index} className="group relative transition-all">
-                        <p className="ml-2 mt-4 flex cursor-pointer text-matisse-100 group-hover:bg-curious-blue-700 dark:group-hover:bg-mountain-mist-950">
+                        <p className="ml-2 mt-4 flex cursor-pointer items-center gap-1 text-matisse-100 group-hover:bg-curious-blue-700 dark:group-hover:bg-mountain-mist-950">
+                            {navIcons[index]}
                             <span>{item.label}</span>
                             {item.children && (
                                 <TiArrowSortedDown className="mt-1 rotate-180 transition-all group-hover:rotate-0" />
@@ -1737,7 +1783,11 @@ function NavBar({ layoutref }: NavBarProps) {
             {/** platform infor and connect button*/}
             <div className="flex flex-row items-center gap-4">
                 <div className="flex flex-row items-center gap-2 text-sm text-shark-300">
-                    {xprID && <span>{`XRP-${xprID['XRPID']}`}</span>}
+                    <ConnectionStatus
+                        isConnected={isConnected}
+                        connectionType={connectionType ?? undefined}
+                        xrpId={xprID?.XRPID}
+                    />
                     {isConnected && connectionType === ConnectionType.USB && xprID?.XRPID && (
                         <button
                             type="button"
@@ -1818,7 +1868,7 @@ function NavBar({ layoutref }: NavBarProps) {
                 </div>
                 <button
                     id="runBtn"
-                    className={`text-white h-full w-[120] items-center justify-center rounded-3xl px-4 py-2 ${isRunning ? 'bg-cinnabar-600' : 'bg-chateau-green-500'} ${isConnected ? 'flex' : 'hidden'}`}
+                    className={`text-white h-11 min-w-[130px] items-center justify-center gap-2 rounded-3xl px-4 py-2 font-semibold ${isRunning ? 'bg-cinnabar-600' : 'bg-chateau-green-500'} ${isConnected ? 'flex' : 'hidden'}`}
                     onClick={onRunBtnClicked}
                     disabled={isStopping}
                 >
@@ -1834,16 +1884,43 @@ function NavBar({ layoutref }: NavBarProps) {
                         </>
                     )}
                 </button>
+                <NavDropdown id="helpBtn" label={t('help')} icon={<TbHelpCircle size={26} />}>
+                    {(close) => (
+                        <ul className="flex cursor-pointer flex-col">
+                            {helpItems.map((item, ci) => (
+                                <li
+                                    key={ci}
+                                    role="menuitem"
+                                    className="text-neutral-200 py-1 pl-4 pr-10 hover:bg-matisse-400 dark:hover:bg-shark-500"
+                                    onClick={() => {
+                                        close();
+                                        item.clicked?.();
+                                    }}
+                                >
+                                    <MenuItem isConnected={true} isOther={false} item={item} />
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </NavDropdown>
                 <div ref={dropdownRef} className="group relative transition-all">
                     <button
                         id="settingsId"
                         onClick={toggleMoreDropdown}
-                        className={`flex flex-row rounded-3xl p-1 ${isMoreMenuOpen ? 'bg-curious-blue-400 dark:bg-mountain-mist-800' : 'bg-curious-blue-700 dark:bg-mountain-mist-950'}`}
+                        title={t('settings')}
+                        aria-label={t('settings')}
+                        aria-expanded={isMoreMenuOpen}
+                        className={`flex h-11 w-11 items-center justify-center rounded-full text-matisse-100 hover:bg-matisse-400 dark:hover:bg-shark-500 ${isMoreMenuOpen ? 'bg-matisse-500 dark:bg-shark-600' : ''}`}
                     >
-                        <MdMoreVert size={'1.5em'} />
+                        <TbSettings size={26} />
                     </button>
                     {isMoreMenuOpen && (
-                        <div className="absolute right-0 top-11 z-[100] mx-auto flex w-max min-w-56 flex-col bg-curious-blue-700 py-3 shadow-md transition-all dark:bg-mountain-mist-950 dark:group-hover:bg-mountain-mist-950">
+                        <div className="absolute right-0 top-12 z-[100] mx-auto flex w-max min-w-56 flex-col bg-curious-blue-700 py-3 shadow-md transition-all dark:bg-mountain-mist-950 dark:group-hover:bg-mountain-mist-950">
+                            <QuickSettings
+                                onChooseLanguage={onChooseLanguage}
+                                onChooseTheme={onChooseTheme}
+                            />
+                            <hr className="mb-2 border-matisse-400 dark:border-shark-600" />
                             <ul id="pythonId" className="flex cursor-pointer flex-col">
                                 {moreMenu.map((item, ci) => (
                                     <li
@@ -1862,6 +1939,7 @@ function NavBar({ layoutref }: NavBarProps) {
                         </div>
                     )}
                 </div>
+                <Login compact onSuccess={onSignInSuccess} logoutCallback={onSignOut} />
             </div>
             <Dialog isOpen={isDlgOpen} toggleDialog={toggleDialog} ref={dialogRef}>
                 {dialogContent}

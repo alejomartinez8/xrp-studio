@@ -24,6 +24,7 @@ import { fireGoogleUserTree, getUsernameFromEmail } from '@/utils/google-utils';
 import EditorMgr, { EdSearchParams } from '@/managers/editormgr';
 import Login from '@/widgets/login';
 import { isOfflineBuild } from '@/utils/offline';
+import { isSignInInNavbar } from '@/utils/session';
 import { UserProfile } from '@/services/google-auth';
 import CreateNodeDlg from './dialogs/create-node-dlg';
 import { StorageKeys } from '@/utils/localstorage';
@@ -43,7 +44,7 @@ type TreeProps = {
 function FolderTree(treeProps: TreeProps) {
     const { t } = useTranslation();
     const [isConnected, setConnected] = useState(false);
-    const [isLogin, setIsLogin] = useState(false);
+    const [isLogin, setIsLogin] = useState(AppMgr.getInstance().authService.isLogin);
     const [treeData, setTreeData] = useState<FolderItem[] | undefined>(undefined);
     const [, setSelectedItems] = useState<FolderItem[] | undefined>(undefined);
     const [isRunning, setIsRunning] = useState<boolean>(false);
@@ -83,6 +84,14 @@ function FolderTree(treeProps: TreeProps) {
                     setIsRunning(true);
                 } else if (running === 'stopped') {
                     setIsRunning(false);
+                }
+            });
+
+            appMgrRef.current.on(EventType.EVENT_LOGIN_STATUS, (status: string) => {
+                if (status === LoginStatus.LOGGED_IN) {
+                    setIsLogin(true);
+                } else if (status === LoginStatus.LOGGED_OUT) {
+                    setIsLogin(false);
                 }
             });
 
@@ -784,7 +793,7 @@ function FolderTree(treeProps: TreeProps) {
 
     return (
         <div className="flex h-full flex-col gap-1">
-            {treeProps.isHeader && (
+            {treeProps.isHeader && !isSignInInNavbar && (
                 <div className="flex flex-col items-center gap-1 bg-mountain-mist-100 p-1 dark:bg-mountain-mist-950">
                     <Login onSuccess={onGoogleLoginSuccess} logoutCallback={onGoogleLogout} />
                 </div>

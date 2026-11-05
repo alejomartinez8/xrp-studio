@@ -257,6 +257,7 @@
     },
     "theme": {
         "label": "Theme",
+        "choose": "Choose a theme",
         "light": "Light",
         "dark": "Dark"
     },
@@ -289,5 +290,10 @@
         "xrprobot": "XRP Robot Files",
         "gdrive": "Google Drive Files",
         "copyTooltip": "Copy selected files to Google Drive"
+    },
+    "navbar": {
+        "connected": "Robot connected",
+        "usb": "USB",
+        "bluetooth": "Bluetooth"
     }
 }
