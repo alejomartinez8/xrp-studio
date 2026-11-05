@@ -18,6 +18,7 @@ be proposed to XRPWeb.
 | 007 | [My projects and robot memory](007-my-projects.md) | Done; robot behaviour to be tested | Answers [Open-STEM/XRPWeb#336](https://github.com/Open-STEM/XRPWeb/issues/336) |
 | 008 | [Google sign-in server](008-google-auth-server.md) | Done; tested locally | Possible as a reference |
 | 009 | [Keep the Google session after a reload](009-restore-google-session.md) | Done | Possible; depends on their backend |
+| 010 | [Theme switch fixes](010-theme-switch.md) | Done | Possible (XRPWeb bugs) |
 | — | [Pending upgrades and backlog](pending-upgrades.md) | Backlog | Each one as its own change |
 
 ## Principles
