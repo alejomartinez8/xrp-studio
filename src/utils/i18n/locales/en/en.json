@@ -168,7 +168,6 @@
     "program-not-saved-to-xrp": "This program has not been saved to the XRP. Please save it to the XRP before running.",
     "FilesystemStorage": "XRP Filesystem: {{ capacity }} MB",
     "GoogleDriveStorage": "Google Drive Filesystem",
-    "localDriveStorage": "My projects (this browser)",
     "sensors": "Sensors",
     "accelerometer": "Accelerometer",
     "gyroscope": "Gyroscope",

@@ -6,6 +6,9 @@ import enLang from '@/utils/i18n/locales/en/en.json';
 import esLang from '@/utils/i18n/locales/es/es.json';
 import enBlockly from '@/utils/i18n/locales/en/blockly.json';
 import esBlockly from '@/utils/i18n/locales/es/blockly.json';
+import enOffline from '@/utils/i18n/locales/en/offline.json';
+import esOffline from '@/utils/i18n/locales/es/offline.json';
+import { isOfflineBuild } from '@/utils/offline';
 
 // the translations
 // (tip move them in a JSON file and import them,
@@ -33,5 +36,10 @@ i18n
             escapeValue: false, // react already safes from xss
         },
     });
+
+if (isOfflineBuild) {
+    i18n.addResourceBundle('en', 'translation', enOffline, true, true);
+    i18n.addResourceBundle('es', 'translation', esOffline, true, true);
+}
 
 export default i18n;

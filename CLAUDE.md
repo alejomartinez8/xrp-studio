@@ -43,8 +43,9 @@ Local projects (MakeCode-style, no login): `src/services/local-drive.ts` impleme
 to it automatically on startup. All existing Drive code (file tree, open, save, autosave, Run)
 then uses the browser unchanged. `AppMgr` picks the service based on the flag.
 
-Still pending offline: some dialog texts still say "Google Drive"; driver installation is blocked
-while signed in (`navbar.tsx`, `onDriverClicked`); with the robot connected the tree shows local
+Offline text overrides live in `src/utils/i18n/locales/{en,es}/offline.json` and are merged over
+the base translations only in offline builds (Drive wording → "My projects", Help links marked
+"online"). Driver installation is allowed offline. With the robot connected the tree shows local
 projects, not the XRP's internal files.
 
 ## Conventions
