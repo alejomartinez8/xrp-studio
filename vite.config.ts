@@ -75,6 +75,10 @@ export default defineConfig(({ mode, command }) => {
                     dest: './node_modules/flexlayout-react/'
                 },
                 {
+                    src: 'node_modules/blockly/media',
+                    dest: './node_modules/blockly/'
+                },
+                {
                     src: 'node_modules/gridstack/dist/gridstack.css',
                     dest: './node_modules/gridstack/dist/'
                 }        ]

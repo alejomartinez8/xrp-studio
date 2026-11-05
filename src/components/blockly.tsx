@@ -565,6 +565,8 @@ function BlocklyEditor({ tabId, tabName }: BlocklyEditorProps) {
                 pinch: false},
 
                 trashcan: true,
+                // serve Blockly's sounds/cursors locally (default is blockly-demo.appspot.com)
+                media: 'node_modules/blockly/media/',
                 grid: {
                     spacing: 20,
                     length: 3,

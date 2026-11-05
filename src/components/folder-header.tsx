@@ -2,6 +2,7 @@ import { ConnectionState } from '@/connections/connection';
 import AppMgr, { EventType } from '@/managers/appmgr';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { isOfflineBuild } from '@/utils/offline';
 import { AiOutlineFileAdd } from "react-icons/ai";
 import { AiOutlineFolderAdd } from "react-icons/ai";
 
@@ -45,7 +46,7 @@ function FolderHeader({newFolderCallback, newFileCallback }: FolderHeaderProps) 
         <div className="flex flex-row items-center justify-between bg-mountain-mist-100 p-1 text-sm dark:bg-mountain-mist-800">
             <div className="flex flex-row">
                 { appMgr.authService.isLogin ?
-                    <span>{t('GoogleDriveStorage')}</span> :
+                    <span>{t(isOfflineBuild ? 'localDriveStorage' : 'GoogleDriveStorage')}</span> :
                     <span>{t('FilesystemStorage', { capacity: capacity})}</span>
                 }
             </div>

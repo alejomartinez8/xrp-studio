@@ -37,6 +37,15 @@ estilo MakeCode, UI simple para niños, en español; desktop y tablet Android.
 `src/utils/offline.ts` (`isOfflineBuild`). Con el flag: no se carga el script de Google
 Identity ni se pide el client ID, el chat IA no aparece y no se envía la telemetría.
 
+Proyectos locales (estilo MakeCode, sin login): `src/services/local-drive.ts` implementa la
+misma interfaz que `GoogleDriveService` sobre IndexedDB, y `src/widgets/local-session.tsx`
+"inicia sesión" sola al abrir. Así todo el código existente de Drive (árbol, abrir, guardar,
+autoguardado, Run) usa el navegador sin cambios. `AppMgr` elige el servicio según el flag.
+
+Pendiente en offline: los textos de algunos diálogos aún dicen "Google Drive"; la instalación
+de drivers se bloquea con sesión iniciada (`navbar.tsx`, `onDriverClicked`); con el robot
+conectado el árbol muestra los proyectos locales, no los archivos internos del XRP.
+
 ## Convenciones
 
 - Cambios mínimos sobre archivos de upstream: preferir archivos nuevos, flags y ganchos de pocas

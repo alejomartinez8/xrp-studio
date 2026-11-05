@@ -8,6 +8,8 @@ import { useTranslation } from 'react-i18next';
 import { Constants } from '@/utils/constants';
 import { useGoogleClientId } from '@/utils/google-client-id';
 import GoogleLogo from '@assets/images/google-logo.svg';
+import { isOfflineBuild } from '@/utils/offline';
+import LocalSession from './local-session';
 
 type LoginProps = {
     logoutCallback: () => void;
@@ -293,6 +295,9 @@ function GoogleLoginButton({ logoutCallback, onSuccess }: LoginProps) {
 function Login(props: LoginProps) {
     const clientId = useGoogleClientId();
 
+    if (isOfflineBuild) {
+        return <LocalSession onSuccess={props.onSuccess} />;
+    }
     return clientId ? <GoogleLoginButton {...props} /> : null;
 }
 

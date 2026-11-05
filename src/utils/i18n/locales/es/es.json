@@ -165,6 +165,7 @@
     "program-not-saved-to-xrp": "Este programa no se ha guardado en el XRP. Guárdelo en el XRP antes de ejecutarlo.",
     "FilesystemStorage": "Sistema de archivos XRP: {{ capacity }} MB",
     "GoogleDriveStorage": "Sistema de archivos de Google Drive",
+    "localDriveStorage": "Mis proyectos (en este navegador)",
     "sensors": "Sensores",
     "accelerometer": "Acelerómetro",
     "gyroscope": "Giroscopio",
