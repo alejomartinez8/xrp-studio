@@ -292,9 +292,7 @@
     },
     "navbar": {
         "connected": "Robot connected",
-        "notConnected": "Robot not connected",
         "usb": "USB",
-        "bluetooth": "Bluetooth",
-        "connectFirst": "Connect the robot first"
+        "bluetooth": "Bluetooth"
     }
 }

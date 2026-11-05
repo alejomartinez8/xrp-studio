@@ -5,6 +5,7 @@ import TabList from '../tab-list';
 import TabItem from '../tab-item';
 import AnimatedThemeToggle from '@/widgets/animated-theme-toggle';
 import { applyTheme } from '@/utils/theme';
+import { SUPPORTED_LANGUAGES } from '@/utils/i18n/languages';
 
 type SettingsProps = {
     /**
@@ -16,10 +17,6 @@ type SettingsProps = {
 function SettingsDlg({ toggleDialog }: SettingsProps) {
     const { t, i18n } = useTranslation();
 
-    const languageOptions = [
-        { code: 'en', label: 'English', nativeName: 'English' },
-        { code: 'es', label: 'Spanish', nativeName: 'Español' },
-    ];
 
     /**
      * handleLanguageChange - handles language selection change
@@ -61,9 +58,9 @@ function SettingsDlg({ toggleDialog }: SettingsProps) {
                             value={i18n.language}
                             onChange={handleLanguageChange}
                         >
-                            {languageOptions.map((option) => (
+                            {SUPPORTED_LANGUAGES.map((option) => (
                                 <option key={option.code} value={option.code}>
-                                    {option.nativeName} ({option.label})
+                                    {option.nativeName} ({option.englishName})
                                 </option>
                             ))}
                         </select>

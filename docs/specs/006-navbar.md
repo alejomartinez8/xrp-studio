@@ -3,7 +3,7 @@
 ## Problem
 
 The top bar mixed text menus (File, View, Help) with a "more" (⋮) menu, language and theme were
-only reachable through the Settings dialog, Run only appeared after connecting, and the Google
+only reachable through the Settings dialog, and the Google
 sign-in lived in the folder tree header, so it disappeared with the tree. In offline builds the
 local session also lives in the sign-in widget, so closing the tree could stop it from signing in.
 
@@ -13,14 +13,17 @@ One friendly top bar for everyone (no separate "kids mode"):
 
 - **Left:** logo and the File and View menus, now with icons.
 - **Right**, in order:
-  - **Connection status:** "Robot not connected" or "Robot connected · USB/Bluetooth · XRP-ID"
-    (icon only below 1280 px).
-  - **Connect** and **Run/Stop**. Run is always visible and disabled until a robot is connected
-    ("Connect the robot first").
+  - **Connect**, which becomes **Run/Stop** once a robot is connected (unchanged from XRPWeb; the
+    run behaviour is left as is until it can be tested with a robot).
+  - **Connection status** while connected: "Robot connected · USB/Bluetooth · XRP-ID" (icon only
+    below 1280 px).
   - **Help (?)**: the former Help menu (guides, forum, change log, privacy).
-  - **Settings (⚙)**: language (English/Español) and theme (light/dark) apply immediately; below
-    them, the former ⋮ items (Dashboard, Drivers, Backup/Restore, Firmware, Settings, AI chat when
-    enabled).
+  - **Settings (⚙)**: a Language row that opens the language picker, the theme (light/dark, applied
+    immediately) and, below them, the former ⋮ items (Dashboard, Drivers, Backup/Restore, Firmware,
+    Settings, AI chat when enabled).
+  - **Language picker:** a dialog with one card per language (native and English name), so it
+    scales beyond two languages. Languages are listed once in `src/utils/i18n/languages.ts`, also
+    used by the Settings dialog.
   - **Account**, at the top right like most apps: a "Google Sign In" button, or an avatar with the
     name, email and Sign out. In offline builds this slot hosts the local session and shows
     nothing.
@@ -29,7 +32,7 @@ One friendly top bar for everyone (no separate "kids mode"):
 ## Files
 
 - New: `src/components/navbar/` (`connection-status.tsx`, `nav-dropdown.tsx`,
-  `quick-settings.tsx`), `src/widgets/compact-account.tsx`, `src/utils/theme.ts` (`applyTheme`,
+  `quick-settings.tsx`), `src/components/dialogs/language-dlg.tsx`, `src/utils/i18n/languages.ts`, `src/widgets/compact-account.tsx`, `src/utils/theme.ts` (`applyTheme`,
   shared with the Settings dialog), `src/utils/session.ts` (sign-in and sign-out handling moved out
   of the folder tree; `isSignInInNavbar`).
 - Hooks: `src/components/navbar.tsx` (layout of the bar, help items, settings dropdown, account),
@@ -39,14 +42,15 @@ One friendly top bar for everyone (no separate "kids mode"):
 
 ## How to test
 
-1. `npm run dev:offline`: the bar shows File, View, the status pill, Connect, a disabled Run, ? and ⚙.
-2. ⚙ → Español / Dark: the app switches language and theme immediately, and keeps them after a reload.
+1. `npm run dev:offline`: the bar shows File, View, Connect, ? and ⚙.
+2. ⚙ → Language → Español, and ⚙ → Dark: the app switches language and theme immediately, and keeps
+   them after a reload.
 3. ? lists the help links.
 4. File → New File works (the local session signs in from the top bar).
 5. At 1024 px the bar fits on one line.
 
-Automated: `src/widgets/tests/compact-account.spec.tsx` (sign-in button, avatar menu, sign out) and
-`src/utils/tests/theme.spec.ts`. The real Google sign-in needs the auth backend and was not run.
+Automated: `src/widgets/tests/compact-account.spec.tsx` (sign-in button, avatar menu, sign out),
+`src/components/tests/language-dlg.spec.tsx` and `src/utils/tests/theme.spec.ts`. The real Google sign-in needs the auth backend and was not run.
 
 ## Screenshots
 
@@ -54,9 +58,13 @@ Automated: `src/widgets/tests/compact-account.spec.tsx` (sign-in button, avatar 
 | --- | --- |
 | ![Before](images/theme-after-light.png) | ![After](images/navbar-light.png) |
 
-| Settings (⚙) | Help (?) |
+| Settings (⚙) | Language picker |
 | --- | --- |
-| ![Settings](images/navbar-settings.png) | ![Help](images/navbar-help.png) |
+| ![Settings](images/navbar-settings.png) | ![Language](images/navbar-language.png) |
+
+| Help (?) | Dark |
+| --- | --- |
+| ![Help](images/navbar-help.png) | ![Dark](images/navbar-dark.png) |
 
 | Spanish, dark | Tablet (1024 px) |
 | --- | --- |

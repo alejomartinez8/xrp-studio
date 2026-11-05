@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { TbBluetooth, TbRobot, TbRobotOff, TbUsb } from 'react-icons/tb';
+import { TbBluetooth, TbRobot, TbUsb } from 'react-icons/tb';
 import { ConnectionType } from '@/utils/types';
 
 type ConnectionStatusProps = {
@@ -9,23 +9,14 @@ type ConnectionStatusProps = {
 };
 
 /**
- * ConnectionStatus - top bar pill that says in plain words whether the robot is connected, how
- * (USB or Bluetooth) and which robot it is.
+ * ConnectionStatus - top bar pill shown while a robot is connected: how (USB or Bluetooth) and which
+ * robot it is. Nothing is shown otherwise, since the Connect button already says it.
  */
 function ConnectionStatus({ isConnected, connectionType, xrpId }: ConnectionStatusProps) {
     const { t } = useTranslation();
 
     if (!isConnected) {
-        return (
-            <div
-                id="connectionStatus"
-                title={t('navbar.notConnected')}
-                className="flex items-center gap-2 whitespace-nowrap rounded-full bg-shark-700 px-3 py-2 text-base text-shark-100 xl:px-4"
-            >
-                <TbRobotOff size={22} />
-                <span className="hidden xl:inline">{t('navbar.notConnected')}</span>
-            </div>
-        );
+        return null;
     }
 
     const isBluetooth = connectionType === ConnectionType.BLUETOOTH;

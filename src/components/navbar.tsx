@@ -74,6 +74,7 @@ import { isAiBuddyMenuEnabled } from '@/utils/aiBuddyAccess';
 import ConnectionStatus from '@components/navbar/connection-status';
 import NavDropdown from '@components/navbar/nav-dropdown';
 import QuickSettings from '@components/navbar/quick-settings';
+import LanguageDialog from '@components/dialogs/language-dlg';
 import Login from '@/widgets/login';
 import { UserProfile } from '@/services/google-auth';
 import { handleSignedIn, handleSignedOut } from '@/utils/session';
@@ -1611,6 +1612,15 @@ function NavBar({ layoutref }: NavBarProps) {
     };
 
     /**
+     * onChooseLanguage - open the language picker from the settings menu.
+     */
+    const onChooseLanguage = () => {
+        setMoreMenuOpen(false);
+        setDialogContent(<LanguageDialog toggleDialog={toggleDialog} />);
+        toggleDialog();
+    };
+
+    /**
      * onSignOut - sign-out from the top bar.
      */
     const onSignOut = () => {
@@ -1848,10 +1858,9 @@ function NavBar({ layoutref }: NavBarProps) {
                 </div>
                 <button
                     id="runBtn"
-                    className={`text-white flex h-11 min-w-[130px] items-center justify-center gap-2 rounded-3xl px-4 py-2 font-semibold disabled:cursor-not-allowed disabled:opacity-70 ${isRunning ? 'bg-cinnabar-600' : 'bg-chateau-green-500'}`}
+                    className={`text-white h-11 min-w-[130px] items-center justify-center gap-2 rounded-3xl px-4 py-2 font-semibold ${isRunning ? 'bg-cinnabar-600' : 'bg-chateau-green-500'} ${isConnected ? 'flex' : 'hidden'}`}
                     onClick={onRunBtnClicked}
-                    disabled={isStopping || !isConnected}
-                    title={!isConnected ? t('navbar.connectFirst') : undefined}
+                    disabled={isStopping}
                 >
                     {isRunning ? (
                         <>
@@ -1897,7 +1906,7 @@ function NavBar({ layoutref }: NavBarProps) {
                     </button>
                     {isMoreMenuOpen && (
                         <div className="absolute right-0 top-12 z-[100] mx-auto flex w-max min-w-56 flex-col bg-curious-blue-700 py-3 shadow-md transition-all dark:bg-mountain-mist-950 dark:group-hover:bg-mountain-mist-950">
-                            <QuickSettings />
+                            <QuickSettings onChooseLanguage={onChooseLanguage} />
                             <hr className="mb-2 border-matisse-400 dark:border-shark-600" />
                             <ul id="pythonId" className="flex cursor-pointer flex-col">
                                 {moreMenu.map((item, ci) => (

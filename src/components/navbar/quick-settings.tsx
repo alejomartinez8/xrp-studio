@@ -1,20 +1,15 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { TbLanguage, TbMoon, TbSun } from 'react-icons/tb';
+import { TbChevronRight, TbLanguage, TbMoon, TbSun } from 'react-icons/tb';
+import { findLanguage } from '@/utils/i18n/languages';
 import { Themes } from '@/managers/appmgr';
 import { applyTheme, currentTheme } from '@/utils/theme';
 
-/** Languages offered in the quick settings. */
-const LANGUAGES = [
-    { code: 'en', label: 'English' },
-    { code: 'es', label: 'Español' },
-];
-
 /**
- * QuickSettings - language and theme at the top of the settings menu. Both apply immediately,
- * without opening the Settings dialog.
+ * QuickSettings - language and theme at the top of the settings menu. The language row opens the
+ * language picker; the theme applies immediately.
  */
-function QuickSettings() {
+function QuickSettings({ onChooseLanguage }: { onChooseLanguage: () => void }) {
     const { t, i18n } = useTranslation();
     const [theme, setThemeState] = useState(currentTheme());
 
@@ -28,25 +23,21 @@ function QuickSettings() {
 
     return (
         <div className="text-neutral-200 flex flex-col gap-3 px-4 pb-3 pt-1">
-            <div className="flex flex-col gap-1">
-                <span className="flex items-center gap-2 text-xs uppercase opacity-80">
-                    <TbLanguage size={16} />
+            <button
+                id="languageBtn"
+                type="button"
+                onClick={onChooseLanguage}
+                className="flex items-center justify-between gap-4 rounded-md px-2 py-1.5 hover:bg-matisse-400 dark:hover:bg-shark-500"
+            >
+                <span className="flex items-center gap-2">
+                    <TbLanguage size={18} />
                     {t('language')}
                 </span>
-                <div className="flex gap-1" role="group" aria-label={t('language')}>
-                    {LANGUAGES.map((language) => (
-                        <button
-                            key={language.code}
-                            type="button"
-                            aria-pressed={i18n.language === language.code}
-                            className={option(i18n.language === language.code)}
-                            onClick={() => i18n.changeLanguage(language.code)}
-                        >
-                            {language.label}
-                        </button>
-                    ))}
-                </div>
-            </div>
+                <span className="flex items-center gap-1 opacity-80">
+                    {findLanguage(i18n.language)?.nativeName}
+                    <TbChevronRight size={16} />
+                </span>
+            </button>
             <div className="flex flex-col gap-1">
                 <span className="text-xs uppercase opacity-80">{t('theme.label')}</span>
                 <div className="flex gap-1" role="group" aria-label={t('theme.label')}>
