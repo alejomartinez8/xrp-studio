@@ -1,6 +1,6 @@
 {
     "_commentXRP": "Esta línea no necesita ser traducida; agregar traducción específica de XRP a continuación",
-    "bluetooth-not-supported" : "El Bluetooth no está soportado en su navegador o sistema. Por favor use otro navegador o sistema para acceder a toda la funcionalidad del IDE Web de XRP.",
+    "bluetooth-not-supported": "El Bluetooth no está soportado en su navegador o sistema. Por favor use otro navegador o sistema para acceder a toda la funcionalidad del IDE Web de XRP.",
     "file": "Archivo",
     "file-exists-on-python-convert": "El archivo de Python {{ filename }} ya existe. Cámbiele el nombre antes de realizar la conversión.",
     "firefox-not-supported": "El navegador ({{ browser }}) que está utilizando no es compatible. Por favor use un navegador diferente como Chrome o Edge para acceder a toda la funcionalidad del IDE Web de XRP.",
@@ -301,5 +301,21 @@
         "myProjects": "Mis proyectos",
         "robotMemory": "Memoria del robot",
         "connectToSee": "Conecte el robot para ver su memoria"
+    },
+    "welcome": {
+        "title": "¿Qué quieres crear hoy?",
+        "newBlocks": "Nuevo proyecto de bloques",
+        "newBlocksHint": "Une bloques para programar tu robot",
+        "newPython": "Nuevo proyecto de Python",
+        "newPythonHint": "Escribe código Python para tu robot",
+        "openHint": "O abre uno de tus proyectos desde el panel Carpetas.",
+        "signInFirst": "Inicia sesión con Google (arriba a la derecha) para guardar tus proyectos.",
+        "nameTitle": "Ponle nombre a tu proyecto",
+        "nameHint": "Elige un nombre que vayas a recordar.",
+        "nameExists": "Ya tienes un proyecto con ese nombre.",
+        "nameInvalid": "Usa letras, números, espacios, - o _. Debe empezar y terminar con una letra o un número.",
+        "create": "Crear",
+        "back": "Volver",
+        "namePlaceholder": "Escribe un nombre"
     }
 }
