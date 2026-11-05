@@ -271,7 +271,7 @@ export default class ConnectionMgr {
                 XRPType: xrpType,
             };
 
-            // Send this information back to the WPI server (skipped in offline builds)
+            // Send this information back to the WPI server
             try {
                 if (!isOfflineBuild) fetch('https://xrpid-464879733234.us-central1.run.app/data', {
                     method: 'POST',

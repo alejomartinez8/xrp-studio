@@ -53,7 +53,6 @@ function Root() {
             <ThemeInit />
             <GoogleClientIdContext.Provider value={googleClientId}>
                 {isOfflineBuild ? (
-                    // Offline: skip the provider so the Google Identity script is never loaded.
                     <App />
                 ) : (
                     <GoogleOAuthProvider clientId={googleClientId}>

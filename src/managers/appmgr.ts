@@ -118,7 +118,6 @@ export default class AppMgr {
     private _folderData: FolderItem[] | null = null;
     private _folderDataJson: string | null = null;
     private _authService: GoogleAuthService = new GoogleAuthService();
-    // offline builds keep files in the browser instead of Google Drive
     private _driveService: GoogleDriveService = isOfflineBuild
         ? new LocalDriveService()
         : new GoogleDriveService();

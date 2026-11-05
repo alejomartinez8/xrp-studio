@@ -197,6 +197,7 @@ class LocalDriveService extends GoogleDriveService {
             .map((r) => this.toDriveFile(r));
     }
 
+    /** Find a folder by name; without a parent, a top-level folder (like the XRPCode root) wins. */
     async findFolderByName(
         folderName: string,
         parentFolderId?: string,
@@ -206,8 +207,7 @@ class LocalDriveService extends GoogleDriveService {
         );
         const match = parentFolderId
             ? folders.find((r) => r.parents?.includes(parentFolderId))
-            : // prefer a top-level folder, like the XRPCode root
-              (folders.find((r) => !r.parents?.length) ?? folders[0]);
+            : (folders.find((r) => !r.parents?.length) ?? folders[0]);
         return match ? this.toDriveFile(match) : null;
     }
 
@@ -286,9 +286,9 @@ class LocalDriveService extends GoogleDriveService {
         }
     }
 
+    /** Delete a file, or a folder and everything inside it, like Google Drive. */
     async DeleteFile(fileId: string): Promise<void> {
         const records = await this.records();
-        // deleting a folder deletes everything inside it, like Google Drive
         for (const child of [...records.values()].filter((r) => r.parents?.includes(fileId))) {
             await this.DeleteFile(child.id);
         }
