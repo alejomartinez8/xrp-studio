@@ -289,5 +289,12 @@
         "xrprobot": "Archivos del robot XRP",
         "gdrive": "Archivos de Google Drive",
         "copyTooltip": "Copiar los archivos seleccionados a Google Drive"
+    },
+    "navbar": {
+        "connected": "Robot conectado",
+        "notConnected": "Robot sin conectar",
+        "usb": "USB",
+        "bluetooth": "Bluetooth",
+        "connectFirst": "Falta conectar el robot"
     }
 }

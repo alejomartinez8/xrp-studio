@@ -10,10 +10,13 @@ import { useGoogleClientId } from '@/utils/google-client-id';
 import GoogleLogo from '@assets/images/google-logo.svg';
 import { isOfflineBuild } from '@/utils/offline';
 import LocalSession from './local-session';
+import CompactAccount from './compact-account';
 
 type LoginProps = {
     logoutCallback: () => void;
     onSuccess: (data: UserProfile) => void;
+    /** Top bar version: an avatar menu when signed in, a small sign-in button otherwise. */
+    compact?: boolean;
 };
 
 const EMPTY_PROFILE: UserProfile = {
@@ -57,7 +60,7 @@ function mapDriveAboutUser(data: DriveAboutResponse): UserProfile | null {
     };
 }
 
-function GoogleLoginButton({ logoutCallback, onSuccess }: LoginProps) {
+function GoogleLoginButton({ logoutCallback, onSuccess, compact }: LoginProps) {
     const { t } = useTranslation();
     const [isLogin, setIsLogin] = useState<boolean>(false);
     const [isSigningIn, setIsSigningIn] = useState<boolean>(false);
@@ -239,6 +242,20 @@ function GoogleLoginButton({ logoutCallback, onSuccess }: LoginProps) {
     ]);
 
     const showProfileImage = Boolean(userProfile.picture) && !pictureLoadFailed;
+
+    if (compact) {
+        return (
+            <CompactAccount
+                isLogin={isLogin}
+                isSigningIn={isSigningIn}
+                profile={userProfile}
+                picture={showProfileImage ? userProfile.picture : undefined}
+                onPictureError={() => setPictureLoadFailed(true)}
+                onSignIn={googleSignIn}
+                onSignOut={googleLogout}
+            />
+        );
+    }
 
     return (
         <>

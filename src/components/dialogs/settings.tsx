@@ -1,11 +1,10 @@
-import { StorageKeys } from '@/utils/localstorage';
-import { useLocalStorage } from 'usehooks-ts';
 import DialogFooter from '@components/dialogs/dialog-footer';
-import AppMgr, { Themes } from '@/managers/appmgr';
+import { Themes } from '@/managers/appmgr';
 import { useTranslation } from 'react-i18next';
 import TabList from '../tab-list';
 import TabItem from '../tab-item';
 import AnimatedThemeToggle from '@/widgets/animated-theme-toggle';
+import { applyTheme } from '@/utils/theme';
 
 type SettingsProps = {
     /**
@@ -16,7 +15,6 @@ type SettingsProps = {
 
 function SettingsDlg({ toggleDialog }: SettingsProps) {
     const { t, i18n } = useTranslation();
-    const [,setTheme] = useLocalStorage(StorageKeys.THEME, Themes.LIGHT);
 
     const languageOptions = [
         { code: 'en', label: 'English', nativeName: 'English' },
@@ -43,18 +41,7 @@ function SettingsDlg({ toggleDialog }: SettingsProps) {
      * @param state 
      */
     const onThemeToggle = (state: Themes) => {
-        // 1. Update the class for Tailwind CSS theming
-        if (state === Themes.DARK) {
-            document.documentElement.classList.add(Themes.DARK);
-            document.documentElement.classList.remove(Themes.LIGHT);
-        } else if (state === Themes.LIGHT) {
-            document.documentElement.classList.add(Themes.LIGHT);
-            document.documentElement.classList.remove(Themes.DARK);
-        }
-        setTheme(state);
-
-        // 2. Emit a global event to notify other components (like flexlayout)
-        AppMgr.getInstance().setTheme(state);
+        applyTheme(state);
     };
 
     return (

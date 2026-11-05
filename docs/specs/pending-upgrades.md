@@ -14,3 +14,14 @@ should be its own change, tested in the app.
 | Vite / Vitest | 6 / 3 | 8 / 5 | Also `@vitejs/plugin-react` 6. |
 | ESLint | 9 | 10 | npm reports ESLint 9 as no longer supported. |
 | recharts | 2 | 3 | 2.x is no longer maintained; used by the dashboard. |
+
+## Feature backlog
+
+| Feature | Notes |
+| --- | --- |
+| Local-first projects with Drive backup | Projects always in the browser in every build; signing in with Google backs them up to Drive (planned next). |
+| Projects home screen | Cards for New project and recent projects; folder tree stays. Guided examples afterwards. |
+| Choose the editor | Blocks, Python, or blocks + Python side by side. |
+| Two-way Drive sync | Pull changes made on another device; conflict handling. |
+| Translate the block search placeholder | `@blockly/toolbox-search` hardcodes "Search". |
+| Battery level in the status pill | `batteryVoltage()` returns 0 while the REPL is busy; needs a robot to test safely. |
