@@ -15,6 +15,7 @@ be proposed to XRPWeb.
 | 004 | [Friendly theme and block editor](004-friendly-theme.md) | Done | Block editor parts possible; app theme is fork-specific |
 | 005 | [Maintenance: lockfile, Tailwind config, minor updates](005-maintenance.md) | Done | Possible |
 | 006 | [Top bar](006-navbar.md) | Done | Fork-specific layout |
+| 008 | [Google sign-in server](008-google-auth-server.md) | Done (untested with real Google) | Possible as a reference |
 | — | [Pending upgrades and backlog](pending-upgrades.md) | Backlog | Each one as its own change |
 
 ## Principles

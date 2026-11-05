@@ -6,6 +6,7 @@ import { visualizer } from "rollup-plugin-visualizer";
 import { viteStaticCopy } from 'vite-plugin-static-copy'
 import { fileURLToPath, URL } from 'url';
 import { extname, join, normalize, resolve } from 'path';
+import { googleAuthDevPlugin } from './server/google-auth/vite-plugin';
 
 const MIME_BY_EXT: Record<string, string> = {
     '.json': 'application/json',
@@ -67,6 +68,7 @@ export default defineConfig(({ mode, command }) => {
         },
         plugins: [
             react(),
+            googleAuthDevPlugin(env),
             ...(isDev ? [devPublicPrefixPlugin()] : []),
             visualizer() as PluginOption, viteStaticCopy({
             targets: [
