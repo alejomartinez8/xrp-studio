@@ -1,13 +1,14 @@
 # XRP Studio
 
 Fork of [Open-STEM/XRPWeb](https://github.com/Open-STEM/XRPWeb): web IDE for the XRP robot
-(Blockly blocks + Python/MicroPython). Fork goals: work without internet, MakeCode-style blocks,
-a simple UI for kids, Spanish first; desktop and Android tablet.
+(Blockly blocks + Python/MicroPython). Fork goals: work without internet, a friendly and colourful
+block editor, a simple UI for kids, Spanish first; desktop and Android tablet.
 
 ## Commands
 
-- `npm install` (not `npm ci`: upstream's `package-lock.json` is out of sync; do not commit
-  lockfile changes unless dependencies are added)
+- `npm ci` (the lockfile is in sync; commit `package-lock.json` whenever dependencies change).
+  Some packages are pinned on purpose; see `docs/specs/005-maintenance.md` and
+  `docs/specs/pending-upgrades.md` before updating them.
 - `npm run dev` / `npm run dev:offline` → http://localhost:3000 (Chrome or Edge; Web Serial does
   not exist in Firefox/Safari)
 - `npm run build` / `npm run build:offline` → `dist/` (may need
@@ -38,7 +39,7 @@ a simple UI for kids, Spanish first; desktop and Android tablet.
 `src/utils/offline.ts` (`isOfflineBuild`). With the flag: the Google Identity script is not
 loaded and no client ID is requested, the AI chat is hidden, and telemetry is not sent.
 
-Local projects (MakeCode-style, no login): `src/services/local-drive.ts` implements the
+Local projects (no login needed): `src/services/local-drive.ts` implements the
 `GoogleDriveService` interface on top of IndexedDB, and `src/widgets/local-session.tsx` signs in
 to it automatically on startup. All existing Drive code (file tree, open, save, autosave, Run)
 then uses the browser unchanged. `AppMgr` picks the service based on the flag.
@@ -47,6 +48,21 @@ Offline text overrides live in `src/utils/i18n/locales/{en,es}/offline.json` and
 the base translations only in offline builds (Drive wording → "My projects", Help links marked
 "online"). Driver installation is allowed offline. With the robot connected the tree shows local
 projects, not the XRP's internal files.
+
+## Themes
+
+- `src/theme/<name>/`: `tailwind.ts` (app palette applied over the named Tailwind palettes, used
+  via `withGitHubTheme()` in `tailwind.config.ts`), `app.css` (font, layout tabs), `blocks.ts`
+  (one colour per toolbox `categoryId` plus editor surfaces). Types in `src/theme/types.ts`;
+  `src/theme/index.ts` picks the active theme (GitHub by default).
+- `src/components/blockly/block-theme.ts` applies a block theme (category colours, block colours,
+  built-in styles, surfaces). `src/components/blockly/toolbox-ui.ts` builds the toolbox: icons,
+  coloured labels, search (`@blockly/toolbox-search`) and the collapsed Advanced group.
+
+## Specs
+
+`docs/specs/` has one spec per change (problem, solution, files, how to test, upstream status) and
+`pending-upgrades.md`. Add or update a spec with every change; they are shared with the XRPWeb team.
 
 ## Conventions
 
@@ -59,7 +75,10 @@ projects, not the XRP's internal files.
 - Minimal changes to upstream files: prefer new files, flags and small hooks over rewrites.
   Do not delete upstream code; disable it behind a flag.
 - Pull upstream changes: `git fetch upstream && git merge upstream/main` on `main`.
-- Small PRs, one topic each (e.g. block shape, block colors, tablet zoom as separate PRs).
+- Small PRs, one topic each. Ask the user how to split the work before starting.
+- Commit messages and PR descriptions never include session links.
+- PR screenshots (English UI, light and dark) go in the `pr-assets` branch and are linked from the
+  PR description; spec screenshots go in `docs/specs/images/`.
 - Upstreamable changes: branch from `upstream/main`, merge the PR into the fork's `main`, and the
   same branch can later be sent to Open-STEM/XRPWeb unchanged.
 - Fork-only changes (kids UI, branding, offline-only glue): branch from the fork's `main`.

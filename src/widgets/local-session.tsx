@@ -18,7 +18,7 @@ type LocalSessionProps = {
 /**
  * LocalSession - offline replacement for the Google sign-in button. Renders nothing; on mount it
  * "signs in" to the browser-backed drive (see LocalDriveService) so the file tree, open, save and
- * run all work without an account or a network, like MakeCode's local projects.
+ * run all work without an account or a network.
  */
 function LocalSession({ onSuccess }: LocalSessionProps) {
     const onSuccessRef = useRef(onSuccess);
