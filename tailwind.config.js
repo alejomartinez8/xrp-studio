@@ -1,7 +1,8 @@
 const flowbiteReact = require("flowbite-react/plugin/tailwindcss");
+const githubTheme = require("./src/theme/github-theme.cjs");
 
 /** @type {import('tailwindcss').Config} */
-export default {
+const config = {
     // Add or update the darkMode property to 'class'
     darkMode: 'class',    
     content: [
@@ -372,3 +373,8 @@ export default {
         flowbiteReact
     ],
 };
+
+Object.assign(config.theme.colors, githubTheme.colors);
+config.theme.extend.borderRadius = githubTheme.borderRadius;
+
+export default config;

@@ -1,0 +1,35 @@
+/* GitHub-style system font and layout tabs. Loaded after index.css and the flexlayout theme. */
+:root {
+    font-family:
+        -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+}
+
+html .flexlayout__layout {
+    --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial,
+        sans-serif;
+    --color-text: #1f2328;
+    --color-background: #ffffff;
+    --color-1: #f6f8fa;
+    --color-2: #eaeef2;
+    --color-3: #d8dee4;
+    --color-4: #d0d7de;
+    --color-tab-selected-background: transparent;
+    --color-tab-unselected: #656d76;
+    --color-splitter: #d0d7de;
+    --color-splitter-hover: #0969da;
+}
+
+html.dark .flexlayout__layout {
+    --color-text: #e6edf3;
+    --color-background: #0d1117;
+    --color-1: #161b22;
+    --color-2: #21262d;
+    --color-3: #30363d;
+    --color-4: #30363d;
+    --color-tab-unselected: #7d8590;
+    --color-splitter: #30363d;
+}
+
+html .flexlayout__tab_button--selected {
+    box-shadow: inset 0 -2px #fd8c73;
+}
