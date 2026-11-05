@@ -28,6 +28,24 @@ function initials(profile: UserProfile): string {
 }
 
 /**
+ * Avatar-sized placeholder shown while a saved Google session is being restored, so the top bar
+ * keeps its layout until the avatar appears.
+ */
+export function AccountPlaceholder() {
+    const { t } = useTranslation();
+    return (
+        <span
+            role="status"
+            aria-label={t('googleSigningIn')}
+            title={t('googleSigningIn')}
+            className="flex h-11 w-11 items-center justify-center"
+        >
+            <span className="h-9 w-9 animate-pulse rounded-full bg-shark-200 dark:bg-shark-600" />
+        </span>
+    );
+}
+
+/**
  * CompactAccount - Google account control for the top bar, like most apps: an avatar that opens a
  * menu with the account and Sign out when signed in, and a small Sign in button otherwise. While
  * a saved session is being restored after a reload, an avatar-sized placeholder keeps the top bar
@@ -46,16 +64,7 @@ function CompactAccount({
     const { t } = useTranslation();
 
     if (!isLogin && isRestoring) {
-        return (
-            <span
-                role="status"
-                aria-label={t('googleSigningIn')}
-                title={t('googleSigningIn')}
-                className="flex h-11 w-11 items-center justify-center"
-            >
-                <span className="h-9 w-9 animate-pulse rounded-full bg-shark-200 dark:bg-shark-600" />
-            </span>
-        );
+        return <AccountPlaceholder />;
     }
 
     if (!isLogin) {

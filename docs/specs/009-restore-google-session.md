@@ -18,7 +18,8 @@ loads the profile and finishes the sign-in as usual (same `finalizeLogin` path a
   session answers with an error: the hint is cleared and the user signs in as before.
 - Called once per page load, even with React StrictMode or more than one widget.
 - While it restores, the top bar shows an avatar-sized placeholder instead of the sign-in button,
-  so the bar does not jump from "Google Sign In" to "Signing in..." to the avatar.
+  so the bar does not jump from "Google Sign In" to "Signing in..." to the avatar. The placeholder
+  is also shown while the OAuth client ID loads, so the Settings button does not move.
 
 ## Files
 

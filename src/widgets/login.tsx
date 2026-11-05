@@ -10,7 +10,7 @@ import { useGoogleClientId } from '@/utils/google-client-id';
 import GoogleLogo from '@assets/images/google-logo.svg';
 import { isOfflineBuild } from '@/utils/offline';
 import LocalSession from './local-session';
-import CompactAccount from './compact-account';
+import CompactAccount, { AccountPlaceholder } from './compact-account';
 
 type LoginProps = {
     logoutCallback: () => void;
@@ -326,7 +326,8 @@ function GoogleLoginButton({ logoutCallback, onSuccess, compact }: LoginProps) {
 /**
  * Google sign-in button. Held back until the OAuth client ID has been fetched -
  * useGoogleLogin throws on an empty ID, which would take down the file tree
- * that hosts this widget.
+ * that hosts this widget. In the top bar, a saved session shows the avatar placeholder during
+ * that wait, so the bar does not shift when the widget appears.
  */
 function Login(props: LoginProps) {
     const clientId = useGoogleClientId();
@@ -334,7 +335,12 @@ function Login(props: LoginProps) {
     if (isOfflineBuild) {
         return <LocalSession onSuccess={props.onSuccess} />;
     }
-    return clientId ? <GoogleLoginButton {...props} /> : null;
+    if (clientId) {
+        return <GoogleLoginButton {...props} />;
+    }
+    return props.compact && AppMgr.getInstance().authService.hasSavedSession ? (
+        <AccountPlaceholder />
+    ) : null;
 }
 
 export default Login;
