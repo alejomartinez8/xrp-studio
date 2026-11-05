@@ -1,6 +1,8 @@
-const flowbiteReact = require("flowbite-react/plugin/tailwindcss");
+import type { Config } from 'tailwindcss';
+import typography from '@tailwindcss/typography';
+import debugScreens from 'tailwindcss-debug-screens';
+import flowbiteReact from 'flowbite-react/plugin/tailwindcss';
 
-/** @type {import('tailwindcss').Config} */
 export default {
     // Add or update the darkMode property to 'class'
     darkMode: 'class',    
@@ -367,8 +369,8 @@ export default {
         },
     },
     plugins: [
-        require('tailwindcss-debug-screens'),
-        require('@tailwindcss/typography'),
-        flowbiteReact
+        debugScreens,
+        typography,
+        flowbiteReact,
     ],
-};
+} satisfies Config;
