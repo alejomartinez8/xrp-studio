@@ -80,10 +80,12 @@ Put the same variables in `.env.local` (not committed) and run `npm run dev`.
    code, missing configuration, refresh, tampered cookie, sign out).
 2. `npm run dev` with dummy values: `/api/google-auth/client-id` returns the ID, the handshake sets
    the cookie, and the app shows "Google Sign In".
-3. With real credentials (Vercel or local): sign in, create a file (it appears in Drive's
-   `XRPCode` folder), reload (still signed in), sign out.
+3. With real credentials (local `.env.local`): sign in, create a file (it appears in Drive's
+   `XRPCode` folder), sign out (`DELETE .../session/...` returns 200 and clears both cookies).
+   Tested locally with a real Google Cloud project; Vercel deployment not tested yet.
 
-Step 3 has not been run yet: it needs real Google credentials.
+XRPWeb keeps the session in memory only, so a reload signs the user out; restoring it from the
+refresh cookie is a separate change.
 
 ## Screenshots
 
