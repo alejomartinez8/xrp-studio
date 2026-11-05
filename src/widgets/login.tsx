@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useGoogleLogin } from '@react-oauth/google';
 import Button from './button';
 import AppMgr from '@/managers/appmgr';
@@ -67,6 +67,7 @@ function GoogleLoginButton({ logoutCallback, onSuccess, compact }: LoginProps) {
     const [userProfile, setUserProfile] = useState<UserProfile>(EMPTY_PROFILE);
     const [pictureLoadFailed, setPictureLoadFailed] = useState(false);
     const [tooltip, setTooltip] = useState<string>('');
+    const restoreStarted = useRef(false);
     const authService = AppMgr.getInstance().authService;
     const driveService = AppMgr.getInstance().driveService;
     const loginLogger = logger.child({ module: 'login' });
@@ -240,6 +241,25 @@ function GoogleLoginButton({ logoutCallback, onSuccess, compact }: LoginProps) {
         finalizeLogin,
         refreshMissingPicture,
     ]);
+
+    useEffect(() => {
+        if (restoreStarted.current || authService.isLogin) {
+            return;
+        }
+        restoreStarted.current = true;
+        void authService.restoreSession().then(async (accessToken) => {
+            if (!accessToken) {
+                return;
+            }
+            setIsSigningIn(true);
+            const profile = await fetchDriveUserProfile(accessToken);
+            if (profile) {
+                await finalizeLogin(profile, accessToken);
+            } else {
+                setIsSigningIn(false);
+            }
+        });
+    }, [authService, fetchDriveUserProfile, finalizeLogin]);
 
     const showProfileImage = Boolean(userProfile.picture) && !pictureLoadFailed;
 
