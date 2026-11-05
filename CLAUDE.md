@@ -59,7 +59,10 @@ projects, not the XRP's internal files.
 - Minimal changes to upstream files: prefer new files, flags and small hooks over rewrites.
   Do not delete upstream code; disable it behind a flag.
 - Pull upstream changes: `git fetch upstream && git merge upstream/main` on `main`.
-- One branch per phase/task.
+- Small PRs, one topic each (e.g. block shape, block colors, tablet zoom as separate PRs).
+- Upstreamable changes: branch from `upstream/main`, merge the PR into the fork's `main`, and the
+  same branch can later be sent to Open-STEM/XRPWeb unchanged.
+- Fork-only changes (kids UI, branding, offline-only glue): branch from the fork's `main`.
 - Prettier: 4 spaces, single quotes, 100 columns. Import aliases: `@/`, `@components/`,
   `@utils/`, `@connections/`, `@assets/`.
 - License GPL: the fork stays GPL.
