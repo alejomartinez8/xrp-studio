@@ -4,6 +4,8 @@ This repository contains the XRP Web application source code using React + TypeS
 
 The XRP software platform is an integrated development environment where you can develop your robotics software program using either the visual block programming paradigm or the Python language.
 
+This fork (XRP Studio) is published at [https://xrp-studio.vercel.app/](https://xrp-studio.vercel.app/).
+
 ## 🚀 Installation & Setup
 
 ### Prerequisites
