@@ -39,7 +39,8 @@ browser projects with Drive is a separate, later change.
 
 ## Files
 
-- New: `server/google-auth/` (`handlers.ts`, `crypto.ts`, `cookies.ts`, `vite-plugin.ts`,
+- New: `public/privacy.html` (privacy policy for the OAuth consent screen),
+  `server/google-auth/` (`handlers.ts`, `crypto.ts`, `cookies.ts`, `vite-plugin.ts`,
   `tests/handlers.spec.ts`), `api/google-auth/` (one thin Vercel function per endpoint),
   `vercel.json`.
 - Hooks: `vite.config.ts` (dev plugin), `tsconfig.node.json` (type-check `api` and `server`).
@@ -51,7 +52,10 @@ browser projects with Drive is a separate, later change.
 1. Create a project at <https://console.cloud.google.com>.
 2. APIs & Services → Library → enable **Google Drive API**.
 3. OAuth consent screen: External, app name, support email. Scope: `drive.file` (the only one
-   the app requests). While in **Testing**, add your Google account under Test users.
+   the app requests). While in **Testing**, add your Google account under Test users. Testing
+   shows a "Google hasn't verified this app" warning and expires sessions after 7 days; to
+   publish, Branding needs a home page (`https://xrp-studio.vercel.app`) and a privacy policy
+   (`https://xrp-studio.vercel.app/privacy.html`, served from `public/privacy.html`).
 4. Credentials → Create credentials → OAuth client ID → **Web application**. Authorized
    JavaScript origins: your Vercel domain (for example `https://xrp-studio.vercel.app`) and
    `http://localhost:3000`. No redirect URIs are needed (popup flow).
@@ -95,6 +99,7 @@ refresh cookie is a separate change.
 | Light | Dark |
 | --- | --- |
 | ![Light](images/google-auth-light.png) | ![Dark](images/google-auth-dark.png) |
+| ![Privacy light](images/privacy-light.png) | ![Privacy dark](images/privacy-dark.png) |
 
 ## Upstream
 
