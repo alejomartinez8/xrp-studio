@@ -7,6 +7,7 @@ import { Constants } from '@/utils/constants';
 import { Workspace } from 'react-blockly';
 import i18n from '@/utils/i18n';
 import { GoogleDriveFile } from '@/services/google-drive';
+import { rememberLastProject } from '@/utils/last-project';
 
 /**
  * EditorSession - Editor session object
@@ -125,6 +126,9 @@ export default class EditorMgr {
      * Theme listeners are kept: `eventOff` drops every listener of an event, and the layout and
      * the shell also listen to theme changes, so closing a tab used to leave them stuck on the
      * old theme. A closed editor's theme listener finds no session and does nothing.
+     *
+     * When the last tab closes, its file is remembered so it can be reopened on the next start
+     * (`@/utils/last-project`).
      * @param session - Editor session object
      */
     public RemoveEditor(id: string): string | undefined {
@@ -142,6 +146,9 @@ export default class EditorMgr {
             appMgr.eventOff(EventType.EVENT_SAVE_EDITOR);
             this.editorSessions.delete(id);
             this.RemoveFromLocalStorage(id);
+            if (this.editorSessions.size === 0 && sesion?.path) {
+                rememberLastProject(sesion.path);
+            }
         }
         if (this.editorSessions.size > 0) {
             const session = Array.from(this.editorSessions.values()).pop();

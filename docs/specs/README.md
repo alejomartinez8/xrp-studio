@@ -20,6 +20,7 @@ be proposed to XRPWeb.
 | 009 | [Keep the Google session after a reload](009-restore-google-session.md) | Done | Possible; depends on their backend |
 | 010 | [Theme switch fixes](010-theme-switch.md) | Done | Possible (XRPWeb bugs) |
 | 011 | [Files from My projects open with their blocks](011-open-file-blocks.md) | Done | Possible (XRPWeb race) |
+| 013 | [Reopen the last project on startup](013-reopen-last-project.md) | Done | Fork-specific |
 | — | [Pending upgrades and backlog](pending-upgrades.md) | Backlog | Each one as its own change |
 
 ## Principles

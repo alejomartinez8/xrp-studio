@@ -476,6 +476,10 @@ function NavBar({ layoutref }: NavBarProps) {
 
     /**
      * loadGoogleEditor - load the file content from Google Drive into the editor
+     *
+     * The content is also kept in the editor session: when the file opens while the app is still
+     * starting (XRP Studio reopens the last project), the load event can arrive before the new tab
+     * has mounted and subscribed, and the editor then loads the session content when it mounts.
      * @param filePathData
      * @param fileType
      * @param filename
@@ -491,6 +495,13 @@ function NavBar({ layoutref }: NavBarProps) {
                 content = fileContent;
             }
             const loadContent = { name: filename, path: filePathData.path, content: content };
+            const session = Array.from(EditorMgr.getInstance().getAllEditorSessions().values()).find(
+                (editorSession) =>
+                    editorSession.name === filename && editorSession.path === filePathData.path,
+            );
+            if (session && !session.content && fileContent) {
+                session.content = fileContent;
+            }
             AppMgr.getInstance().emit(EventType.EVENT_EDITOR_LOAD, JSON.stringify(loadContent));
         });
     }
