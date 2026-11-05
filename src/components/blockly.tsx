@@ -11,8 +11,10 @@ import { StorageKeys } from '@/utils/localstorage';
 import EditorMgr, { EditorSession } from '@/managers/editormgr';
 import i18n from '@/utils/i18n';
 import moment from 'moment';
+import { applyVividHsv, vividThemeOptions, vividToolbox } from '@components/blockly/vivid-colours';
 
 registerFieldColour(); //Plugin needs to be registered. Used for the Color LED on the non beta board. 
+applyVividHsv();
 
 const blocklyDarkTheme = Blockly.Theme.defineTheme('dark', {
     base: Blockly.Themes.Classic,
@@ -32,7 +34,7 @@ const blocklyDarkTheme = Blockly.Theme.defineTheme('dark', {
     name: 'dark',
 });
 
-const blocklyMpdernTheme = Blockly.Theme.defineTheme('modern', {
+const blocklyMpdernTheme = Blockly.Theme.defineTheme('modern', vividThemeOptions({
     base: Blockly.Themes.Classic,
     blockStyles: {
         colour_blocks: {
@@ -119,7 +121,7 @@ const blocklyMpdernTheme = Blockly.Theme.defineTheme('modern', {
     componentStyles: {},
     fontStyle: {},
     name: 'modern',
-});
+}));
 
 interface BlocklyEditorProps {
     tabId: string;
@@ -260,7 +262,7 @@ function BlocklyEditor({ tabId, tabName }: BlocklyEditorProps) {
 
     // Shallow copy gives react-blockly a new reference so its updateToolbox effect runs.
     const toolboxConfiguration = useMemo(
-        () => ({ ...BlocklyConfigs.getLocalizedToolboxJson() }) as typeof BlocklyConfigs.ToolboxJson,
+        () => vividToolbox({ ...BlocklyConfigs.getLocalizedToolboxJson() }) as typeof BlocklyConfigs.ToolboxJson,
         [toolboxRevision, language],
     );
 
