@@ -13,6 +13,8 @@ import { ConnectionType, EditorType, FolderItem } from '@/utils/types';
 import { BluetoothConnection } from '@/connections/bluetoothconnection';
 import GoogleAuthService from '@/services/google-auth';
 import GoogleDriveService from '@/services/google-drive';
+import LocalDriveService from '@/services/local-drive';
+import { isOfflineBuild } from '@/utils/offline';
 
 export enum Themes {
     DARK = 'dark',
@@ -116,7 +118,9 @@ export default class AppMgr {
     private _folderData: FolderItem[] | null = null;
     private _folderDataJson: string | null = null;
     private _authService: GoogleAuthService = new GoogleAuthService();
-    private _driveService: GoogleDriveService = new GoogleDriveService();
+    private _driveService: GoogleDriveService = isOfflineBuild
+        ? new LocalDriveService()
+        : new GoogleDriveService();
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore

@@ -23,6 +23,7 @@ import AlertDialog from './dialogs/alertdlg';
 import { fireGoogleUserTree, getUsernameFromEmail } from '@/utils/google-utils';
 import EditorMgr, { EdSearchParams } from '@/managers/editormgr';
 import Login from '@/widgets/login';
+import { isOfflineBuild } from '@/utils/offline';
 import { UserProfile } from '@/services/google-auth';
 import CreateNodeDlg from './dialogs/create-node-dlg';
 import { StorageKeys } from '@/utils/localstorage';
@@ -633,7 +634,7 @@ function FolderTree(treeProps: TreeProps) {
         const firstTimeLogin =
             localStorage.getItem(StorageKeys.GOOGLE_FIRST_TIME_LOGIN) === null ||
             localStorage.getItem(StorageKeys.GOOGLE_FIRST_TIME_LOGIN) === 'true';
-        if (firstTimeLogin) {
+        if (firstTimeLogin && !isOfflineBuild) {
             localStorage.setItem(StorageKeys.GOOGLE_FIRST_TIME_LOGIN, 'false');
             // put up a dialog to inform user that the Google Drive notification about owner created folder and files
             setDialogContent(

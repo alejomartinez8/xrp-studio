@@ -1,3 +1,5 @@
+import { isOfflineBuild } from '@/utils/offline';
+
 /** Set when ?aibuddy=1 is present on initial page load (cleared on full reload). */
 let aiBuddyMenuEnabled = false;
 
@@ -34,6 +36,9 @@ export function initAiBuddyAccess(): void {
 }
 
 export function isAiBuddyMenuEnabled(): boolean {
+    if (isOfflineBuild) {
+        return false;
+    }
     if (import.meta.env.VITE_ENABLE_AI_BUDDY === 'true') {
         return true;
     }

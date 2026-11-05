@@ -10,8 +10,10 @@
     "gen:firmware-manifests": "node scripts/gen-firmware-manifests.mjs",
     "predev": "node scripts/gen-firmware-manifests.mjs",
     "dev": "vite",
+    "dev:offline": "node scripts/gen-firmware-manifests.mjs && vite --mode offline",
     "prebuild": "node scripts/gen-firmware-manifests.mjs",
     "build": "tsc -b && vite build",
+    "build:offline": "node scripts/gen-firmware-manifests.mjs && tsc -b && vite build --mode offline",
     "lint": "eslint .",
     "preview": "vite preview --base=./ --open",
     "test": "vitest"

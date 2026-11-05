@@ -1,5 +1,6 @@
 import logger from "@/utils/logger";
 import { googleLogout } from "@react-oauth/google";
+import { isOfflineBuild } from "@/utils/offline";
 
 export type UserProfile = {
     id: string;
@@ -40,7 +41,7 @@ class GoogleAuthService {
     constructor() {
         this._googleAuthBackendUrl = import.meta.env.GOOGLE_AUTH_URL;
         this._userProfile = { id: '', email: '', name: '', picture: '' };
-        this.initHandshake(); // Initiate handshake on service creation
+        if (!isOfflineBuild) this.initHandshake(); // Initiate handshake on service creation
         
         document.addEventListener('visibilitychange', this.onVisibilityChange);
     }

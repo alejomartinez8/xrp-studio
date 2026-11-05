@@ -50,9 +50,9 @@ function devPublicPrefixPlugin(): PluginOption {
 }
 
 // https://vite.dev/config/
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ mode, command }) => {
     const env = loadEnv(mode, process.cwd(), '');
-    const isDev = mode === 'development';
+    const isDev = mode === 'development' || command === 'serve';
     return {
         base: './',
         esbuild: {
@@ -73,6 +73,10 @@ export default defineConfig(({ mode }) => {
                 {
                     src: 'node_modules/flexlayout-react/style',
                     dest: './node_modules/flexlayout-react/'
+                },
+                {
+                    src: 'node_modules/blockly/media',
+                    dest: './node_modules/blockly/'
                 },
                 {
                     src: 'node_modules/gridstack/dist/gridstack.css',
