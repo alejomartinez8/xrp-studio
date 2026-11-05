@@ -3,6 +3,7 @@ import {
     Model,
     IJsonModel,
     TabNode,
+    TabSetNode,
     Action,
     Actions,
     ITabRenderValues,
@@ -31,6 +32,7 @@ import { useTranslation } from 'react-i18next';
 import Dialog from '@components/dialogs/dialog';
 import ConfirmationDlg from '@components/dialogs/confirmdlg';
 import { swapStylesheet } from '@/utils/swap-stylesheet';
+import WelcomeScreen from '@components/welcome/welcome-screen';
 
 /**
  *  Layout-React's layout JSON to specify the XRPWeb's single page application's layout
@@ -112,6 +114,13 @@ EditorMgr.getInstance().setLayoutModel(model);
 let layoutRef: React.RefObject<Layout> = {
     current: null,
 };
+
+/**
+ * Content of an empty tabset: the welcome screen in the editor area (XRP Studio), nothing
+ * elsewhere.
+ */
+const renderTabSetPlaceHolder = (node: TabSetNode) =>
+    node.getId() === Constants.EDITOR_TABSET_ID ? <WelcomeScreen /> : null;
 
 const factory = (node: TabNode) => {
     const component = node.getComponent();
@@ -433,6 +442,7 @@ function XRPLayout({ forwardedref }: XRPLayoutProps) {
                 factory={factory}
                 onAction={handleActions}
                 onRenderTab={onRenderTab}
+                onTabSetPlaceHolder={renderTabSetPlaceHolder}
             />
             <Dialog isOpen={false} toggleDialog={toggleDialog} ref={dialogRef}>
                 {dialogContent}

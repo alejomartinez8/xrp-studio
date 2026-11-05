@@ -35,6 +35,8 @@ export enum EventType {
     EVENT_ID = 'id', // XRP platform ID
     EVENT_EDITOR = 'editor', // editor events
     EVENT_OPEN_FILE = 'open-file', // open file event
+    /** Create and open a new file without the New File dialog (NewFileData JSON). */
+    EVENT_NEW_PROJECT = 'new-project',
     EVENT_EDITOR_LOAD = 'editor-load', // loading data into editor
     EVENT_FONTCHANGE = 'font-change', // change manoco editor fontsize
     EVENT_GENPYTHON = 'gen-python', // change python requestion
@@ -74,6 +76,7 @@ type Events = {
     [EventType.EVENT_ID]: string;
     [EventType.EVENT_EDITOR]: EditorType;
     [EventType.EVENT_OPEN_FILE]: string;
+    [EventType.EVENT_NEW_PROJECT]: string;
     [EventType.EVENT_EDITOR_LOAD]: string;
     [EventType.EVENT_FONTCHANGE]: string;
     [EventType.EVENT_GENPYTHON]: string;
@@ -297,6 +300,13 @@ export default class AppMgr {
     public setFoderData(folderJson: string) {
         this._folderData = JSON.parse(folderJson);
         this._folderDataJson = folderJson;
+    }
+
+    /**
+     * getFolderData - the folder tree last listed (the user's projects or the XRP's files)
+     */
+    public getFolderData(): FolderItem[] | null {
+        return this._folderData ?? null;
     }
 
     /**

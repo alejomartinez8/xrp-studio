@@ -256,6 +256,10 @@ function NavBar({ layoutref }: NavBarProps) {
                 }
             });
 
+            AppMgr.getInstance().on(EventType.EVENT_NEW_PROJECT, (newFileDataJson: string) => {
+                void createNewFile(JSON.parse(newFileDataJson) as NewFileData);
+            });
+
             AppMgr.getInstance().on(EventType.EVENT_OPEN_FILE, async (filePathDataJson: string) => {
                 const filePathData = JSON.parse(filePathDataJson);
                 const filename = filePathData.xrpPath.split('/').pop();
@@ -533,6 +537,17 @@ function NavBar({ layoutref }: NavBarProps) {
      */
     async function onNewFileSubmitted(data: NewFileData) {
         toggleDialog();
+        await createNewFile(data);
+    }
+
+    /**
+     * createNewFile - open a tab for a new file and create it in Google Drive (or My projects) or
+     * on the XRP. Shared by the New File dialog and the welcome screen (`EVENT_NEW_PROJECT`); the
+     * connection is read from the manager because the welcome screen calls it from an event
+     * handler, where React state is stale.
+     */
+    async function createNewFile(data: NewFileData) {
+        const isConnected = AppMgr.getInstance().getConnection()?.isConnected() ?? false;
         const tabId = CreateEditorTab(data, layoutref);
         setActiveTab(tabId);
         if (authService.isLogin) {
