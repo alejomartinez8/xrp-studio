@@ -1,5 +1,5 @@
-import { decrypt, encrypt, randomToken } from './crypto';
-import { readCookie, serializeCookie } from './cookies';
+import { decrypt, encrypt, randomToken } from './crypto.js';
+import { readCookie, serializeCookie } from './cookies.js';
 
 /**
  * Google sign-in endpoints used by the app's `GoogleAuthService` (`src/services/google-auth.ts`):
