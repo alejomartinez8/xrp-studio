@@ -15,6 +15,7 @@
     "saveFile": "Guardar Archivo",
     "saveFileAs": "Guardar Archivo Como",
     "viewPythonFile": "Ver Archivo Python",
+    "pythonEditorLoading": "Abriendo el editor de Python…",
     "convertToPython": "Convertir a Python",
     "increaseFont": "Aumentar Fuente",
     "decreaseFont": "Disminuir Fuente",
