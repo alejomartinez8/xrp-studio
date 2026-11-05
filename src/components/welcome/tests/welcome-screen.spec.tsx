@@ -73,4 +73,43 @@ describe('WelcomeScreen', () => {
         expect(screen.getByRole('status').textContent).toContain('Sign in with Google');
         expect(emit).not.toHaveBeenCalled();
     });
+    it('lists recent projects and opens one with a tap', async () => {
+        const appMgr = AppMgr.getInstance();
+        appMgr.authService.isLogin = true;
+        appMgr.authService.userProfile = {
+            id: 'local',
+            email: 'local@xrp-studio',
+            name: '',
+            picture: '',
+        };
+        vi.spyOn(appMgr.driveService, 'buildTree').mockResolvedValue({
+            id: 'xrpcode',
+            name: 'XRPCode',
+            mimeType: 'application/vnd.google-apps.folder',
+            kind: 'drive#file',
+            children: [
+                {
+                    id: 'sq',
+                    name: 'square.blocks',
+                    mimeType: 'application/json',
+                    kind: 'drive#file',
+                    parents: ['xrpcode'],
+                    modifiedTime: new Date().toISOString(),
+                },
+            ],
+        });
+
+        render(<WelcomeScreen />);
+        fireEvent.click(await screen.findByText('square'));
+
+        expect(screen.getByText('Your recent projects')).toBeTruthy();
+        expect(screen.getByText('Just now')).toBeTruthy();
+        const [event, json] = emit.mock.calls[0] as [EventType, string];
+        expect(event).toBe(EventType.EVENT_OPEN_FILE);
+        expect(JSON.parse(json)).toEqual({
+            xrpPath: '/gusers/local/square.blocks',
+            gPath: 'sq',
+            gparentId: 'xrpcode',
+        });
+    });
 });

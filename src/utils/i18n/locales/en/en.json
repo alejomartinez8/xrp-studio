@@ -316,6 +316,9 @@
         "nameInvalid": "Use letters, numbers, spaces, - or _. It must start and end with a letter or number.",
         "create": "Create",
         "back": "Back",
-        "namePlaceholder": "Type a name"
+        "namePlaceholder": "Type a name",
+        "recentTitle": "Your recent projects",
+        "justNow": "Just now",
+        "moreHint": "Find all your projects in the Folders panel."
     }
 }

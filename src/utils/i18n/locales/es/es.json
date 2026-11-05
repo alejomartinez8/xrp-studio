@@ -316,6 +316,9 @@
         "nameInvalid": "Usa letras, números, espacios, - o _. Debe empezar y terminar con una letra o un número.",
         "create": "Crear",
         "back": "Volver",
-        "namePlaceholder": "Escribe un nombre"
+        "namePlaceholder": "Escribe un nombre",
+        "recentTitle": "Tus proyectos recientes",
+        "justNow": "Recién",
+        "moreHint": "Todos tus proyectos están en el panel Carpetas."
     }
 }

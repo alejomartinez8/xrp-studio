@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import AppMgr, { EventType } from '@/managers/appmgr';
+import AppMgr, { EventType, LoginStatus } from '@/managers/appmgr';
 import { Constants } from '@/utils/constants';
 import { getUsernameFromEmail } from '@/utils/google-utils';
 import {
@@ -10,6 +10,7 @@ import {
     projectExtension,
     projectNameProblem,
 } from '@/utils/new-project';
+import { projectTitle, RecentProject, recentProjects, timeAgo } from '@/utils/recent-projects';
 import logger from '@/utils/logger';
 import blockIcon from '@assets/images/blockly.svg';
 import pythonIcon from '@assets/images/python-svgrepo-com.svg';
@@ -28,15 +29,64 @@ const welcomeLogger = logger.child({ module: 'welcome' });
  * empty space. Like MakeCode, the child picks blocks or Python and names the project (no name is
  * suggested, so the child thinks of one that is easy to find later); it is saved right away in the
  * user's projects (My projects or Google Drive) and opened, without the New File dialog. Without a place
- * to save projects (signed out of Google), it asks to sign in first.
+ * to save projects (signed out of Google), it asks to sign in first. Below, the most recent
+ * projects open with one tap.
  */
 function WelcomeScreen() {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const [recents, setRecents] = useState<RecentProject[]>([]);
     const [isBusy, setIsBusy] = useState(false);
     const [needsSignIn, setNeedsSignIn] = useState(false);
     const [draft, setDraft] = useState<Draft | null>(null);
     const [name, setName] = useState('');
     const nameInputRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        let isMounted = true;
+        const appMgr = AppMgr.getInstance();
+        /** List the most recent projects, or none while signed out. */
+        const loadRecents = async () => {
+            if (!appMgr.authService.isLogin) {
+                setRecents([]);
+                return;
+            }
+            try {
+                const tree = await appMgr.driveService.buildTree(Constants.XRPCODE);
+                const username = getUsernameFromEmail(appMgr.authService.userProfile.email) ?? '';
+                if (isMounted) {
+                    setRecents(recentProjects(tree, username));
+                }
+            } catch (error) {
+                welcomeLogger.error(
+                    `Could not list recent projects: ${error instanceof Error ? error.message : String(error)}`,
+                );
+            }
+        };
+        const onLogin = (status: string) => {
+            if (status === LoginStatus.LOGGED_IN) {
+                setNeedsSignIn(false);
+            }
+            void loadRecents();
+        };
+        void loadRecents();
+        appMgr.on(EventType.EVENT_LOGIN_STATUS, onLogin);
+        return () => {
+            isMounted = false;
+            appMgr.removeHandler(EventType.EVENT_LOGIN_STATUS, onLogin);
+        };
+    }, []);
+
+    /** Open a recent project in a tab, as the folder tree does. */
+    const openRecent = (project: RecentProject) => {
+        AppMgr.getInstance().emit(
+            EventType.EVENT_OPEN_FILE,
+            JSON.stringify({
+                xrpPath: project.xrpPath,
+                gPath: project.fileId,
+                gparentId: project.parentId,
+            }),
+        );
+    };
 
     useEffect(() => {
         if (draft) {
@@ -194,8 +244,48 @@ function WelcomeScreen() {
                         </span>
                     </button>
                 </div>
+                {recents.length > 0 && (
+                    <section className="flex w-full max-w-3xl flex-col gap-3">
+                        <h3 className="text-lg font-semibold text-shark-700 dark:text-mountain-mist-200">
+                            {t('welcome.recentTitle')}
+                        </h3>
+                        <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                            {recents.map((project) => (
+                                <li key={project.fileId}>
+                                    <button
+                                        type="button"
+                                        onClick={() => openRecent(project)}
+                                        className="flex w-full items-center gap-3 rounded-xl border-2 border-mountain-mist-200 bg-shark-50 px-4 py-3 text-left transition hover:border-curious-blue-300 hover:shadow-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-curious-blue-400 dark:border-shark-700 dark:bg-shark-800 dark:hover:border-curious-blue-500"
+                                    >
+                                        <img
+                                            src={project.kind === 'blocks' ? blockIcon : pythonIcon}
+                                            alt=""
+                                            className="h-9 w-9 shrink-0"
+                                        />
+                                        <span className="flex min-w-0 flex-col">
+                                            <span className="truncate font-semibold text-shark-800 dark:text-mountain-mist-100">
+                                                {projectTitle(project.name)}
+                                            </span>
+                                            <span className="text-sm text-shark-600 dark:text-mountain-mist-300">
+                                                {timeAgo(
+                                                    project.modifiedTime,
+                                                    new Date(),
+                                                    i18n.language,
+                                                ) ?? t('welcome.justNow')}
+                                            </span>
+                                        </span>
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                    </section>
+                )}
                 <p role="status" className={hint}>
-                    {needsSignIn ? t('welcome.signInFirst') : t('welcome.openHint')}
+                    {needsSignIn
+                        ? t('welcome.signInFirst')
+                        : recents.length > 0
+                          ? t('welcome.moreHint')
+                          : t('welcome.openHint')}
                 </p>
             </div>
         </div>
