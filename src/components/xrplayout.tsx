@@ -30,6 +30,7 @@ import { isLocalProjectsEnabled } from '@/utils/offline';
 import { useTranslation } from 'react-i18next';
 import Dialog from '@components/dialogs/dialog';
 import ConfirmationDlg from '@components/dialogs/confirmdlg';
+import { swapStylesheet } from '@/utils/swap-stylesheet';
 
 /**
  *  Layout-React's layout JSON to specify the XRPWeb's single page application's layout
@@ -185,24 +186,8 @@ function XRPLayout({ forwardedref }: XRPLayoutProps) {
         const flexlayout_stylesheet: any = window.document.getElementById('flexlayout-stylesheet');
         const index = flexlayout_stylesheet.href.lastIndexOf('/');
         const newAddress = flexlayout_stylesheet.href.substr(0, index);
-        const existingTheme = flexlayout_stylesheet.href.substr(index + 1);
 
-        if (existingTheme === themeName) return;
-
-        // eslint-disable-next-line prefer-const
-        let stylesheetLink = document.createElement('link');
-        stylesheetLink.setAttribute('id', 'flexlayout-stylesheet');
-        stylesheetLink.setAttribute('rel', 'stylesheet');
-        stylesheetLink.setAttribute('href', newAddress + '/' + themeName);
-
-        const promises: Promise<boolean>[] = [];
-        promises.push(
-            new Promise((resolve) => {
-                stylesheetLink.onload = () => resolve(true);
-            }),
-        );
-
-        document.head.replaceChild(stylesheetLink, flexlayout_stylesheet);
+        swapStylesheet(flexlayout_stylesheet, newAddress + '/' + themeName);
     };
 
     useEffect(() => {
