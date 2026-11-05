@@ -39,7 +39,9 @@ function getCustomBlocklyMessages(language: string): Record<string, string> {
  */
 export function applyBlocklyLocale(language: string): void {
     const defaultLanguage = 'en';
-    const targetLanguage = isLanguageSupported(language) ? language : defaultLanguage;
+    // accept regional codes such as es-ES or es-419
+    const baseLanguage = language.split('-')[0];
+    const targetLanguage = isLanguageSupported(baseLanguage) ? baseLanguage : defaultLanguage;
     const coreMessages = localeMessages[targetLanguage];
     const customMessages = getCustomBlocklyMessages(targetLanguage);
 

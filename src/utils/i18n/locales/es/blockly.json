@@ -21,7 +21,7 @@
         "XRP_MOTOR_RESET_POSITION_TOOLTIP": "Reinicia a cero la posición y el conteo del codificador del motor seleccionado.",
         "XRP_STRAIGHT": "Recto",
         "XRP_CM": "cm:",
-        "XRP_TURN_DEG": "Girar  Gr:",
+        "XRP_TURN_DEG": "Girar  grados:",
         "XRP_SET_EFFORT": "Establecer esfuerzo",
         "XRP_SET_SPEED": "Establecer velocidad",
         "XRP_CM_S": "cm/s",

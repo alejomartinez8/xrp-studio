@@ -130,7 +130,7 @@
     "power-switch-alerts": "¡El interruptor de encendido del XRP no está activado. Los motores y servos no funcionarán correctamente. Por favor encienda el interruptor antes de continuar!",
     "alert": "Notificación",
     "XRP-not-connected": "¡Su XRP no está conectado. Por favor verifique que el XRP esté conectado antes de intentar ejecutar su programa o instalar controladores!",
-    "driver-install-login": "Has iniciado sesión en Google Drive. Cierra sesión en Google Drive antes de intentar instalar los controladores.",
+    "driver-install-login": "Ha iniciado sesión en Google Drive. Cierre sesión en Google Drive antes de instalar los controladores.",
     "sad-battery-title": "Batería Baja",
     "sad-battery-desc": "¡El paquete de baterías XRP tiene poca energía. Por favor reemplace las baterías! Continuar ejecutando el programa puede tener resultados impredecibles. ¿Desea continuar ejecutando el programa?",
     "final-path": "Ruta Final: ",
@@ -247,7 +247,7 @@
         "failedToLoadDocs": "Fallo al cargar documentos",
         "noContext": "Sin contexto",
         "startConversation": "Iniciar una conversación",
-        "startConversationHelper": "Haz preguntas, obtén ayuda con el código o aprende robótica XRP con el Compañero de Código XRP.",
+        "startConversationHelper": "Haga preguntas, obtenga ayuda con el código o aprenda robótica XRP con el Compañero de Código XRP.",
         "placeholder": "Mensaje para el Compañero de Código XRP...",
         "stopGeneration": "Detener generación",
         "sendMessage": "Enviar mensaje",
@@ -263,7 +263,7 @@
     },
     "backup-restore": {
         "title": "Copia/Restaurar",
-        "description": "Respalda o restaura tus archivos XRP. Haz clic en el botón de abajo para comenzar. Tenga en cuenta que su XRP debe estar conectado y su cuenta de Google Drive debe estar iniciada sesión antes de realizar un respaldo o restauración.",
+        "description": "Respalde o restaure sus archivos XRP. Haga clic en el botón de abajo para comenzar. Tenga en cuenta que su XRP debe estar conectado y debe haber iniciado sesión en Google Drive antes de realizar un respaldo o restauración.",
         "backup": "Respaldo",
         "restore": "Restauración",
         "close": "Cerrar",
@@ -271,13 +271,13 @@
     },
     "backup": {
         "title": "Respaldo",
-        "description": "Respalda tus archivos XRP desde Google Drive a tu XRP Robot.",
+        "description": "Respalde sus archivos XRP desde Google Drive a su robot XRP.",
         "processing": "Procesando...",
         "begin": "Comenzar Respaldo"
     },
     "restore": {
         "title": "Restauración",
-        "description": "Restaura tus archivos XRP desde tu XRP Robot a Google Drive.",
+        "description": "Restaure sus archivos XRP desde su robot XRP a Google Drive.",
         "processing": "Procesando...",
         "begin": "Comenzar Restauración"
     },
@@ -288,7 +288,7 @@
         "copy": "Copiar",
         "menuTitle": "Copiar archivos",
         "xrprobot": "Archivos del robot XRP",
-        "googledrive": "Archivos de Google Drive",
+        "gdrive": "Archivos de Google Drive",
         "copyTooltip": "Copiar archivos a Google Drive"
     }
 }
