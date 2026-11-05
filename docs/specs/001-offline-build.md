@@ -23,8 +23,9 @@ paths stay in place and are skipped when the flag is on.
   - The AI chat menu is hidden, even with `?aibuddy=1`.
   - Connection telemetry is not sent.
   - Driver installation is allowed (it was blocked while signed in to Google).
-  - Offline-only translation overrides replace Google Drive wording with "My projects" and mark
-    Help links as "(online)".
+  - Offline-only translation overrides mark Help links as "(online)" (`offline.json`).
+  - My projects is used (see [007](007-my-projects.md)); its wording overrides live in
+    `local-projects.json`.
 - In every build (not only offline), Blockly media is served from the app
   (`node_modules/blockly/media`) instead of `blockly-demo.appspot.com`.
 

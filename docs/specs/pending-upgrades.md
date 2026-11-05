@@ -19,7 +19,8 @@ should be its own change, tested in the app.
 
 | Feature | Notes |
 | --- | --- |
-| Local-first projects with Drive backup | Projects always in the browser in every build; signing in with Google backs them up to Drive (planned next). |
+| Drive backup for My projects | Signing in with Google could back up My projects to Drive. On hold until the XRPWeb team answers Open-STEM/XRPWeb#336. |
+| Test My projects with a robot | Run from My projects, Robot memory switch, disconnect. See spec 007. |
 | Projects home screen | Cards for New project and recent projects; folder tree stays. Guided examples afterwards. |
 | Choose the editor | Blocks, Python, or blocks + Python side by side. |
 | Two-way Drive sync | Pull changes made on another device; conflict handling. |

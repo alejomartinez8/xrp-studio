@@ -10,3 +10,11 @@
  * Code paths stay in place; they are only skipped when this flag is on.
  */
 export const isOfflineBuild: boolean = import.meta.env.VITE_OFFLINE === 'true';
+
+/**
+ * Whether "My projects" (projects kept in the browser, see LocalDriveService) is the project
+ * store. It is used when Google sign-in is not available: in offline builds and in builds without
+ * a Google auth backend (`GOOGLE_AUTH_URL`). Builds with Google keep XRPWeb's behaviour unchanged.
+ */
+export const isLocalProjectsEnabled: boolean =
+    isOfflineBuild || !import.meta.env.GOOGLE_AUTH_URL;

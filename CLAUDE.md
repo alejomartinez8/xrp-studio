@@ -39,15 +39,21 @@ block editor, a simple UI for kids, Spanish first; desktop and Android tablet.
 `src/utils/offline.ts` (`isOfflineBuild`). With the flag: the Google Identity script is not
 loaded and no client ID is requested, the AI chat is hidden, and telemetry is not sent.
 
-Local projects (no login needed): `src/services/local-drive.ts` implements the
-`GoogleDriveService` interface on top of IndexedDB, and `src/widgets/local-session.tsx` signs in
-to it automatically on startup. All existing Drive code (file tree, open, save, autosave, Run)
-then uses the browser unchanged. `AppMgr` picks the service based on the flag.
+My projects (no login needed) is used when Google sign-in is not available:
+`isLocalProjectsEnabled` in `src/utils/offline.ts` (offline builds, or no `GOOGLE_AUTH_URL`).
+Builds with Google keep XRPWeb's behaviour unchanged. `src/services/local-drive.ts` implements the
+`GoogleDriveService` interface on top of IndexedDB, and `src/widgets/local-session.tsx` opens it on
+startup (it uses the same session slot as Google Drive, so the existing Drive code paths work
+unchanged; Run copies the program to the robot). The "My projects | Robot memory" switch above the
+folder tree (`src/components/storage-switch.tsx`, `src/utils/local-projects.ts`) shows the
+connected robot's files as XRPWeb does without Google.
 
-Offline text overrides live in `src/utils/i18n/locales/{en,es}/offline.json` and are merged over
-the base translations only in offline builds (Drive wording → "My projects", Help links marked
-"online"). Driver installation is allowed offline. With the robot connected the tree shows local
-projects, not the XRP's internal files.
+Text overrides: `local-projects.json` (Drive wording → My projects) when My projects is enabled,
+and `offline.json` (Help links marked "online") in offline builds, both in
+`src/utils/i18n/locales/{en,es}/`. Driver installation is allowed when My projects is enabled.
+
+Behaviour with a robot connected was designed from the code and still needs testing with a real
+robot; see `docs/specs/007-my-projects.md`.
 
 ## Themes
 

@@ -295,5 +295,11 @@
         "connected": "Robot connected",
         "usb": "USB",
         "bluetooth": "Bluetooth"
+    },
+    "storage": {
+        "label": "Where your projects are",
+        "myProjects": "My projects",
+        "robotMemory": "Robot memory",
+        "connectToSee": "Connect the robot to see its memory"
     }
 }

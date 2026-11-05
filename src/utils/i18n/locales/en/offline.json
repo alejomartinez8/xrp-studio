@@ -1,25 +1,8 @@
 {
-    "GoogleDriveStorage": "My projects (this browser)",
-    "not-google-drive-file": "This file is not in My projects. Please save it to the XRP instead.",
     "userGuide": "User Guide (online)",
     "apiReference": "API Reference (online)",
     "curriculum": "Curriculum (online)",
     "userHelpForum": "User Help Forum (online)",
     "bugs-submission": "Reporting Bugs (online)",
-    "privacyPolicy": "Privacy Policy (online)",
-    "backup-restore": {
-        "description": "Backup or restore your XRP Robot files. Click the button below to begin. Note that your XRP must be connected before performing a backup or restore."
-    },
-    "backup": {
-        "description": "Backup XRP Robot files to My projects."
-    },
-    "restore": {
-        "description": "Restore XRP Robot files from My projects."
-    },
-    "copyfiles": {
-        "title": "Copy Files to My projects",
-        "description": "This will allow you to select files from the XRP Robot and copy them to My projects. Select files from left and destination on right and click the Copy button to begin the copy process.",
-        "gdrive": "My projects",
-        "copyTooltip": "Copy selected files to My projects"
-    }
+    "privacyPolicy": "Privacy Policy (online)"
 }
