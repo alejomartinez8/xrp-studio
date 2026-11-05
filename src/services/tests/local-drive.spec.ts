@@ -45,12 +45,12 @@ describe('LocalDriveService', () => {
     });
 
     it('builds the folder tree used by the file explorer', async () => {
-        const sub = await drive.createFolder('carros', rootId);
+        const sub = await drive.createFolder('cars', rootId);
         await drive.uploadFile(new Blob(['a']), 'a.py', 'text/x-python', sub!.id);
 
         const tree = await drive.buildTree(Constants.XRPCODE);
         expect(tree.name).toBe(Constants.XRPCODE);
-        expect(tree.children?.[0].name).toBe('carros');
+        expect(tree.children?.[0].name).toBe('cars');
         expect(tree.children?.[0].mimeType).toBe(FOLDER_MIME_TYPE);
         expect(tree.children?.[0].children?.[0].name).toBe('a.py');
     });
