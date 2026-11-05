@@ -225,6 +225,13 @@ function BlocklyEditor({ tabId, tabName }: BlocklyEditorProps) {
     const [name, setName] = useState<string>(tabName);
     const nameRef = useRef(name);
     const isLoadingRef = useRef(isLoading);
+    /**
+     * react-blockly imports its empty `initialJson` a render after injecting the workspace, which
+     * clears anything loaded before. A file that arrives before that import (My projects reads
+     * IndexedDB almost instantly) is kept here and loaded once the import has finished.
+     */
+    const initialImportDoneRef = useRef(false);
+    const pendingLoadRef = useRef<string | null>(null);
     const [workspace, setWorkspace] = useState<Workspace | null>(null);
     // True when this is a Google Drive file (session.gpath) but the user is
     // signed out of Google Drive. The file cannot be saved, so editing is
@@ -284,6 +291,7 @@ function BlocklyEditor({ tabId, tabName }: BlocklyEditorProps) {
      */
     function handleOnInject(ws: Workspace) {
         const editorSession = EditorMgr.getInstance().getEditorSession(tabId);
+        initialImportDoneRef.current = false;
         if (editorSession) {
             editorSession.workspace = ws;
             // FlexLayout can remount a hidden tab with an empty workspace while the
@@ -355,6 +363,10 @@ function BlocklyEditor({ tabId, tabName }: BlocklyEditorProps) {
                     EditorMgr.getInstance().getEditorSession(tabId);
                 if (loadContent.name !== nameRef.current || loadContent.path !== session?.path) return;
                 const ws = session?.workspace;
+                if (session && session.hasBeenLoaded !== true && (!ws || !initialImportDoneRef.current)) {
+                    pendingLoadRef.current = content;
+                    return;
+                }
                 if (ws && session && session.hasBeenLoaded !== true) {
                     try {
                         Blockly.Events.disable();
@@ -487,6 +499,14 @@ function BlocklyEditor({ tabId, tabName }: BlocklyEditorProps) {
                 setIsLoading(false);
                 isLoadingRef.current = false;
                 persistViewport(workspace);
+                if (!initialImportDoneRef.current) {
+                    initialImportDoneRef.current = true;
+                    const pending = pendingLoadRef.current;
+                    pendingLoadRef.current = null;
+                    if (pending) {
+                        AppMgr.getInstance().emit(EventType.EVENT_EDITOR_LOAD, pending);
+                    }
+                }
                 return;
             }
             if (event.type === Blockly.Events.VIEWPORT_CHANGE) {
