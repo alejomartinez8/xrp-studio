@@ -49,6 +49,31 @@ function devPublicPrefixPlugin(): PluginOption {
     };
 }
 
+/**
+ * Splits vendor code into chunks by exact package name under node_modules, so that
+ * unrelated packages whose path merely contains "react" or "vscode" do not create circular chunks.
+ */
+function manualChunks(id: string): string | undefined {
+    if (id.includes('/node_modules/react-blockly/')) {
+        return '@react-blockly';
+    }
+    if (
+        /\/node_modules\/(@codingame\/|monaco-languageclient\/|@typefox\/pyright-browser\/|monaco-editor\/|vscode)/.test(
+            id,
+        )
+    ) {
+        return '@monaco';
+    }
+    if (
+        /\/node_modules\/(react|react-dom|flexlayout-react|react-arborist|react-hotkeys-hook|react-i18next|react-icons|react-xtermjs)\//.test(
+            id,
+        )
+    ) {
+        return '@react';
+    }
+    return undefined;
+}
+
 // https://vite.dev/config/
 export default defineConfig(({ mode, command }) => {
     const env = loadEnv(mode, process.cwd(), '');
@@ -68,7 +93,8 @@ export default defineConfig(({ mode, command }) => {
         plugins: [
             react(),
             ...(isDev ? [devPublicPrefixPlugin()] : []),
-            visualizer() as PluginOption, viteStaticCopy({
+            ...(env.ANALYZE === 'true' ? [visualizer() as PluginOption] : []),
+            viteStaticCopy({
             targets: [
                 {
                     src: 'node_modules/flexlayout-react/style',
@@ -124,37 +150,13 @@ export default defineConfig(({ mode, command }) => {
         },
         build: {
             minify: 'esbuild',
+            reportCompressedSize: false,
             rollupOptions: {
                 input: {
                     main: resolve(__dirname, 'index.html'),
                 },
                 output: {
-                    manualChunks(id: string) {
-                        if (id.includes('react-blockly')) {
-                            return '@react-blockly'
-                        }
-                        if (
-                            id.includes('@codingame') ||
-                            id.includes('monaco-languageclient') ||
-                            id.includes('@typefox/pyright-browser') ||
-                            id.includes('monaco-editor') ||
-                            id.includes('vscode')
-                        ) {
-                            return '@monaco'
-                        }
-                        if (
-                            id.includes('react') ||
-                            id.includes('flexlayout-react') ||
-                            id.includes('react-arborist') ||
-                            id.includes('react-dom') ||
-                            id.includes('react-hotkeys-hook') ||
-                            id.includes('react-i18next') ||
-                            id.includes('react-icons') ||
-                            id.includes('react-xtermjs')
-                        ) {
-                            return '@react'
-                        }
-                    }
+                    manualChunks: manualChunks,
                 }
             }
         },

@@ -15,6 +15,7 @@ be proposed to XRPWeb.
 | 004 | [Friendly theme and block editor](004-friendly-theme.md) | Done | Block editor parts possible; app theme is fork-specific |
 | 005 | [Maintenance: lockfile, Tailwind config, minor updates](005-maintenance.md) | Done | Possible |
 | 006 | [Top bar](006-navbar.md) | Done | Fork-specific layout |
+| 007 | [Build time](007-build-time.md) | Done | Possible |
 | — | [Pending upgrades and backlog](pending-upgrades.md) | Backlog | Each one as its own change |
 
 ## Principles
