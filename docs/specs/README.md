@@ -16,6 +16,7 @@ be proposed to XRPWeb.
 | 005 | [Maintenance: lockfile, Tailwind config, minor updates](005-maintenance.md) | Done | Possible |
 | 006 | [Top bar](006-navbar.md) | Done | Fork-specific layout |
 | 008 | [Google sign-in server](008-google-auth-server.md) | Done (untested with real Google) | Possible as a reference |
+| 009 | [Keep the Google session after a reload](009-restore-google-session.md) | Done | Possible; depends on their backend |
 | — | [Pending upgrades and backlog](pending-upgrades.md) | Backlog | Each one as its own change |
 
 ## Principles

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useGoogleLogin } from '@react-oauth/google';
 import Button from './button';
 import AppMgr from '@/managers/appmgr';
@@ -10,7 +10,7 @@ import { useGoogleClientId } from '@/utils/google-client-id';
 import GoogleLogo from '@assets/images/google-logo.svg';
 import { isOfflineBuild } from '@/utils/offline';
 import LocalSession from './local-session';
-import CompactAccount from './compact-account';
+import CompactAccount, { AccountPlaceholder } from './compact-account';
 
 type LoginProps = {
     logoutCallback: () => void;
@@ -67,7 +67,11 @@ function GoogleLoginButton({ logoutCallback, onSuccess, compact }: LoginProps) {
     const [userProfile, setUserProfile] = useState<UserProfile>(EMPTY_PROFILE);
     const [pictureLoadFailed, setPictureLoadFailed] = useState(false);
     const [tooltip, setTooltip] = useState<string>('');
+    const restoreStarted = useRef(false);
     const authService = AppMgr.getInstance().authService;
+    const [isRestoring, setIsRestoring] = useState<boolean>(
+        () => !authService.isLogin && authService.hasSavedSession,
+    );
     const driveService = AppMgr.getInstance().driveService;
     const loginLogger = logger.child({ module: 'login' });
 
@@ -241,6 +245,20 @@ function GoogleLoginButton({ logoutCallback, onSuccess, compact }: LoginProps) {
         refreshMissingPicture,
     ]);
 
+    useEffect(() => {
+        if (restoreStarted.current || authService.isLogin) {
+            return;
+        }
+        restoreStarted.current = true;
+        void authService.restoreSession().then(async (accessToken) => {
+            const profile = accessToken ? await fetchDriveUserProfile(accessToken) : null;
+            if (accessToken && profile) {
+                await finalizeLogin(profile, accessToken);
+            }
+            setIsRestoring(false);
+        });
+    }, [authService, fetchDriveUserProfile, finalizeLogin]);
+
     const showProfileImage = Boolean(userProfile.picture) && !pictureLoadFailed;
 
     if (compact) {
@@ -248,6 +266,7 @@ function GoogleLoginButton({ logoutCallback, onSuccess, compact }: LoginProps) {
             <CompactAccount
                 isLogin={isLogin}
                 isSigningIn={isSigningIn}
+                isRestoring={isRestoring}
                 profile={userProfile}
                 picture={showProfileImage ? userProfile.picture : undefined}
                 onPictureError={() => setPictureLoadFailed(true)}
@@ -307,7 +326,8 @@ function GoogleLoginButton({ logoutCallback, onSuccess, compact }: LoginProps) {
 /**
  * Google sign-in button. Held back until the OAuth client ID has been fetched -
  * useGoogleLogin throws on an empty ID, which would take down the file tree
- * that hosts this widget.
+ * that hosts this widget. In the top bar, a saved session shows the avatar placeholder during
+ * that wait, so the bar does not shift when the widget appears.
  */
 function Login(props: LoginProps) {
     const clientId = useGoogleClientId();
@@ -315,7 +335,12 @@ function Login(props: LoginProps) {
     if (isOfflineBuild) {
         return <LocalSession onSuccess={props.onSuccess} />;
     }
-    return clientId ? <GoogleLoginButton {...props} /> : null;
+    if (clientId) {
+        return <GoogleLoginButton {...props} />;
+    }
+    return props.compact && AppMgr.getInstance().authService.hasSavedSession ? (
+        <AccountPlaceholder />
+    ) : null;
 }
 
 export default Login;

@@ -10,6 +10,7 @@ const StorageKeys = {
     LAST_GOOGLE_DRIVE_TO_XRP_SAVE_TIME: 'LastGoogleDriveToXrpSaveTime',
     GOOGLE_FIRST_TIME_LOGIN: 'GoogleFirstTimeLogin',
     REMEMBERED_XRP: 'RememberedXrp',
+    GOOGLE_SESSION: 'GoogleSession',
   } as const;
   
   export type StorageKeysType = (typeof StorageKeys)[keyof typeof StorageKeys];
