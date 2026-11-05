@@ -21,6 +21,7 @@ be proposed to XRPWeb.
 | 010 | [Theme switch fixes](010-theme-switch.md) | Done | Possible (XRPWeb bugs) |
 | 011 | [Files from My projects open with their blocks](011-open-file-blocks.md) | Done | Possible (XRPWeb race) |
 | 012 | [Open files with a single tap](012-open-on-single-tap.md) | Done | Possible, behind a flag |
+| 013 | [Reopen the last project on startup](013-reopen-last-project.md) | Done | Fork-specific |
 | — | [Pending upgrades and backlog](pending-upgrades.md) | Backlog | Each one as its own change |
 
 ## Principles

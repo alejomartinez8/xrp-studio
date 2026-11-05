@@ -30,6 +30,7 @@ import { openFilesOnSingleClick } from '@/utils/folder-tree-options';
 import { UserProfile } from '@/services/google-auth';
 import CreateNodeDlg from './dialogs/create-node-dlg';
 import { StorageKeys } from '@/utils/localstorage';
+import { reopenLastProject } from '@/utils/last-project';
 
 type TreeProps = {
     treeData: string | null;
@@ -119,6 +120,11 @@ function FolderTree(treeProps: TreeProps) {
                     } else {
                         setTreeData(filesysData);
                         appMgrRef.current?.setFoderData(filesysJson);
+                        reopenLastProject(
+                            filesysData,
+                            getFilePath,
+                            EditorMgr.getInstance().getAllEditorSessions().size > 0,
+                        );
                     }
                 } catch (err) {
                     if (err instanceof Error) {
