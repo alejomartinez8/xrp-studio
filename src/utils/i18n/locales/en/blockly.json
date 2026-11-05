@@ -144,6 +144,8 @@
         "text": "Text",
         "lists": "Lists",
         "variables": "Variables",
-        "functions": "Functions"
+        "functions": "Functions",
+        "advanced": "Advanced",
+        "search": "Search"
     }
 }

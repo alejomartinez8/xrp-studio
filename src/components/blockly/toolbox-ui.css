@@ -1,0 +1,42 @@
+/* Toolbox rows: taller, bolder, with a separator line. */
+.blocklyToolboxCategory {
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgba(127, 127, 127, 0.2);
+}
+
+.blocklyToolboxCategoryLabel {
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.blocklyTreeRowContentContainer {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+#toolbox-search-input input {
+    width: calc(100% - 16px);
+    padding: 6px 12px;
+    border: 1px solid rgba(127, 127, 127, 0.4);
+    border-radius: 16px;
+    font-size: 14px;
+}
+
+.xrpToolboxIcon {
+    display: inline-flex;
+    align-items: center;
+    margin: 0 8px 0 4px;
+}
+
+.dark #toolbox-search-input input {
+    background: #2b2b2b;
+    color: #ddd;
+}
+
+.dark .blocklyToolboxCategoryIconClosed,
+.dark .blocklyToolboxCategoryIconOpen {
+    filter: invert(1);
+}

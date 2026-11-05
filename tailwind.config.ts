@@ -2,8 +2,9 @@ import type { Config } from 'tailwindcss';
 import typography from '@tailwindcss/typography';
 import debugScreens from 'tailwindcss-debug-screens';
 import flowbiteReact from 'flowbite-react/plugin/tailwindcss';
+import { withGitHubTheme } from './src/theme/github/tailwind';
 
-export default {
+const config = {
     // Add or update the darkMode property to 'class'
     darkMode: 'class',    
     content: [
@@ -374,3 +375,5 @@ export default {
         flowbiteReact,
     ],
 } satisfies Config;
+
+export default withGitHubTheme(config);
