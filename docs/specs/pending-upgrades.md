@@ -28,6 +28,7 @@ should be its own change, tested in the app.
 | Dracula theme | Second app theme; needs runtime CSS variables instead of build-time Tailwind colours. |
 | Configurable Drive folder name | `Constants.XRPCODE` is fixed to `XRPCode`. With its own OAuth client the fork only sees the folders it created, so users of both apps get two `XRPCode` folders. A build setting (default `XRPCode`) would avoid renaming it for XRPWeb users; the hardcoded `'/XRPCode/'` paths in `folder-tree.tsx`, `newfiledlg.tsx` and `filesaveasdlg.tsx` would need to use the constant first (they map Drive paths to `/gusers/<user>/` on the robot, so test Run with a robot). |
 | Battery level in the status pill | `batteryVoltage()` returns 0 while the REPL is busy; needs a robot to test safely. |
+| Installable app that works offline (PWA) | A service worker caches the app on the first visit, so https://xrp-studio.vercel.app opens without internet, stays HTTPS (Web Serial and Web Bluetooth need a secure context, which a LAN `http://` server is not) and can be installed on tablets and computers. Updates when online. Most schools would use this instead of the offline build, which stays for no-network or strict-privacy setups. |
 
 ## Known issues
 
@@ -35,5 +36,6 @@ Bugs found while testing, not yet fixed. Each one should be its own change.
 
 | Issue | Where | Notes |
 | --- | --- | --- |
-| Opening a file from the folder tree is slow | `src/components/folder-tree.tsx` (`EVENT_OPEN_FILE` on double click) | Production, a `.blocks` file from Google Drive: Interaction to Next Paint ~650 ms (selecting with a single click is ~40 ms). The tab, the Blockly workspace and the file load seem to run before the next paint. Measure with the Performance panel first; then show the tab and a loading state before building the workspace. Check whether XRPWeb has the same delay (this code is upstream). |
+| Opening a file from the folder tree is slow | `src/components/folder-tree.tsx` (`EVENT_OPEN_FILE`), `src/components/blockly.tsx` | Measured on a production build with a 4× slower CPU: the click blocks the page ~290 ms before the tab shows. About 130 ms is Blockly creating the workspace and toolbox, ~110 ms the block search indexing every block (fork code, same index for every file), ~50 ms the new tab. Plan: index the search once and lazily; later, show the tab with a loading state before building the workspace. |
 | Opening a `.blocks` file that was never saved throws "Unexpected end of JSON input" | `src/components/blockly.tsx` (`EVENT_EDITOR_LOAD`) | Create a Blockly file, close its tab without saving, open it again from the folder tree: the page logs the error (the file is empty). Found while testing spec 010. |
+| The block search registers its shortcut once per editor | `@blockly/toolbox-search` (`ToolboxSearchCategory.registerShortcut`) | With two `.blocks` tabs open, the console shows `Shortcut named "startSearch" already exists.` No visible effect. Fix together with indexing the search only once (it also rebuilds its index for every file opened, ~110 ms with a 4× slower CPU). |

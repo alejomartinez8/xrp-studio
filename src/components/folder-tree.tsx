@@ -26,9 +26,11 @@ import Login from '@/widgets/login';
 import { isLocalProjectsEnabled } from '@/utils/offline';
 import { isSignInInNavbar } from '@/utils/session';
 import StorageSwitch from '@components/storage-switch';
+import { openFilesOnSingleClick } from '@/utils/folder-tree-options';
 import { UserProfile } from '@/services/google-auth';
 import CreateNodeDlg from './dialogs/create-node-dlg';
 import { StorageKeys } from '@/utils/localstorage';
+import { reopenLastProject } from '@/utils/last-project';
 
 type TreeProps = {
     treeData: string | null;
@@ -118,6 +120,11 @@ function FolderTree(treeProps: TreeProps) {
                     } else {
                         setTreeData(filesysData);
                         appMgrRef.current?.setFoderData(filesysJson);
+                        reopenLastProject(
+                            filesysData,
+                            getFilePath,
+                            EditorMgr.getInstance().getAllEditorSessions().size > 0,
+                        );
                     }
                 } catch (err) {
                     if (err instanceof Error) {
@@ -217,7 +224,9 @@ function FolderTree(treeProps: TreeProps) {
     }
 
     /**
-     * Node component for rendering each tree node
+     * Node component for rendering each tree node. Files open on a single click when
+     * `openFilesOnSingleClick` is set, otherwise on a double click as in XRPWeb. Clicks on the
+     * rename and delete buttons, or in the rename field, never open the file.
      * @param param0
      * @returns
      */
@@ -240,7 +249,8 @@ function FolderTree(treeProps: TreeProps) {
                 className={`group flex flex-row items-center justify-between hover:bg-matisse-400 dark:hover:bg-shark-500 ${node.isSelected ? 'bg-curious-blue-300 dark:bg-shark-400' : ''} ${isRunning ? 'pointer-events-none opacity-50' : 'pointer-events-auto opacity-100'}}`}
                 onClick={(e) => {
                     if (node.isInternal) node.toggle();
-                    if (!(e.detail % 2) && !isRunning) {
+                    const onControl = (e.target as HTMLElement).closest('button, input') !== null;
+                    if (!isRunning && !onControl && (openFilesOnSingleClick || !(e.detail % 2))) {
                         if (node.children === null) {
                             const filePath = getFilePath(node.data);
                             const filePathData = {

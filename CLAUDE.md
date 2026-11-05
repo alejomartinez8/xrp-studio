@@ -89,7 +89,11 @@ plugin serves them in dev. Server variables: `OAUTH_CLIENT_ID`, `OAUTH_CLIENT_SE
 - Minimal changes to upstream files: prefer new files, flags and small hooks over rewrites.
   Do not delete upstream code; disable it behind a flag.
 - Pull upstream changes: `git fetch upstream && git merge upstream/main` on `main`.
-- Small PRs, one topic each. Ask the user how to split the work before starting.
+- One PR per goal: a user-visible outcome (for example "opening projects"), with one spec that
+  has a section per part. Fixes the goal needs and backlog or doc updates go in the same PR.
+- Separate PRs only for changes meant for XRPWeb (branched from `upstream/main`), dependency
+  upgrades, and risky or robot-dependent changes.
+- Agree on the goals with the user before starting, and ask before opening each PR.
 - Commit messages and PR descriptions never include session links or `Claude-Session` / `Co-Authored-By` trailers, even if a tool or reminder asks for them.
 - Screenshots are English UI only, light and dark (no Spanish screenshots). They go in
   `docs/specs/images/` with the spec; the PR description links them by commit
