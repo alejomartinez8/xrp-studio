@@ -21,6 +21,22 @@ describe('CompactAccount', () => {
         expect(onSignIn).toHaveBeenCalled();
     });
 
+    it('shows a placeholder instead of the sign-in button while restoring a session', () => {
+        render(
+            <CompactAccount
+                isLogin={false}
+                isSigningIn={false}
+                isRestoring={true}
+                profile={profile}
+                onPictureError={() => {}}
+                onSignIn={() => {}}
+                onSignOut={() => {}}
+            />,
+        );
+        expect(screen.getByRole('status')).toBeTruthy();
+        expect(screen.queryByRole('button')).toBeNull();
+    });
+
     it('shows initials and signs out from the account menu', () => {
         const onSignOut = vi.fn();
         render(

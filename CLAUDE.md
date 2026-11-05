@@ -55,6 +55,14 @@ and `offline.json` (Help links marked "online") in offline builds, both in
 Behaviour with a robot connected was designed from the code and still needs testing with a real
 robot; see `docs/specs/007-my-projects.md`.
 
+## Google sign-in server
+
+`server/google-auth/` implements XRPWeb's `GOOGLE_AUTH_URL` endpoints (stateless, encrypted
+refresh token in an HttpOnly cookie); `api/google-auth/` wraps them as Vercel functions and a Vite
+plugin serves them in dev. Server variables: `OAUTH_CLIENT_ID`, `OAUTH_CLIENT_SECRET`,
+`AUTH_SESSION_SECRET` (never `GOOGLE_`/`VITE_`, which Vite exposes to the browser); the app uses
+`GOOGLE_AUTH_URL=/api`. Setup in `docs/specs/008-google-auth-server.md`.
+
 ## Themes
 
 - `src/theme/<name>/`: `tailwind.ts` (app palette applied over the named Tailwind palettes, used
