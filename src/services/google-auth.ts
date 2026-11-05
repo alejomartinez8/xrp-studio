@@ -321,12 +321,13 @@ class GoogleAuthService {
         }   
     }
 
+    /** Whether the last Google sign-in in this browser did not end with a sign-out. */
+    get hasSavedSession(): boolean {
+        return localStorage.getItem(StorageKeys.GOOGLE_SESSION) === 'true';
+    }
+
     /**
-     * Restores the previous session after a page reload. Only tried when the last sign-in in this
-     * browser did not end with a sign-out. The backend keeps the refresh token in its own
-     * HttpOnly cookie, so the app only asks for a new access token; when the backend cannot give
-     * one (no stored session, or a backend that keys sessions by handshake), the hint is cleared
-     * and the user signs in as usual.
+     * Restores the saved session once per page load (see `tryRestoreSession`).
      * @returns The new access token, or null when there is no session to restore.
      */
     restoreSession(): Promise<string | null> {
@@ -334,9 +335,15 @@ class GoogleAuthService {
         return this._restore;
     }
 
-    /** Ask the backend for a new access token from the stored session (see `restoreSession`). */
+    /**
+     * Restores the previous session after a page reload. Only tried when the last sign-in in this
+     * browser did not end with a sign-out. The backend keeps the refresh token in its own
+     * HttpOnly cookie, so the app only asks for a new access token; when the backend cannot give
+     * one (no stored session, or a backend that keys sessions by handshake), the hint is cleared
+     * and the user signs in as usual.
+     */
     private async tryRestoreSession(): Promise<string | null> {
-        if (localStorage.getItem(StorageKeys.GOOGLE_SESSION) !== 'true') {
+        if (!this.hasSavedSession) {
             return null;
         }
         try {

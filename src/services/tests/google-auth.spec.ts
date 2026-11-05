@@ -49,6 +49,7 @@ describe('GoogleAuthService.restoreSession', () => {
         localStorage.setItem(StorageKeys.GOOGLE_SESSION, 'true');
         const fetchMock = fakeBackend(200);
         const service = new GoogleAuthService();
+        expect(service.hasSavedSession).toBe(true);
         const [first, second] = await Promise.all([
             service.restoreSession(),
             service.restoreSession(),

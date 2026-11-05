@@ -6,6 +6,8 @@ import GoogleLogo from '@assets/images/google-logo.svg';
 type CompactAccountProps = {
     isLogin: boolean;
     isSigningIn: boolean;
+    /** A saved session is being restored: shows an avatar-sized placeholder, so nothing jumps. */
+    isRestoring?: boolean;
     profile: UserProfile;
     picture?: string;
     onPictureError: () => void;
@@ -27,11 +29,14 @@ function initials(profile: UserProfile): string {
 
 /**
  * CompactAccount - Google account control for the top bar, like most apps: an avatar that opens a
- * menu with the account and Sign out when signed in, and a small Sign in button otherwise.
+ * menu with the account and Sign out when signed in, and a small Sign in button otherwise. While
+ * a saved session is being restored after a reload, an avatar-sized placeholder keeps the top bar
+ * from jumping between states.
  */
 function CompactAccount({
     isLogin,
     isSigningIn,
+    isRestoring = false,
     profile,
     picture,
     onPictureError,
@@ -39,6 +44,19 @@ function CompactAccount({
     onSignOut,
 }: CompactAccountProps) {
     const { t } = useTranslation();
+
+    if (!isLogin && isRestoring) {
+        return (
+            <span
+                role="status"
+                aria-label={t('googleSigningIn')}
+                title={t('googleSigningIn')}
+                className="flex h-11 w-11 items-center justify-center"
+            >
+                <span className="h-9 w-9 animate-pulse rounded-full bg-shark-200 dark:bg-shark-600" />
+            </span>
+        );
+    }
 
     if (!isLogin) {
         return (

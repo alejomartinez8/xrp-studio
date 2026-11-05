@@ -69,6 +69,9 @@ function GoogleLoginButton({ logoutCallback, onSuccess, compact }: LoginProps) {
     const [tooltip, setTooltip] = useState<string>('');
     const restoreStarted = useRef(false);
     const authService = AppMgr.getInstance().authService;
+    const [isRestoring, setIsRestoring] = useState<boolean>(
+        () => !authService.isLogin && authService.hasSavedSession,
+    );
     const driveService = AppMgr.getInstance().driveService;
     const loginLogger = logger.child({ module: 'login' });
 
@@ -248,16 +251,11 @@ function GoogleLoginButton({ logoutCallback, onSuccess, compact }: LoginProps) {
         }
         restoreStarted.current = true;
         void authService.restoreSession().then(async (accessToken) => {
-            if (!accessToken) {
-                return;
-            }
-            setIsSigningIn(true);
-            const profile = await fetchDriveUserProfile(accessToken);
-            if (profile) {
+            const profile = accessToken ? await fetchDriveUserProfile(accessToken) : null;
+            if (accessToken && profile) {
                 await finalizeLogin(profile, accessToken);
-            } else {
-                setIsSigningIn(false);
             }
+            setIsRestoring(false);
         });
     }, [authService, fetchDriveUserProfile, finalizeLogin]);
 
@@ -268,6 +266,7 @@ function GoogleLoginButton({ logoutCallback, onSuccess, compact }: LoginProps) {
             <CompactAccount
                 isLogin={isLogin}
                 isSigningIn={isSigningIn}
+                isRestoring={isRestoring}
                 profile={userProfile}
                 picture={showProfileImage ? userProfile.picture : undefined}
                 onPictureError={() => setPictureLoadFailed(true)}

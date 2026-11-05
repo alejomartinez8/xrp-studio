@@ -17,11 +17,14 @@ loads the profile and finishes the sign-in as usual (same `finalizeLogin` path a
   token lives in an HttpOnly cookie that survives the reload. A backend that cannot restore the
   session answers with an error: the hint is cleared and the user signs in as before.
 - Called once per page load, even with React StrictMode or more than one widget.
+- While it restores, the top bar shows an avatar-sized placeholder instead of the sign-in button,
+  so the bar does not jump from "Google Sign In" to "Signing in..." to the avatar.
 
 ## Files
 
 - `src/services/google-auth.ts`: `restoreSession()`, hint set on exchange and cleared on sign-out.
-- `src/widgets/login.tsx`: one effect that restores the session on mount.
+- `src/widgets/login.tsx`: one effect that restores the session on mount (`isRestoring`).
+- `src/widgets/compact-account.tsx`: `isRestoring` placeholder.
 - `src/utils/localstorage.ts`: `GOOGLE_SESSION` key.
 - Test: `src/services/tests/google-auth.spec.ts`.
 
@@ -35,9 +38,15 @@ loads the profile and finishes the sign-in as usual (same `finalizeLogin` path a
    Playwright).
 
 Automated: `src/services/tests/google-auth.spec.ts` (no hint, restore once, backend refusal,
-sign-out).
+sign-out) and `src/widgets/tests/compact-account.spec.tsx` (placeholder while restoring).
 
-No visual change: the button and avatar are the same as before.
+## Screenshots
+
+Top bar while the session is restored:
+
+| Light | Dark |
+| --- | --- |
+| ![Light](images/restore-session-light.png) | ![Dark](images/restore-session-dark.png) |
 
 ## Upstream
 
