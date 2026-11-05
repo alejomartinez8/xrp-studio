@@ -144,6 +144,8 @@
         "text": "Texto",
         "lists": "Listas",
         "variables": "Variables",
-        "functions": "Funciones"
+        "functions": "Funciones",
+        "advanced": "Avanzado",
+        "search": "Buscar"
     }
 }

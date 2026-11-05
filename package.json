@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@blockly/field-colour": "^6.0.4",
+    "@blockly/toolbox-search": "3.1.9",
     "@codingame/esbuild-import-meta-url-plugin": "^1.0.2",
     "@codingame/monaco-vscode-chat-extensions-notebook-task-terminal-testing-common": "^11.1.2",
     "@codingame/monaco-vscode-configuration-service-override": "^11.1.2",

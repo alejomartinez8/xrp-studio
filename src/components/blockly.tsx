@@ -11,8 +11,12 @@ import { StorageKeys } from '@/utils/localstorage';
 import EditorMgr, { EditorSession } from '@/managers/editormgr';
 import i18n from '@/utils/i18n';
 import moment from 'moment';
+import { applyVividHsv, vividThemeOptions } from '@components/blockly/vivid-colours';
+import { kidFriendlyToolbox, registerToolboxUi } from '@components/blockly/toolbox-ui';
 
 registerFieldColour(); //Plugin needs to be registered. Used for the Color LED on the non beta board. 
+applyVividHsv();
+registerToolboxUi();
 
 const blocklyDarkTheme = Blockly.Theme.defineTheme('dark', {
     base: Blockly.Themes.Classic,
@@ -32,7 +36,7 @@ const blocklyDarkTheme = Blockly.Theme.defineTheme('dark', {
     name: 'dark',
 });
 
-const blocklyMpdernTheme = Blockly.Theme.defineTheme('modern', {
+const blocklyMpdernTheme = Blockly.Theme.defineTheme('modern', vividThemeOptions({
     base: Blockly.Themes.Classic,
     blockStyles: {
         colour_blocks: {
@@ -116,10 +120,12 @@ const blocklyMpdernTheme = Blockly.Theme.defineTheme('modern', {
             colour: '#a55b99',
         },
     },
-    componentStyles: {},
+    componentStyles: {
+        workspaceBackgroundColour: '#f2f4f6',
+    },
     fontStyle: {},
     name: 'modern',
-});
+}));
 
 interface BlocklyEditorProps {
     tabId: string;
@@ -260,7 +266,7 @@ function BlocklyEditor({ tabId, tabName }: BlocklyEditorProps) {
 
     // Shallow copy gives react-blockly a new reference so its updateToolbox effect runs.
     const toolboxConfiguration = useMemo(
-        () => ({ ...BlocklyConfigs.getLocalizedToolboxJson() }) as typeof BlocklyConfigs.ToolboxJson,
+        () => kidFriendlyToolbox({ ...BlocklyConfigs.getLocalizedToolboxJson() }) as typeof BlocklyConfigs.ToolboxJson,
         [toolboxRevision, language],
     );
 
@@ -566,15 +572,17 @@ function BlocklyEditor({ tabId, tabName }: BlocklyEditorProps) {
 
                 trashcan: true,
                 grid: {
-                    spacing: 20,
-                    length: 3,
-                    colour: '#ccc',
+                    spacing: 40,
+                    length: 7,
+                    colour:
+                        AppMgr.getInstance().getTheme() === Themes.DARK ? '#3a3a3a' : '#d0d7de',
                     snap: true,
                 },
                 theme:
                     AppMgr.getInstance().getTheme() === Themes.DARK
                         ? blocklyDarkTheme
                         : blocklyMpdernTheme,
+                renderer: 'zelos',
             }}
             initialJson={BlocklyConfigs.InitialJson}
             onInject={handleOnInject}
