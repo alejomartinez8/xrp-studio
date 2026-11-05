@@ -75,6 +75,7 @@ import ConnectionStatus from '@components/navbar/connection-status';
 import NavDropdown from '@components/navbar/nav-dropdown';
 import QuickSettings from '@components/navbar/quick-settings';
 import LanguageDialog from '@components/dialogs/language-dlg';
+import ThemeDialog from '@components/dialogs/theme-dlg';
 import Login from '@/widgets/login';
 import { UserProfile } from '@/services/google-auth';
 import { handleSignedIn, handleSignedOut } from '@/utils/session';
@@ -1621,6 +1622,15 @@ function NavBar({ layoutref }: NavBarProps) {
     };
 
     /**
+     * onChooseTheme - open the theme picker from the settings menu.
+     */
+    const onChooseTheme = () => {
+        setMoreMenuOpen(false);
+        setDialogContent(<ThemeDialog toggleDialog={toggleDialog} />);
+        toggleDialog();
+    };
+
+    /**
      * onSignOut - sign-out from the top bar.
      */
     const onSignOut = () => {
@@ -1906,7 +1916,10 @@ function NavBar({ layoutref }: NavBarProps) {
                     </button>
                     {isMoreMenuOpen && (
                         <div className="absolute right-0 top-12 z-[100] mx-auto flex w-max min-w-56 flex-col bg-curious-blue-700 py-3 shadow-md transition-all dark:bg-mountain-mist-950 dark:group-hover:bg-mountain-mist-950">
-                            <QuickSettings onChooseLanguage={onChooseLanguage} />
+                            <QuickSettings
+                                onChooseLanguage={onChooseLanguage}
+                                onChooseTheme={onChooseTheme}
+                            />
                             <hr className="mb-2 border-matisse-400 dark:border-shark-600" />
                             <ul id="pythonId" className="flex cursor-pointer flex-col">
                                 {moreMenu.map((item, ci) => (

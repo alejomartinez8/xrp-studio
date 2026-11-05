@@ -18,12 +18,15 @@ One friendly top bar for everyone (no separate "kids mode"):
   - **Connection status** while connected: "Robot connected · USB/Bluetooth · XRP-ID" (icon only
     below 1280 px).
   - **Help (?)**: the former Help menu (guides, forum, change log, privacy).
-  - **Settings (⚙)**: a Language row that opens the language picker, the theme (light/dark, applied
-    immediately) and, below them, the former ⋮ items (Dashboard, Drivers, Backup/Restore, Firmware,
+  - **Settings (⚙)**: Language and Theme rows that show the current choice and open their pickers;
+    below them, the former ⋮ items (Dashboard, Drivers, Backup/Restore, Firmware,
     Settings, AI chat when enabled).
   - **Language picker:** a dialog with one card per language (native and English name), so it
     scales beyond two languages. Languages are listed once in `src/utils/i18n/languages.ts`, also
     used by the Settings dialog.
+  - **Theme picker:** a dialog with one card per theme and a miniature preview of the app in its
+    colours. Themes are listed in `src/theme/app-themes.ts`, so a new one (for example Dracula) is
+    one more entry plus its colours.
   - **Account**, at the top right like most apps: a "Google Sign In" button, or an avatar with the
     name, email and Sign out. In offline builds this slot hosts the local session and shows
     nothing.
@@ -32,7 +35,8 @@ One friendly top bar for everyone (no separate "kids mode"):
 ## Files
 
 - New: `src/components/navbar/` (`connection-status.tsx`, `nav-dropdown.tsx`,
-  `quick-settings.tsx`), `src/components/dialogs/language-dlg.tsx`, `src/utils/i18n/languages.ts`, `src/widgets/compact-account.tsx`, `src/utils/theme.ts` (`applyTheme`,
+  `quick-settings.tsx`), `src/components/dialogs/language-dlg.tsx`, `src/components/dialogs/theme-dlg.tsx`,
+  `src/utils/i18n/languages.ts`, `src/theme/app-themes.ts`, `src/widgets/compact-account.tsx`, `src/utils/theme.ts` (`applyTheme`,
   shared with the Settings dialog), `src/utils/session.ts` (sign-in and sign-out handling moved out
   of the folder tree; `isSignInInNavbar`).
 - Hooks: `src/components/navbar.tsx` (layout of the bar, help items, settings dropdown, account),
@@ -43,14 +47,14 @@ One friendly top bar for everyone (no separate "kids mode"):
 ## How to test
 
 1. `npm run dev:offline`: the bar shows File, View, Connect, ? and ⚙.
-2. ⚙ → Language → Español, and ⚙ → Dark: the app switches language and theme immediately, and keeps
+2. ⚙ → Language → Español, and ⚙ → Theme → Dark: the app switches language and theme immediately, and keeps
    them after a reload.
 3. ? lists the help links.
 4. File → New File works (the local session signs in from the top bar).
 5. At 1024 px the bar fits on one line.
 
 Automated: `src/widgets/tests/compact-account.spec.tsx` (sign-in button, avatar menu, sign out),
-`src/components/tests/language-dlg.spec.tsx` and `src/utils/tests/theme.spec.ts`. The real Google sign-in needs the auth backend and was not run.
+`src/components/tests/language-dlg.spec.tsx`, `src/components/tests/theme-dlg.spec.tsx` and `src/utils/tests/theme.spec.ts`. The real Google sign-in needs the auth backend and was not run.
 
 ## Screenshots
 
@@ -61,6 +65,10 @@ Automated: `src/widgets/tests/compact-account.spec.tsx` (sign-in button, avatar 
 | Settings (⚙) | Language picker |
 | --- | --- |
 | ![Settings](images/navbar-settings.png) | ![Language](images/navbar-language.png) |
+
+| Theme picker | |
+| --- | --- |
+| ![Theme](images/navbar-theme.png) | |
 
 | Help (?) | Dark |
 | --- | --- |

@@ -257,6 +257,7 @@
     },
     "theme": {
         "label": "Tema",
+        "choose": "Elija un tema",
         "light": "Claro",
         "dark": "Oscuro"
     },
