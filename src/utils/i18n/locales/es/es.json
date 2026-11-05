@@ -289,5 +289,18 @@
         "xrprobot": "Archivos del robot XRP",
         "gdrive": "Archivos de Google Drive",
         "copyTooltip": "Copiar los archivos seleccionados a Google Drive"
+    },
+    "kidsMode": {
+        "title": "Modo niños",
+        "description": "Una pantalla más simple para estudiantes pequeños: botones grandes para Conectar y Ejecutar, solo el menú Archivo, sin árbol de archivos, y los mensajes del robot ocultos hasta que se necesiten.",
+        "on": "Activado",
+        "off": "Desactivado",
+        "reloadNote": "La aplicación se recarga al guardar.",
+        "connected": "Robot conectado",
+        "notConnected": "Robot sin conectar",
+        "usb": "USB",
+        "bluetooth": "Bluetooth",
+        "connectFirst": "Falta conectar el robot",
+        "messages": "Mensajes del robot"
     }
 }

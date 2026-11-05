@@ -6,6 +6,9 @@ import { useTranslation } from 'react-i18next';
 import TabList from '../tab-list';
 import TabItem from '../tab-item';
 import AnimatedThemeToggle from '@/widgets/animated-theme-toggle';
+import { useState } from 'react';
+import { isKidsMode, setKidsMode } from '@/utils/kids-mode';
+import KidsModeSetting from '@components/kids/kids-mode-setting';
 
 type SettingsProps = {
     /**
@@ -17,6 +20,7 @@ type SettingsProps = {
 function SettingsDlg({ toggleDialog }: SettingsProps) {
     const { t, i18n } = useTranslation();
     const [,setTheme] = useLocalStorage(StorageKeys.THEME, Themes.LIGHT);
+    const [kidsMode, setKidsModeChoice] = useState(isKidsMode());
 
     const languageOptions = [
         { code: 'en', label: 'English', nativeName: 'English' },
@@ -35,6 +39,11 @@ function SettingsDlg({ toggleDialog }: SettingsProps) {
      * handleSave - saving the settings into localstorage
      */
     const handleSave = async () => {
+        if (kidsMode !== isKidsMode()) {
+            setKidsMode(kidsMode);
+            window.location.reload();
+            return;
+        }
         toggleDialog();
     };
 
@@ -91,6 +100,9 @@ function SettingsDlg({ toggleDialog }: SettingsProps) {
                             onToggle={onThemeToggle}
                         />
                     </div>
+                </TabItem>
+                <TabItem label={t('kidsMode.title')} isActive={false}>
+                    <KidsModeSetting enabled={kidsMode} onChange={setKidsModeChoice} />
                 </TabItem>
             </TabList>
             <hr className="w-full border-mountain-mist-600" />

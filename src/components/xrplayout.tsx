@@ -30,6 +30,8 @@ import { isOfflineBuild } from '@/utils/offline';
 import { useTranslation } from 'react-i18next';
 import Dialog from '@components/dialogs/dialog';
 import ConfirmationDlg from '@components/dialogs/confirmdlg';
+import { isKidsMode } from '@/utils/kids-mode';
+import { hideFolderTreeForKids, kidsLayout } from '@components/kids/kids-layout';
 
 /**
  *  Layout-React's layout JSON to specify the XRPWeb's single page application's layout
@@ -106,7 +108,7 @@ const layout_json: IJsonModel = {
     },
 };
 
-const model = Model.fromJson(layout_json);
+const model = Model.fromJson(isKidsMode() ? kidsLayout(layout_json) : layout_json);
 EditorMgr.getInstance().setLayoutModel(model);
 let layoutRef: React.RefObject<Layout> = {
     current: null,
@@ -204,6 +206,12 @@ function XRPLayout({ forwardedref }: XRPLayoutProps) {
 
         document.head.replaceChild(stylesheetLink, flexlayout_stylesheet);
     };
+
+    useEffect(() => {
+        if (isKidsMode()) {
+            hideFolderTreeForKids(model);
+        }
+    }, []);
 
     useEffect(() => {
         layoutRef = forwardedref;

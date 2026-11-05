@@ -72,6 +72,9 @@ import {
     saveRememberedXrp,
 } from '@/utils/rememberedxrp';
 import { isAiBuddyMenuEnabled } from '@/utils/aiBuddyAccess';
+import { isKidsMode } from '@/utils/kids-mode';
+import ConnectionStatus from '@components/kids/connection-status';
+import MessagesToggle from '@components/kids/messages-toggle';
 import { isOfflineBuild } from '@/utils/offline';
 import FileSaver from 'file-saver';
 import PowerSwitchAlert from '@/components/dialogs/power-switchdlg';
@@ -143,6 +146,7 @@ function NavBar({ layoutref }: NavBarProps) {
     const { t } = useTranslation();
     const [isMoreMenuOpen, setMoreMenuOpen] = useState(false);
     const [isConnected, setConnected] = useState(false);
+    const kidsMode = isKidsMode();
     const [isLogin, setLogin] = useState(false);
     const [isRunning, setRunning] = useState(false);
     const [isStopping, setIsStopping] = useState(false);
@@ -1672,7 +1676,7 @@ function NavBar({ layoutref }: NavBarProps) {
             <div className="flex flex-row gap-4 transition-all">
                 {/** Logo */}
                 <img src={logo} alt="logo" width="100" height="50" />
-                {navItems.map((item, index) => (
+                {navItems.filter((item) => !kidsMode || item.label === t('file')).map((item, index) => (
                     <div key={index} className="group relative transition-all">
                         <p className="ml-2 mt-4 flex cursor-pointer text-matisse-100 group-hover:bg-curious-blue-700 dark:group-hover:bg-mountain-mist-950">
                             <span>{item.label}</span>
@@ -1737,7 +1741,14 @@ function NavBar({ layoutref }: NavBarProps) {
             {/** platform infor and connect button*/}
             <div className="flex flex-row items-center gap-4">
                 <div className="flex flex-row items-center gap-2 text-sm text-shark-300">
-                    {xprID && <span>{`XRP-${xprID['XRPID']}`}</span>}
+                    {kidsMode && (
+                        <ConnectionStatus
+                            isConnected={isConnected}
+                            connectionType={connectionType ?? undefined}
+                            xrpId={xprID?.XRPID}
+                        />
+                    )}
+                    {xprID && !kidsMode && <span>{`XRP-${xprID['XRPID']}`}</span>}
                     {isConnected && connectionType === ConnectionType.USB && xprID?.XRPID && (
                         <button
                             type="button"
@@ -1780,7 +1791,7 @@ function NavBar({ layoutref }: NavBarProps) {
                 <div className={`flex h-full items-stretch ${isConnected ? 'hidden' : ''}`}>
                     <button
                         id="connectBtn"
-                        className="text-neutral-900 flex h-full min-w-[200px] items-center justify-center gap-2 rounded-l-3xl bg-shark-200 px-4 py-2 text-matisse-900 hover:bg-curious-blue-300 dark:bg-shark-600 dark:text-shark-100 dark:hover:bg-shark-500"
+                        className={`text-neutral-900 flex h-full min-w-[200px] items-center justify-center gap-2 rounded-l-3xl ${kidsMode ? 'min-h-12 text-lg' : ''} bg-shark-200 px-4 py-2 text-matisse-900 hover:bg-curious-blue-300 dark:bg-shark-600 dark:text-shark-100 dark:hover:bg-shark-500`}
                         onClick={onConnectBtnClicked}
                     >
                         <svg width="20" height="20" viewBox="0 0 20 20">
@@ -1816,11 +1827,13 @@ function NavBar({ layoutref }: NavBarProps) {
                         <IoChevronDown size={16} />
                     </button>
                 </div>
+                {kidsMode && <MessagesToggle />}
                 <button
                     id="runBtn"
-                    className={`text-white h-full w-[120] items-center justify-center rounded-3xl px-4 py-2 ${isRunning ? 'bg-cinnabar-600' : 'bg-chateau-green-500'} ${isConnected ? 'flex' : 'hidden'}`}
+                    className={`text-white h-full w-[120] items-center justify-center rounded-3xl px-4 py-2 ${isRunning ? 'bg-cinnabar-600' : 'bg-chateau-green-500'} ${isConnected || kidsMode ? 'flex' : 'hidden'} ${kidsMode ? 'min-h-12 min-w-[150px] gap-2 text-lg font-semibold disabled:cursor-not-allowed disabled:opacity-70' : ''}`}
                     onClick={onRunBtnClicked}
-                    disabled={isStopping}
+                    disabled={isStopping || (kidsMode && !isConnected)}
+                    title={kidsMode && !isConnected ? t('kidsMode.connectFirst') : undefined}
                 >
                     {isRunning ? (
                         <>
