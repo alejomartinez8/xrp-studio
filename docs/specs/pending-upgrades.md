@@ -21,7 +21,7 @@ should be its own change, tested in the app.
 | --- | --- |
 | Drive backup for My projects | Signing in with Google (now working, spec 008) could back up My projects to Drive. Asked in Open-STEM/XRPWeb#336. |
 | Test My projects with a robot | Run from My projects, Robot memory switch, disconnect. See spec 007. |
-| Recent projects on the welcome screen | The welcome screen (spec 013) has New blocks / New Python; add cards for the most recent projects (by modified time) and guided examples afterwards. Folder tree stays. |
+| Guided examples on the welcome screen | After the recent projects (spec 015): example projects to start from (drive and turn, square, avoid obstacles, follow a line). Folder tree stays. |
 | Choose the editor | Blocks, Python, or blocks + Python side by side. |
 | Two-way Drive sync | Pull changes made on another device; conflict handling. |
 | Translate the block search placeholder | `@blockly/toolbox-search` hardcodes "Search". |

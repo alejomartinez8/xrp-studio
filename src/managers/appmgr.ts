@@ -228,6 +228,15 @@ export default class AppMgr {
     }
 
     /**
+     * Remove one handler added with `on`, leaving the event's other handlers in place (`eventOff`
+     * removes them all). For components that subscribe each time they mount.
+     */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    public removeHandler(eventName: EventType, handler: (...args: any[]) => void): void {
+        this._emitter.off(eventName, handler);
+    }
+
+    /**
      * eventOff - turn off an event subscription
      * @param eventName
      */
