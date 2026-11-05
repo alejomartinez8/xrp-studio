@@ -7,7 +7,7 @@ import {
     handshake,
     refreshToken,
     type AuthEnv,
-} from './handlers';
+} from './handlers.js';
 
 /**
  * Serves the Google auth endpoints (`/api/google-auth/*`) from `npm run dev`, with the same handlers

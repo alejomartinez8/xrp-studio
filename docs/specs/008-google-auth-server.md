@@ -28,6 +28,9 @@ already calls (`src/services/google-auth.ts`), so the app's sign-in code is unch
   origin, no CORS).
 - In development, a Vite plugin serves the same handlers under `/api/google-auth` when the server
   variables are set.
+- Relative imports in `api/` and `server/` use explicit `.js` extensions: the repo is
+  `"type": "module"`, so Vercel runs the functions as native ES modules, which do not resolve
+  extensionless paths (Vite does, so it only failed once deployed). A test checks this.
 - Server variables avoid the `GOOGLE_` and `VITE_` prefixes on purpose: Vite exposes those to the
   browser bundle (`envPrefix`), and the client secret must never reach it.
 
