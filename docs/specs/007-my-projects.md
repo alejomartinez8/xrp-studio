@@ -61,13 +61,9 @@ return to My projects on disconnect, follows sign-in events) and the locale over
 
 ## Screenshots
 
-| English (normal build, no Google) | Spanish (offline build) |
+| Light (normal build, no Google) | Dark |
 | --- | --- |
-| ![English](images/my-projects-en.png) | ![Spanish](images/my-projects-es.png) |
-
-| Dark | |
-| --- | --- |
-| ![Dark](images/my-projects-dark.png) | |
+| ![Light](images/my-projects-en.png) | ![Dark](images/my-projects-dark.png) |
 
 ## Upstream
 
