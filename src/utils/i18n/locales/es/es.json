@@ -310,6 +310,12 @@
         "newPythonHint": "Escribe código Python para tu robot",
         "openHint": "O abre uno de tus proyectos desde el panel Carpetas.",
         "signInFirst": "Inicia sesión con Google (arriba a la derecha) para guardar tus proyectos.",
-        "projectBaseName": "mi-proyecto"
+        "projectBaseName": "mi-proyecto",
+        "nameTitle": "Ponle nombre a tu proyecto",
+        "nameHint": "Elige un nombre que vayas a recordar.",
+        "nameExists": "Ya tienes un proyecto con ese nombre.",
+        "nameInvalid": "Usa letras, números, espacios, - o _. Debe empezar y terminar con una letra o un número.",
+        "create": "Crear",
+        "back": "Volver"
     }
 }

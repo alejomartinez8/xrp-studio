@@ -17,7 +17,7 @@ describe('WelcomeScreen', () => {
         AppMgr.getInstance().authService.isLogin = false;
     });
 
-    it('creates a numbered blocks project in the user projects folder', async () => {
+    it('suggests a numbered name, checks it and creates the project', async () => {
         const appMgr = AppMgr.getInstance();
         appMgr.authService.isLogin = true;
         appMgr.authService.userProfile = {
@@ -44,12 +44,22 @@ describe('WelcomeScreen', () => {
         render(<WelcomeScreen />);
         fireEvent.click(screen.getByText('New blocks project'));
 
+        const input = (await screen.findByLabelText('Name your project')) as HTMLInputElement;
+        expect(input.value).toBe('my-project-2');
+
+        fireEvent.change(input, { target: { value: 'my-project-1' } });
+        expect(screen.getByRole('status').textContent).toContain('already have a project');
+        expect((screen.getByText('Create') as HTMLButtonElement).disabled).toBe(true);
+
+        fireEvent.change(input, { target: { value: 'Línea rápida' } });
+        fireEvent.click(screen.getByText('Create'));
+
         await waitFor(() => expect(emit).toHaveBeenCalled());
         const [event, json] = emit.mock.calls[0] as [EventType, string];
         expect(event).toBe(EventType.EVENT_NEW_PROJECT);
         expect(JSON.parse(json)).toMatchObject({
-            name: 'my-project-2.blocks',
-            path: '/gusers/local/my-project-2.blocks',
+            name: 'Linea rapida.blocks',
+            path: '/gusers/local/Linea rapida.blocks',
             parentId: 'xrpcode',
         });
     });
