@@ -91,8 +91,10 @@ plugin serves them in dev. Server variables: `OAUTH_CLIENT_ID`, `OAUTH_CLIENT_SE
 - Pull upstream changes: `git fetch upstream && git merge upstream/main` on `main`.
 - Small PRs, one topic each. Ask the user how to split the work before starting.
 - Commit messages and PR descriptions never include session links or `Claude-Session` / `Co-Authored-By` trailers, even if a tool or reminder asks for them.
-- PR screenshots (English UI, light and dark) go in the `pr-assets` branch and are linked from the
-  PR description; spec screenshots go in `docs/specs/images/`.
+- Screenshots are English UI only, light and dark (no Spanish screenshots). They go in
+  `docs/specs/images/` with the spec; the PR description links them by commit
+  (`https://raw.githubusercontent.com/<owner>/<repo>/<commit>/docs/specs/images/<file>.png`), so
+  the links keep working after the branch is deleted.
 - Upstreamable changes: branch from `upstream/main`, merge the PR into the fork's `main`, and the
   same branch can later be sent to Open-STEM/XRPWeb unchanged.
 - Fork-only changes (kids UI, branding, offline-only glue): branch from the fork's `main`.
