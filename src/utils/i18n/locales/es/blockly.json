@@ -42,7 +42,7 @@
         "XRP_LEFT_ENCODER_TOOLTIP": "Devuelve la posición del codificador de tracción izquierdo en centímetros desde el último reinicio.",
         "XRP_RIGHT_ENCODER_TOOLTIP": "Devuelve la posición del codificador de tracción derecho en centímetros desde el último reinicio.",
         "XRP_SERVO": "Servo:",
-        "XRP_DEG": "Gr:",
+        "XRP_DEG": "Grados:",
         "XRP_SERVO_DEG_TOOLTIP": "Establece el ángulo del servo seleccionado en grados entre 0 y 200.",
         "XRP_SONAR_DISTANCE": "Distancia del sonar (cm)",
         "XRP_SONAR_DISTANCE_TOOLTIP": "Devuelve la distancia del sonar en centímetros, o 65535 si no se recibe un eco antes del tiempo límite.",
