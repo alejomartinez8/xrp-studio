@@ -1,4 +1,4 @@
-import MonacoEditor from '../MonacoEditor';
+import MonacoEditor from '@components/python/lazy-monaco-editor';
 import { useTranslation } from 'react-i18next';
 
 type ViewPythonDlgProps = {

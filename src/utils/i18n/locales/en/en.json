@@ -15,6 +15,7 @@
     "saveFile": "Save File",
     "saveFileAs": "Save File As",
     "viewPythonFile": "View Python File",
+    "pythonEditorLoading": "Opening the Python editor…",
     "convertToPython": "Convert to Python",
     "increaseFont": "Increase Font",
     "decreaseFont": "Decrease Font",

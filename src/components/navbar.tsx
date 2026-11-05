@@ -85,6 +85,7 @@ import FileSaver from 'file-saver';
 import PowerSwitchAlert from '@/components/dialogs/power-switchdlg';
 import SwitchToBluetoothDlg from '@/components/dialogs/switch-to-bluetoothdlg';
 import ViewPythonDlg from '@/components/dialogs/view-pythondlg';
+import { storeLoadedContent } from '@/utils/loaded-content';
 import AlertDialog from '@/components/dialogs/alertdlg';
 import BleReconnectFailedDlg from '@/components/dialogs/ble-reconnect-faileddlg';
 import BatteryBadDlg from '@/components/dialogs/battery-baddlg';
@@ -499,13 +500,7 @@ function NavBar({ layoutref }: NavBarProps) {
                 content = fileContent;
             }
             const loadContent = { name: filename, path: filePathData.path, content: content };
-            const session = Array.from(EditorMgr.getInstance().getAllEditorSessions().values()).find(
-                (editorSession) =>
-                    editorSession.name === filename && editorSession.path === filePathData.path,
-            );
-            if (session && !session.content && fileContent) {
-                session.content = fileContent;
-            }
+            storeLoadedContent(filename, filePathData.path, fileContent);
             AppMgr.getInstance().emit(EventType.EVENT_EDITOR_LOAD, JSON.stringify(loadContent));
         });
     }
@@ -520,6 +515,11 @@ function NavBar({ layoutref }: NavBarProps) {
     function loadXRPEditor(content: number[], fileType: FileType, filename: string, path: string) {
         // if the file is a block files, extract the blockly JSON out of the comment ##XRPBLOCKS
         let bytes = content;
+        storeLoadedContent(
+            filename,
+            path,
+            typeof content === 'string' ? content : new TextDecoder().decode(new Uint8Array(content)),
+        );
         if (fileType === FileType.BLOCKLY) {
             const data: string = new TextDecoder().decode(new Uint8Array(bytes));
             const lines: string[] = data.split('##XRPBLOCKS ');

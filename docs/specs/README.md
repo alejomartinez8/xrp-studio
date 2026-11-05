@@ -22,6 +22,7 @@ be proposed to XRPWeb.
 | 011 | [Files from My projects open with their blocks](011-open-file-blocks.md) | Done | Possible (XRPWeb race) |
 | 012 | [Opening projects: single tap, reopen the last project](012-opening-projects.md) | Done | Single tap possible behind a flag; reopen is fork-specific |
 | 013 | [Welcome screen](013-welcome-screen.md) | Done | Fork-specific (kids UI) |
+| 014 | [Lighter first load](014-lighter-first-load.md) | Done | Possible |
 | 015 | [Recent projects on the welcome screen](015-recent-projects.md) | Done | Fork-specific (kids UI) |
 | — | [Pending upgrades and backlog](pending-upgrades.md) | Backlog | Each one as its own change |
 

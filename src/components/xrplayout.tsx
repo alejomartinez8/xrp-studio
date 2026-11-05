@@ -11,7 +11,7 @@ import {
 import React, { useEffect, useRef, useState } from 'react';
 import * as Blockly from 'blockly/core';
 import BlocklyEditor from '@components/blockly';
-import MonacoEditor from '@components/MonacoEditor';
+import MonacoEditor from '@components/python/lazy-monaco-editor';
 import XRPShell from '@components/xrpshell';
 import FolderIcon from '@assets/images/folder-24.png';
 import ShellIcon from '@assets/images/shell.svg';
