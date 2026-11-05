@@ -8,7 +8,9 @@ import enBlockly from '@/utils/i18n/locales/en/blockly.json';
 import esBlockly from '@/utils/i18n/locales/es/blockly.json';
 import enOffline from '@/utils/i18n/locales/en/offline.json';
 import esOffline from '@/utils/i18n/locales/es/offline.json';
-import { isOfflineBuild } from '@/utils/offline';
+import enLocalProjects from '@/utils/i18n/locales/en/local-projects.json';
+import esLocalProjects from '@/utils/i18n/locales/es/local-projects.json';
+import { isLocalProjectsEnabled, isOfflineBuild } from '@/utils/offline';
 
 // the translations
 // (tip move them in a JSON file and import them,
@@ -36,6 +38,11 @@ i18n
             escapeValue: false, // react already safes from xss
         },
     });
+
+if (isLocalProjectsEnabled) {
+    i18n.addResourceBundle('en', 'translation', enLocalProjects, true, true);
+    i18n.addResourceBundle('es', 'translation', esLocalProjects, true, true);
+}
 
 if (isOfflineBuild) {
     i18n.addResourceBundle('en', 'translation', enOffline, true, true);

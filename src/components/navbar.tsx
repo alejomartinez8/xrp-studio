@@ -80,7 +80,7 @@ import Login from '@/widgets/login';
 import { UserProfile } from '@/services/google-auth';
 import { handleSignedIn, handleSignedOut } from '@/utils/session';
 import { TbEye, TbFile, TbHelpCircle, TbSettings } from 'react-icons/tb';
-import { isOfflineBuild } from '@/utils/offline';
+import { isLocalProjectsEnabled } from '@/utils/offline';
 import FileSaver from 'file-saver';
 import PowerSwitchAlert from '@/components/dialogs/power-switchdlg';
 import SwitchToBluetoothDlg from '@/components/dialogs/switch-to-bluetoothdlg';
@@ -1398,7 +1398,7 @@ function NavBar({ layoutref }: NavBarProps) {
      */
     function onDriverClicked() {
         setMoreMenuOpen(false);
-        const loginBlocksDrivers = isLogin && !isOfflineBuild;
+        const loginBlocksDrivers = isLogin && !isLocalProjectsEnabled;
         if (!isConnected || loginBlocksDrivers) {
             const message = loginBlocksDrivers ? t('driver-install-login') : t('XRP-not-connected');
             setDialogContent(<AlertDialog alertMessage={message} toggleDialog={toggleDialog} />);

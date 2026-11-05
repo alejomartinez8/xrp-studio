@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { Constants } from '@/utils/constants';
 import { useGoogleClientId } from '@/utils/google-client-id';
 import GoogleLogo from '@assets/images/google-logo.svg';
-import { isOfflineBuild } from '@/utils/offline';
+import { isLocalProjectsEnabled } from '@/utils/offline';
 import LocalSession from './local-session';
 import CompactAccount, { AccountPlaceholder } from './compact-account';
 
@@ -332,7 +332,7 @@ function GoogleLoginButton({ logoutCallback, onSuccess, compact }: LoginProps) {
 function Login(props: LoginProps) {
     const clientId = useGoogleClientId();
 
-    if (isOfflineBuild) {
+    if (isLocalProjectsEnabled) {
         return <LocalSession onSuccess={props.onSuccess} />;
     }
     if (clientId) {

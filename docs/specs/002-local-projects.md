@@ -15,12 +15,15 @@ Projects are kept in the browser (IndexedDB), with no account and no robot requi
 
 - `LocalDriveService` implements the same interface as `GoogleDriveService` (create, read, update,
   rename, move, delete, list, folder tree) on top of IndexedDB.
-- In offline builds, `AppMgr` uses `LocalDriveService`, and a `LocalSession` widget replaces the
-  Google sign-in button: it signs in to the local drive automatically on startup.
+- When Google sign-in is not available (offline builds, or builds without `GOOGLE_AUTH_URL`),
+  `AppMgr` uses `LocalDriveService`, and a `LocalSession` widget replaces the Google sign-in
+  button: it signs in to the local drive automatically on startup. See
+  [007 — My projects and robot memory](007-my-projects.md) for when it is used and how to switch to
+  the robot's files.
 - Because the local drive behaves like Google Drive, the existing code paths work unchanged: file
   tree, New / Open / Save, autosave, and Run (which copies the program to the XRP when connected).
 - The root `XRPCode` folder is created once, even when React's StrictMode mounts twice.
-- The tree header reads "My projects (this browser)".
+- The tree header reads "In this browser".
 
 ## Files
 
