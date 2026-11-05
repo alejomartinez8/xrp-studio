@@ -15,7 +15,8 @@ be proposed to XRPWeb.
 | 004 | [Friendly theme and block editor](004-friendly-theme.md) | Done | Block editor parts possible; app theme is fork-specific |
 | 005 | [Maintenance: lockfile, Tailwind config, minor updates](005-maintenance.md) | Done | Possible |
 | 006 | [Top bar](006-navbar.md) | Done | Fork-specific layout |
-| 008 | [Google sign-in server](008-google-auth-server.md) | Done (untested with real Google) | Possible as a reference |
+| 007 | [My projects and robot memory](007-my-projects.md) | Done; robot behaviour to be tested | Answers [Open-STEM/XRPWeb#336](https://github.com/Open-STEM/XRPWeb/issues/336) |
+| 008 | [Google sign-in server](008-google-auth-server.md) | Done; tested locally | Possible as a reference |
 | 009 | [Keep the Google session after a reload](009-restore-google-session.md) | Done | Possible; depends on their backend |
 | — | [Pending upgrades and backlog](pending-upgrades.md) | Backlog | Each one as its own change |
 

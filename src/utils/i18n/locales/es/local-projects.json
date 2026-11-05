@@ -1,0 +1,20 @@
+{
+    "GoogleDriveStorage": "En este navegador",
+    "not-google-drive-file": "Este archivo no está en Mis proyectos. Por favor guárdelo en el XRP.",
+    "backup-restore": {
+        "description": "Respalde o restaure sus archivos XRP. Haga clic en el botón de abajo para comenzar. Tenga en cuenta que su XRP debe estar conectado antes de realizar un respaldo o restauración."
+    },
+    "backup": {
+        "description": "Respalde los archivos de su robot XRP en Mis proyectos."
+    },
+    "restore": {
+        "description": "Restaure los archivos de su robot XRP desde Mis proyectos."
+    },
+    "copyfiles": {
+        "title": "Copiar archivos a Mis proyectos",
+        "description": "Esto le permitirá seleccionar archivos del robot XRP y copiarlos a Mis proyectos. Seleccione uno o varios archivos de la lista de la izquierda y una carpeta de destino en la lista de la derecha. Luego haga clic en el botón Copiar para comenzar.",
+        "gdrive": "Mis proyectos",
+        "copyTooltip": "Copiar los archivos seleccionados a Mis proyectos"
+    },
+    "editGoogleLoginRequired": "Este archivo está en Mis proyectos. Elija Mis proyectos arriba del árbol de carpetas para editarlo y guardarlo."
+}

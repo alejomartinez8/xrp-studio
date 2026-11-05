@@ -4,7 +4,7 @@ import { UserProfile } from '@/services/google-auth';
 import { Constants } from '@/utils/constants';
 import { fireGoogleUserTree, getUsernameFromEmail } from '@/utils/google-utils';
 import { StorageKeys } from '@/utils/localstorage';
-import { isOfflineBuild } from '@/utils/offline';
+import { isLocalProjectsEnabled } from '@/utils/offline';
 
 /**
  * Sign-in and sign-out handling, shared by the sign-in widget wherever it is shown. In XRP Studio
@@ -36,7 +36,7 @@ export async function handleSignedIn(profile: UserProfile): Promise<boolean> {
     const isFirstTime =
         localStorage.getItem(StorageKeys.GOOGLE_FIRST_TIME_LOGIN) === null ||
         localStorage.getItem(StorageKeys.GOOGLE_FIRST_TIME_LOGIN) === 'true';
-    if (isFirstTime && !isOfflineBuild) {
+    if (isFirstTime && !isLocalProjectsEnabled) {
         localStorage.setItem(StorageKeys.GOOGLE_FIRST_TIME_LOGIN, 'false');
         return true;
     }

@@ -19,7 +19,8 @@ should be its own change, tested in the app.
 
 | Feature | Notes |
 | --- | --- |
-| Sync My projects with Google Drive | When signed in with Google, back up browser projects to Drive (planned next, now that sign-in works; spec 008). |
+| Drive backup for My projects | Signing in with Google (now working, spec 008) could back up My projects to Drive. Asked in Open-STEM/XRPWeb#336. |
+| Test My projects with a robot | Run from My projects, Robot memory switch, disconnect. See spec 007. |
 | Projects home screen | Cards for New project and recent projects; folder tree stays. Guided examples afterwards. |
 | Choose the editor | Blocks, Python, or blocks + Python side by side. |
 | Two-way Drive sync | Pull changes made on another device; conflict handling. |
