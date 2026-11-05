@@ -26,6 +26,7 @@ import EditorMgr, { EditorStore } from '@/managers/editormgr';
 import { CreateEditorTab } from '@/utils/editorUtils';
 import XRPDashboard from '@/components/dashboard/xrp-dashboard';
 import AIChat from '@/components/chat/ai-chat';
+import { isOfflineBuild } from '@/utils/offline';
 import { useTranslation } from 'react-i18next';
 import Dialog from '@components/dialogs/dialog';
 import ConfirmationDlg from '@components/dialogs/confirmdlg';
@@ -418,7 +419,7 @@ function XRPLayout({ forwardedref }: XRPLayoutProps) {
                     }}
                 />
             );
-        } else if (EditorMgr.getInstance().getEditorSession(node.getId())?.gpath) {
+        } else if (!isOfflineBuild && EditorMgr.getInstance().getEditorSession(node.getId())?.gpath) {
             // Only Google Drive files carry a real gpath (file id). New local/XRP
             // files and the Dashboard/AI Buddy tabs use an empty gpath, so a
             // truthy check keeps the Drive icon off of them.

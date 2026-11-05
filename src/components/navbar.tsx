@@ -72,6 +72,7 @@ import {
     saveRememberedXrp,
 } from '@/utils/rememberedxrp';
 import { isAiBuddyMenuEnabled } from '@/utils/aiBuddyAccess';
+import { isOfflineBuild } from '@/utils/offline';
 import FileSaver from 'file-saver';
 import PowerSwitchAlert from '@/components/dialogs/power-switchdlg';
 import SwitchToBluetoothDlg from '@/components/dialogs/switch-to-bluetoothdlg';
@@ -1389,8 +1390,9 @@ function NavBar({ layoutref }: NavBarProps) {
      */
     function onDriverClicked() {
         setMoreMenuOpen(false);
-        if (!isConnected || isLogin) {
-            const message = isLogin ? t('driver-install-login') : t('XRP-not-connected');
+        const loginBlocksDrivers = isLogin && !isOfflineBuild;
+        if (!isConnected || loginBlocksDrivers) {
+            const message = loginBlocksDrivers ? t('driver-install-login') : t('XRP-not-connected');
             setDialogContent(<AlertDialog alertMessage={message} toggleDialog={toggleDialog} />);
             toggleDialog();
             return;

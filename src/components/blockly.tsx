@@ -569,6 +569,7 @@ function BlocklyEditor({ tabId, tabName }: BlocklyEditorProps) {
                 pinch: false},
 
                 trashcan: true,
+                media: 'node_modules/blockly/media/',
                 grid: {
                     spacing: 40,
                     length: 7,

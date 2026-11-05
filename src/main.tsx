@@ -11,6 +11,7 @@ import App from '@/App.tsx';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { GoogleClientIdContext } from '@/utils/google-client-id';
 import { ThemeInit } from '../.flowbite-react/init';
+import { isOfflineBuild } from '@/utils/offline';
 
 initAiBuddyAccess();
 applyBlocklyLocale(i18n.language);
@@ -25,6 +26,9 @@ function Root() {
             document.body.classList.add('debug-screens');
         }
 
+        if (isOfflineBuild) {
+            return;
+        }
         if (!googleAuthBackendUrl) {
             console.warn('GOOGLE_AUTH_URL is not set - Google sign-in is disabled.');
             return;
@@ -49,9 +53,13 @@ function Root() {
         <StrictMode>
             <ThemeInit />
             <GoogleClientIdContext.Provider value={googleClientId}>
-                <GoogleOAuthProvider clientId={googleClientId}>
+                {isOfflineBuild ? (
                     <App />
-                </GoogleOAuthProvider>
+                ) : (
+                    <GoogleOAuthProvider clientId={googleClientId}>
+                        <App />
+                    </GoogleOAuthProvider>
+                )}
             </GoogleClientIdContext.Provider>
         </StrictMode>
     );

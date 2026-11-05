@@ -1,3 +1,5 @@
+import type { Config } from 'tailwindcss';
+
 /**
  * GitHub-style (Primer) theme for Tailwind.
  *
@@ -24,7 +26,7 @@ const neutral = {
     950: '#0d1117',
 };
 
-module.exports = {
+const theme = {
     colors: {
         shark: neutral,
         'mountain-mist': neutral,
@@ -89,3 +91,19 @@ module.exports = {
         '3xl': '6px',
     },
 };
+
+/** Apply the GitHub palette and corner radius over a Tailwind config. */
+export function withGitHubTheme(config: Config): Config {
+    const themeConfig = config.theme ?? {};
+    return {
+        ...config,
+        theme: {
+            ...themeConfig,
+            colors: { ...(themeConfig.colors as object), ...theme.colors },
+            extend: {
+                ...themeConfig.extend,
+                borderRadius: { ...themeConfig.extend?.borderRadius, ...theme.borderRadius },
+            },
+        },
+    };
+}
