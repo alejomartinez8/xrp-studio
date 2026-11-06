@@ -17,7 +17,7 @@ The rest of the app looks like an IDE for adults.
 - **Toolbox:** an icon per category (react-icons, bundled, works offline), labels in the category
   colour (darker on the light theme, lighter on the dark theme), taller rows with separators.
 - **Search:** a search field at the top of the toolbox (`@blockly/toolbox-search` 3.1.9, compatible
-  with Blockly 12; replaced by an adapted copy in spec 016).
+  with Blockly 12; replaced by an adapted copy in spec 012).
 - **Advanced group:** Web Server, Dashboard, Gamepad, 3rd Party, Text, Lists and Functions move into a
   collapsed "Advanced" category. Grouping happens when the toolbox is built, so the plugin manager
   still finds Gamepad when it inserts the 3rd Party category.

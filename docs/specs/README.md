@@ -18,10 +18,9 @@ be proposed to XRPWeb.
 | 008 | [Google sign-in: server, keep the session after a reload](008-google-auth-server.md) | Done | Server as a reference; session restore possible |
 | 010 | [Theme switch fixes](010-theme-switch.md) | Done | Possible (XRPWeb bugs) |
 | 011 | [Files from My projects open with their blocks](011-open-file-blocks.md) | Done | Possible (XRPWeb race) |
-| 012 | [Opening projects: single tap, reopen the last project](012-opening-projects.md) | Done | Single tap possible behind a flag; reopen is fork-specific |
+| 012 | [Opening projects: single tap, reopen the last project, faster opening](012-opening-projects.md) | Done | Single tap possible behind a flag; empty-file fix possible; reopen and search are fork-only |
 | 013 | [Welcome screen: new project, recent projects](013-welcome-screen.md) | Done | Fork-specific (kids UI) |
 | 014 | [Lighter first load](014-lighter-first-load.md) | Done | Possible |
-| 016 | [Open projects quickly and without errors](016-faster-project-open.md) | Done | Empty-file fix possible; search is fork-only |
 | — | [Pending upgrades and backlog](pending-upgrades.md) | Backlog | Each one as its own change |
 
 Numbers 002, 009 and 015 were merged into 007, 008 and 013, so each goal has one spec.

@@ -10,7 +10,7 @@ should be its own change, tested in the app.
 | `react-xtermjs` | 1.0.9 | 1.0.12 | Newer versions use React 19 ref types; fits with the React 19 upgrade. |
 | React | 18 | 19 | Also `@types/react`, `react-i18next` 17, `react-hotkeys-hook` 5. |
 | Tailwind CSS | 3.4 | 4 | New config format; the theme palette approach needs a review. |
-| Blockly | 12.3 | 13 | Also `@blockly/field-colour` 13.x. Check the block search field (spec 016), adapted from `@blockly/toolbox-search`. |
+| Blockly | 12.3 | 13 | Also `@blockly/field-colour` 13.x. Check the block search field (spec 012), adapted from `@blockly/toolbox-search`. |
 | Vite / Vitest | 6 / 3 | 8 / 5 | Also `@vitejs/plugin-react` 6. |
 | ESLint | 9 | 10 | npm reports ESLint 9 as no longer supported. |
 | recharts | 2 | 3 | 2.x is no longer maintained; used by the dashboard. |
@@ -36,4 +36,4 @@ Bugs found while testing, not yet fixed. Each one should be its own change.
 
 | Issue | Where | Notes |
 | --- | --- | --- |
-| Opening a file from the folder tree is slow | `src/components/folder-tree.tsx` (`EVENT_OPEN_FILE`), `src/components/blockly.tsx` | Measured on a production build with a 4× slower CPU: the click blocks the page ~290 ms before the tab shows. About 130 ms is Blockly creating the workspace and toolbox, ~110 ms the block search indexing every block (fork code, same index for every file), ~50 ms the new tab. The search indexing was removed from opening (spec 016). Next: show the tab with a loading state before building the workspace. |
+| Opening a file from the folder tree is slow | `src/components/folder-tree.tsx` (`EVENT_OPEN_FILE`), `src/components/blockly.tsx` | Measured on a production build with a 4× slower CPU: the click blocks the page ~290 ms before the tab shows. About 130 ms is Blockly creating the workspace and toolbox, ~110 ms the block search indexing every block (fork code, same index for every file), ~50 ms the new tab. The search indexing was removed from opening (spec 012). Next: show the tab with a loading state before building the workspace. |
