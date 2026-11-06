@@ -1,6 +1,13 @@
 import { useTranslation } from 'react-i18next';
-import { TbCloudCheck, TbCloudOff, TbDeviceLaptop, TbLoader2 } from 'react-icons/tb';
+import {
+    TbAlertTriangle,
+    TbCloudCheck,
+    TbCloudOff,
+    TbDeviceLaptop,
+    TbLoader2,
+} from 'react-icons/tb';
 import { SyncStatus, useSyncStatus } from '@/services/drive-sync';
+import { useAutosaveStatus } from '@/utils/autosave';
 
 const SYNC_ICONS: Record<SyncStatus, typeof TbCloudCheck> = {
     off: TbDeviceLaptop,
@@ -20,16 +27,22 @@ const SYNC_LABELS: Record<SyncStatus, string> = {
 export const STATUS_BAR_HEIGHT_PX = 28;
 
 /**
- * StatusBar - thin bar at the bottom of the screen (spec 020). Its first element is the cloud
- * that shows whether the projects are saved in the account: a check when everything is there, a
- * spinner while changes are uploaded, a crossed cloud without connection, and a device when no
- * account is signed in (projects on this device only). The full text is in the tooltip.
+ * StatusBar - thin bar at the bottom of the screen (specs 019 and 020). It has one indicator: an
+ * icon for where the projects are kept (a device when no account is signed in, a cloud with a
+ * check when they are saved in the account, a spinner while changes are uploaded, a crossed cloud
+ * without connection) and, after the first change, the automatic save text ("Saving…", "Saved",
+ * or a warning when a save failed). The tooltip explains the icon in full.
  */
 function StatusBar() {
     const { t } = useTranslation();
     const status = useSyncStatus();
-    const Icon = SYNC_ICONS[status];
-    const label = t(SYNC_LABELS[status]);
+    const autosave = useAutosaveStatus();
+    const failed = autosave === 'error';
+    const Icon = failed ? TbAlertTriangle : SYNC_ICONS[status];
+    const spinning = !failed && (status === 'syncing' || autosave === 'saving');
+    const label = failed
+        ? `${t('autosave.error')}. ${t('autosave.retry')}`
+        : t(SYNC_LABELS[status]);
 
     return (
         <footer
@@ -43,9 +56,12 @@ function StatusBar() {
                 data-status={status}
                 title={label}
                 aria-label={label}
-                className="flex items-center"
+                className="flex items-center gap-1.5 text-sm"
             >
-                <Icon size={18} className={status === 'syncing' ? 'animate-spin' : undefined} />
+                <Icon size={18} className={spinning ? 'animate-spin' : undefined} />
+                {autosave !== 'idle' && (
+                    <span data-testid="save-status">{t(`autosave.${autosave}`)}</span>
+                )}
             </span>
         </footer>
     );

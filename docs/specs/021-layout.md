@@ -7,7 +7,7 @@ Earlier layout changes, kept in their own specs:
 
 - [006 — Top bar](006-navbar.md): the bar with File, View, Connect and settings.
 - [013 — Welcome screen, part 4](013-welcome-screen.md#part-4--shell-only-with-a-project-open): the
-  shell only shows while a project is open.
+  shell only showed while a project was open; Part 2 below replaces that rule.
 
 ## Part 1 — Explorer icon in a side bar, collapsed by default
 
@@ -39,11 +39,11 @@ it to see what the program prints or to debug.
 - A Terminal icon sits below the Explorer icon. A click shows the terminal under the editor,
   another click hides it. It is highlighted while the terminal shows.
 - The terminal is off the first time. The choice is remembered on the device.
-- With no project open the terminal stays hidden, as before (spec 013); once a project opens it
-  follows the choice.
+- The Terminal icon works the same on the welcome screen, with no project open.
 - Hiding the terminal does not close it: what the program printed is still there when it is
   shown again.
-- Its tab is named "Terminal" instead of "Shell", the more common word.
+- Its tab is named "Terminal" instead of "Shell", the more common word, and shows the same icon
+  as the side bar so the two are associated.
 
 ## Part 3 — Rounded panels, one colour each
 
@@ -58,7 +58,9 @@ all differed. The screen looked busy.
 - The side panel, the editor and the terminal are rounded cards on a frame colour, with a small
   gap between them, like a modern code editor.
 - The frame colour is shared by the side bar, the status bar and, in dark mode, the top bar.
-- Each card has one colour: the tab bar, the folder rows and the terminal match the card. There
+- Each card has one colour, and the tab bar is a slightly different tone so tabs stand out from
+  the content. The panel corners are rounded all around, also at the bottom. The folder rows and
+  the terminal match the card. There
   are no lines between the tab bar and the content, under the status bar, between toolbox rows
   or around the side panel's rows.
 
@@ -88,10 +90,9 @@ all differed. The screen looked busy.
    terminal are hidden.
 2. Hover each icon: "Explorer" and "Terminal". In Spanish: "Explorador" and "Terminal".
 3. Click Explorer: the projects panel opens. Click again: it closes.
-4. Open a project: there is no terminal. Click Terminal: it shows under the editor. Click again:
-   it hides.
-5. Turn the terminal on and reload: it is still on with the project open. Close the last tab:
-   it hides with the welcome screen.
+4. On the welcome screen and with a project open, click Terminal: it shows under the editor.
+   Click again: it hides. The tab shows the same icon as the side bar.
+5. Turn the terminal on and reload: it is still on.
 6. In light and dark: the side panel, editor and terminal are rounded cards with a gap between
    them; no grey lines between panels, under the tab bar, between toolbox rows or above the
    status bar; the terminal and the folder rows have the same colour as their card.
@@ -112,3 +113,6 @@ Explorer and terminal open:
 
 Fork-specific (kids UI). XRPWeb could take the Explorer icon on its own; hiding the terminal by
 default suits a kids' editor more than XRPWeb's.
+
+- The toolbox search box can be clicked and typed in, has a flat focus outline and no gradient in
+  dark mode. Dialogs opened from the side panel keep their own colours.

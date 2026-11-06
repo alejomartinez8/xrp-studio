@@ -16,7 +16,6 @@ import BlocklyEditor from '@components/blockly';
 import MonacoEditor from '@components/python/lazy-monaco-editor';
 import XRPShell from '@components/xrpshell';
 import FolderIcon from '@assets/images/folder-24.png';
-import ShellIcon from '@assets/images/shell.svg';
 import GoogleDriveLogo from '@assets/images/Google_Drive-Logo.svg';
 //import treeDaaJson from '@/utils/testdata';
 import AppMgr, { EventType, Themes } from '@/managers/appmgr';
@@ -415,19 +414,7 @@ function XRPLayout({ forwardedref }: XRPLayoutProps) {
                 />
             );
         } else if (node.getId() === Constants.SHELL_TAB_ID) {
-            renderValues.leading = (
-                <img
-                    src={ShellIcon}
-                    alt="icon"
-                    style={{
-                        width: '16px',
-                        height: '16px',
-                        marginRight: '0px',
-                        flexShrink: 0,
-                        minWidth: '16px',
-                    }}
-                />
-            );
+            renderValues.leading = <VscTerminal size={16} aria-hidden="true" className="shrink-0" />;
         } else if (!isLocalProjectsEnabled && EditorMgr.getInstance().getEditorSession(node.getId())?.gpath) {
             // Only Google Drive files carry a real gpath (file id). New local/XRP
             // files and the Dashboard/AI Buddy tabs use an empty gpath, so a

@@ -79,9 +79,9 @@ html .flexlayout__layout {
     --panel-radius: 8px;
     --color-splitter: var(--app-frame);
     --color-border-background: var(--app-frame);
-    --color-tabset-background: var(--color-background);
-    --color-tabset-background-selected: var(--color-background);
-    --color-tabset-background-maximized: var(--color-background);
+    --color-tabset-background: var(--color-1);
+    --color-tabset-background-selected: var(--color-1);
+    --color-tabset-background-maximized: var(--color-1);
     --color-tabset-divider-line: transparent;
     --color-border-divider-line: transparent;
     top: 6px;
@@ -106,10 +106,14 @@ html .flexlayout__tabset_container {
 
 html .flexlayout__tab {
     border-radius: 0 0 var(--panel-radius) var(--panel-radius);
+    overflow: hidden;
 }
 
-/* The side panel's rows share the panel colour, with no lines of their own. */
-html .flexlayout__tab_border_left [class*='bg-mountain-mist'] {
+/*
+ * The side panel's rows share the panel colour, with no lines of their own. Only plain background
+ * classes match (not hover or backdrop ones), and never inside a dialog opened from the panel.
+ */
+html .flexlayout__tab_border_left :is([class^='bg-mountain-mist'], [class*=' bg-mountain-mist']):not(dialog, dialog *) {
     background-color: transparent;
     border-color: transparent;
 }

@@ -84,18 +84,18 @@ describe('syncShellVisibility', () => {
         expect(isTerminalOn()).toBe(false);
     });
 
-    it('hides the shell with no projects open and shows it while one is open', () => {
-        localStorage.setItem(StorageKeys.TERMINAL, 'on');
-        const model = layoutModel();
-        model.addChangeListener(() => syncShellVisibility(model));
-        syncShellVisibility(model);
+    it('toggles the terminal with no projects open, as on the welcome screen', () => {
+        const model = syncedModel();
         expect(shellHidden(model)).toBe(true);
+        toggleTerminal(model);
+        expect(isShellVisible(model)).toBe(true);
 
         openTab(model, 'a');
-        expect(shellHidden(model)).toBe(false);
-
         model.doAction(Actions.deleteTab('a'));
-        expect(shellHidden(model)).toBe(true);
+        expect(isShellVisible(model)).toBe(true);
+
+        toggleTerminal(model);
+        expect(isShellVisible(model)).toBe(false);
     });
 
     it('keeps a maximize chosen by the user while projects are open', () => {

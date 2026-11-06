@@ -50,7 +50,7 @@ it. Two parts:
 
 ### Part (a): status bar
 
-A thin bar at the bottom of the screen, like MakeCode's. Its first element is a cloud:
+A thin bar at the bottom of the screen, like MakeCode's. It has one indicator: an icon for where the projects are kept, followed by the automatic save text (spec 019: "Saving…", "Saved", "Couldn't save") once there is a change. The tooltip explains the icon:
 
 | Icon | Meaning (tooltip) |
 | --- | --- |
