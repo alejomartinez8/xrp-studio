@@ -1,8 +1,9 @@
 import { useTranslation } from 'react-i18next';
-import { TbChevronRight, TbLanguage, TbPalette } from 'react-icons/tb';
+import { TbChevronRight, TbDownload, TbLanguage, TbPalette } from 'react-icons/tb';
 import { findLanguage } from '@/utils/i18n/languages';
 import { findAppTheme } from '@/theme/app-themes';
 import { currentTheme } from '@/utils/theme';
+import { installApp, usePwaState } from '@/utils/pwa';
 
 type QuickSettingsProps = {
     onChooseLanguage: () => void;
@@ -11,10 +12,11 @@ type QuickSettingsProps = {
 
 /**
  * QuickSettings - language and theme rows at the top of the settings menu, each showing the
- * current choice and opening its picker.
+ * current choice and opening its picker, and Install app while the browser offers it (spec 018).
  */
 function QuickSettings({ onChooseLanguage, onChooseTheme }: QuickSettingsProps) {
     const { t, i18n } = useTranslation();
+    const { canInstall } = usePwaState();
 
     return (
         <div className="text-neutral-200 flex flex-col gap-3 px-4 pb-3 pt-1">
@@ -48,6 +50,17 @@ function QuickSettings({ onChooseLanguage, onChooseTheme }: QuickSettingsProps) 
                     <TbChevronRight size={16} />
                 </span>
             </button>
+            {canInstall && (
+                <button
+                    id="installAppBtn"
+                    type="button"
+                    onClick={() => installApp()}
+                    className="flex items-center gap-2 rounded-md px-2 py-1.5 hover:bg-matisse-400 dark:hover:bg-shark-500"
+                >
+                    <TbDownload size={18} />
+                    {t('pwa.install')}
+                </button>
+            )}
         </div>
     );
 }

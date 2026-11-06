@@ -340,5 +340,11 @@
                 "hint": "Follow a dark line with the reflectance sensors"
             }
         }
+    },
+    "pwa": {
+        "updateReady": "A new version of XRP Studio is ready.",
+        "reload": "Reload",
+        "later": "Later",
+        "install": "Install app"
     }
 }

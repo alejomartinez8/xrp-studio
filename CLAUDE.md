@@ -39,6 +39,10 @@ block editor, a simple UI for kids, Spanish first; desktop and Android tablet.
 `src/utils/offline.ts` (`isOfflineBuild`). With the flag: the Google Identity script is not
 loaded and no client ID is requested, the AI chat is hidden, and telemetry is not sent.
 
+All builds are also an installable app (PWA, `pwa-plugin.ts`, `src/utils/pwa.ts`): a service
+worker precaches the whole build, so the hosted app opens without internet after the first visit;
+updates wait for the user's Reload (spec 018).
+
 My projects (no login needed) is used when Google sign-in is not available:
 `isLocalProjectsEnabled` in `src/utils/offline.ts` (offline builds, or no `GOOGLE_AUTH_URL`).
 Builds with Google keep XRPWeb's behaviour unchanged. `src/services/local-drive.ts` implements the

@@ -22,6 +22,7 @@ be proposed to XRPWeb.
 | 013 | [Welcome screen: new project, recent projects, examples, shell only with a project](013-welcome-screen.md) | Done | Fork-specific (kids UI) |
 | 014 | [Lighter first load](014-lighter-first-load.md) | Done | Possible |
 | 017 | [Close button on modals](017-modal-close-button.md) | Done | Possible |
+| 018 | [Installable app that works offline](018-installable-app.md) | Done | Possible |
 | — | [Pending upgrades and backlog](pending-upgrades.md) | Backlog | Each one as its own change |
 
 Numbers 002, 009 and 015 were merged into 007, 008 and 013, so each goal has one spec.

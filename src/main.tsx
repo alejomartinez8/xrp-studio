@@ -12,8 +12,10 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import { GoogleClientIdContext } from '@/utils/google-client-id';
 import { ThemeInit } from '../.flowbite-react/init';
 import { isOfflineBuild } from '@/utils/offline';
+import { startPwa } from '@/utils/pwa';
 
 initAiBuddyAccess();
+startPwa();
 applyBlocklyLocale(i18n.language);
 
 function Root() {

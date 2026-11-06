@@ -7,6 +7,7 @@ import { viteStaticCopy } from 'vite-plugin-static-copy'
 import { fileURLToPath, URL } from 'url';
 import { extname, join, normalize, resolve } from 'path';
 import { googleAuthDevPlugin } from './server/google-auth/vite-plugin';
+import { pwaPlugin } from './pwa-plugin';
 
 const MIME_BY_EXT: Record<string, string> = {
     '.json': 'application/json',
@@ -99,6 +100,7 @@ export default defineConfig(({ mode, command }) => {
         plugins: [
             react(),
             googleAuthDevPlugin(env),
+            pwaPlugin(),
             ...(isDev ? [devPublicPrefixPlugin()] : []),
             ...(env.ANALYZE === 'true' ? [visualizer() as PluginOption] : []),
             viteStaticCopy({

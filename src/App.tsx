@@ -4,6 +4,7 @@ import Navbar from '@components/navbar';
 import XRPLayout from '@components/xrplayout';
 import AppMgr from '@/managers/appmgr';
 import { prefetchPythonEditor } from '@components/python/prefetch-python-editor';
+import UpdateNotice from '@components/update-notice';
 
 function App() {
     const xrpLayoutRef = useRef();
@@ -32,6 +33,7 @@ function App() {
             <main className="relative h-[calc(100vh-56px)]">
                 <XRPLayout forwardedref={xrpLayoutRef} />
             </main>
+            <UpdateNotice />
         </>
     );
 }
