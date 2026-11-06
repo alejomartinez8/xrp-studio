@@ -146,6 +146,8 @@
         "variables": "Variables",
         "functions": "Funciones",
         "advanced": "Avanzado",
-        "search": "Buscar"
+        "search": "Buscar",
+        "searchHint": "Escribe para buscar bloques",
+        "searchNone": "No se encontraron bloques"
     }
 }

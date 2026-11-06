@@ -10,7 +10,7 @@ should be its own change, tested in the app.
 | `react-xtermjs` | 1.0.9 | 1.0.12 | Newer versions use React 19 ref types; fits with the React 19 upgrade. |
 | React | 18 | 19 | Also `@types/react`, `react-i18next` 17, `react-hotkeys-hook` 5. |
 | Tailwind CSS | 3.4 | 4 | New config format; the theme palette approach needs a review. |
-| Blockly | 12.3 | 13 | Also `@blockly/field-colour` and `@blockly/toolbox-search` 13.x. |
+| Blockly | 12.3 | 13 | Also `@blockly/field-colour` 13.x. Check the block search field (spec 012), adapted from `@blockly/toolbox-search`. |
 | Vite / Vitest | 6 / 3 | 8 / 5 | Also `@vitejs/plugin-react` 6. |
 | ESLint | 9 | 10 | npm reports ESLint 9 as no longer supported. |
 | recharts | 2 | 3 | 2.x is no longer maintained; used by the dashboard. |
@@ -24,7 +24,6 @@ should be its own change, tested in the app.
 | Guided examples on the welcome screen | After the recent projects (spec 013): example projects to start from (drive and turn, square, avoid obstacles, follow a line). Folder tree stays. |
 | Choose the editor | Blocks, Python, or blocks + Python side by side. |
 | Two-way Drive sync | Pull changes made on another device; conflict handling. |
-| Translate the block search placeholder | `@blockly/toolbox-search` hardcodes "Search". |
 | Dracula theme | Second app theme; needs runtime CSS variables instead of build-time Tailwind colours. |
 | Configurable Drive folder name | `Constants.XRPCODE` is fixed to `XRPCode`. With its own OAuth client the fork only sees the folders it created, so users of both apps get two `XRPCode` folders. A build setting (default `XRPCode`) would avoid renaming it for XRPWeb users; the hardcoded `'/XRPCode/'` paths in `folder-tree.tsx`, `newfiledlg.tsx` and `filesaveasdlg.tsx` would need to use the constant first (they map Drive paths to `/gusers/<user>/` on the robot, so test Run with a robot). |
 | Battery level in the status pill | `batteryVoltage()` returns 0 while the REPL is busy; needs a robot to test safely. |
@@ -37,6 +36,4 @@ Bugs found while testing, not yet fixed. Each one should be its own change.
 
 | Issue | Where | Notes |
 | --- | --- | --- |
-| Opening a file from the folder tree is slow | `src/components/folder-tree.tsx` (`EVENT_OPEN_FILE`), `src/components/blockly.tsx` | Measured on a production build with a 4× slower CPU: the click blocks the page ~290 ms before the tab shows. About 130 ms is Blockly creating the workspace and toolbox, ~110 ms the block search indexing every block (fork code, same index for every file), ~50 ms the new tab. Plan: index the search once and lazily; later, show the tab with a loading state before building the workspace. |
-| Opening a `.blocks` file that was never saved throws "Unexpected end of JSON input" | `src/components/blockly.tsx` (`EVENT_EDITOR_LOAD`) | Create a Blockly file, close its tab without saving, open it again from the folder tree: the page logs the error (the file is empty). Found while testing spec 010. |
-| The block search registers its shortcut once per editor | `@blockly/toolbox-search` (`ToolboxSearchCategory.registerShortcut`) | With two `.blocks` tabs open, the console shows `Shortcut named "startSearch" already exists.` No visible effect. Fix together with indexing the search only once (it also rebuilds its index for every file opened, ~110 ms with a 4× slower CPU). |
+| Opening a file from the folder tree is slow | `src/components/folder-tree.tsx` (`EVENT_OPEN_FILE`), `src/components/blockly.tsx` | Measured on a production build with a 4× slower CPU: the click blocks the page ~290 ms before the tab shows. About 130 ms is Blockly creating the workspace and toolbox, ~110 ms the block search indexing every block (fork code, same index for every file), ~50 ms the new tab. The search indexing was removed from opening (spec 012). Next: show the tab with a loading state before building the workspace. |
