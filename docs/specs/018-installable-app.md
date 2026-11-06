@@ -43,6 +43,17 @@ open without internet.
 ![Update notice, light](images/018-update-light.png)
 ![Update notice, dark](images/018-update-dark.png)
 
+### Part 4 — Fix: Reload did nothing
+
+- **Problem:** clicking **Reload** left the old version on screen. The plugin's update function
+  asks the waiting version to take over and then waits for a signal that never comes when the app
+  was opened before its offline copy was ready (first visit, or an installed app opened right
+  away), or when the update was found by the hourly check.
+- **Solution:** `applyUpdate()` in `src/utils/pwa.ts` does the update itself. It saves the open
+  files first (autosave, spec 019), asks the waiting version to take over, and reloads the page
+  once, as soon as the new version controls the page or becomes active. If no version is waiting
+  (it is already active), it reloads right away.
+
 ## Files
 
 - New: `pwa-plugin.ts`, `src/utils/pwa.ts`, `src/components/update-notice.tsx`,
@@ -61,8 +72,11 @@ open without internet.
 3. Install: the ⚙ menu shows **Install app** (Chrome on a computer or Android); installing opens
    the app in its own window and the row goes away.
 4. Update: publish a new build and reload the app once; the notice appears. **Later**
-   hides it; **Reload** loads the new version.
-5. On a build served over HTTPS, repeat 2 and 3 on an Android tablet.
+   hides it; **Reload** saves the open files and loads the new version.
+5. Reload on a first visit: in a new browser profile, open the app once and wait until the
+   offline copy is ready, publish a new build, then use DevTools > Application > Service workers
+   > Update. The notice appears; **Reload** loads the new version.
+6. On a build served over HTTPS, repeat 2 and 3 on an Android tablet.
 
 ## Upstream
 
