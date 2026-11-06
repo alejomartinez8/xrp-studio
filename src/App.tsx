@@ -3,6 +3,7 @@ import './App.css';
 import Navbar from '@components/navbar';
 import XRPLayout from '@components/xrplayout';
 import AppMgr from '@/managers/appmgr';
+import { prefetchPythonEditor } from '@components/python/prefetch-python-editor';
 
 function App() {
     const xrpLayoutRef = useRef();
@@ -17,6 +18,11 @@ function App() {
             appMgrRef.current.start();
         }
     }, []);
+
+    /**
+     * Download the Python editor in the background once the app is idle (spec 014).
+     */
+    useEffect(() => prefetchPythonEditor(), []);
 
     return (
         <>
