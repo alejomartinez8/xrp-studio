@@ -15,7 +15,7 @@ describe('AskDialog', () => {
             first = ask({
                 title: 'account.moveTitle',
                 message: 'account.moveMessage',
-                values: { count: 3 },
+                values: { count: '3' },
                 choices: [
                     { value: 'move', label: 'account.moveYes', primary: true },
                     { value: 'leave', label: 'account.moveNo' },
