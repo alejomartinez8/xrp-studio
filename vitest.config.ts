@@ -12,6 +12,7 @@ export default defineConfig({
   },
   resolve: {
     alias: [
+      { find: 'virtual:pwa-register', replacement: fileURLToPath(new URL('./src/utils/tests/stubs/pwa-register.ts', import.meta.url)) },
       { find: '@', replacement: fileURLToPath(new URL('./src', import.meta.url)) },
       { find: '@components', replacement: fileURLToPath(new URL('./src/components', import.meta.url)) },
       { find: '@managers', replacement: fileURLToPath(new URL('./src/managers', import.meta.url)) },
