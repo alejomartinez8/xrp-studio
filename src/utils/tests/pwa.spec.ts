@@ -1,4 +1,8 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+const flushAutosave = vi.fn(() => Promise.resolve());
+
+vi.mock('@/utils/autosave', () => ({ flushAutosave }));
 
 /** A fresh copy of the module, so each test starts from the initial state. */
 async function loadPwa() {
@@ -21,9 +25,40 @@ async function snapshot(pwa: typeof import('@/utils/pwa')) {
     return renderHook(() => pwa.usePwaState()).result.current;
 }
 
+/** A waiting worker that records its messages and can move to another state. */
+function waitingWorker() {
+    const worker = Object.assign(new EventTarget(), {
+        state: 'installed' as ServiceWorkerState,
+        postMessage: vi.fn(),
+        moveTo(state: ServiceWorkerState) {
+            worker.state = state;
+            worker.dispatchEvent(new Event('statechange'));
+        },
+    });
+    return worker;
+}
+
+/** A `navigator.serviceWorker` whose registration has `waiting` as its waiting worker. */
+function fakeServiceWorker(waiting: ReturnType<typeof waitingWorker> | null) {
+    const container = Object.assign(new EventTarget(), {
+        getRegistration: vi.fn(() => Promise.resolve({ waiting })),
+    });
+    Object.defineProperty(navigator, 'serviceWorker', { value: container, configurable: true });
+    return container;
+}
+
 describe('pwa', () => {
+    const reload = vi.fn();
+
+    beforeEach(() => {
+        reload.mockReset();
+        flushAutosave.mockClear();
+        vi.stubGlobal('location', { ...window.location, reload });
+    });
+
     afterEach(() => {
         Reflect.deleteProperty(navigator, 'serviceWorker');
+        vi.unstubAllGlobals();
     });
 
     it('offers Install app after the browser allows it and hides it once installed', async () => {
@@ -49,26 +84,63 @@ describe('pwa', () => {
         expect((await snapshot(pwa)).canInstall).toBe(true);
     });
 
-    it('reports a new version and reloads only when asked', async () => {
-        Object.defineProperty(navigator, 'serviceWorker', { value: {}, configurable: true });
+    it('reports a new version and hides it on Later', async () => {
+        fakeServiceWorker(null);
         const pwa = await loadPwa();
-        const update = vi.fn(() => Promise.resolve());
         let onNeedRefresh = () => {};
         pwa.startPwa((options) => {
             onNeedRefresh = options.onNeedRefresh;
-            return update;
         });
         expect((await snapshot(pwa)).needRefresh).toBe(false);
 
         onNeedRefresh();
         expect((await snapshot(pwa)).needRefresh).toBe(true);
-        expect(update).not.toHaveBeenCalled();
-
-        await pwa.applyUpdate();
-        expect(update).toHaveBeenCalledWith(true);
+        expect(reload).not.toHaveBeenCalled();
 
         pwa.dismissUpdate();
         expect((await snapshot(pwa)).needRefresh).toBe(false);
+    });
+
+    it('saves, activates the waiting version and reloads when it takes control', async () => {
+        const waiting = waitingWorker();
+        const container = fakeServiceWorker(waiting);
+        const pwa = await loadPwa();
+        await pwa.applyUpdate();
+
+        expect(flushAutosave).toHaveBeenCalled();
+        expect(waiting.postMessage).toHaveBeenCalledWith({ type: 'SKIP_WAITING' });
+        expect(reload).not.toHaveBeenCalled();
+
+        container.dispatchEvent(new Event('controllerchange'));
+        waiting.moveTo('activated');
+        expect(reload).toHaveBeenCalledTimes(1);
+    });
+
+    it('reloads once the new version is active on a page opened without a worker', async () => {
+        const waiting = waitingWorker();
+        fakeServiceWorker(waiting);
+        const pwa = await loadPwa();
+        await pwa.applyUpdate();
+
+        waiting.moveTo('activating');
+        expect(reload).not.toHaveBeenCalled();
+        waiting.moveTo('activated');
+        expect(reload).toHaveBeenCalledTimes(1);
+    });
+
+    it('reloads right away when no version is waiting', async () => {
+        fakeServiceWorker(null);
+        const pwa = await loadPwa();
+        await pwa.applyUpdate();
+        expect(reload).toHaveBeenCalledTimes(1);
+    });
+
+    it('reloads even when saving fails', async () => {
+        fakeServiceWorker(null);
+        flushAutosave.mockRejectedValueOnce(new Error('offline'));
+        const pwa = await loadPwa();
+        await pwa.applyUpdate();
+        expect(reload).toHaveBeenCalledTimes(1);
     });
 
     it('does not register a worker where service workers are not available', async () => {

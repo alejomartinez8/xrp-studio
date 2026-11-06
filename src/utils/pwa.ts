@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from 'react';
+import { flushAutosave } from '@/utils/autosave';
 
 /** What the installable app can offer the user right now. */
 export type PwaState = {
@@ -14,11 +15,11 @@ type InstallPromptEvent = Event & {
     userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
 };
 
-/** Registers the service worker; returns the function that activates a waiting version. */
+/** Registers the service worker and reports new versions. */
 type Register = (options: {
     onNeedRefresh: () => void;
     onRegisteredSW: (url: string, registration: ServiceWorkerRegistration | undefined) => void;
-}) => (reloadPage?: boolean) => Promise<void>;
+}) => void;
 
 /** How often an open app checks for a new version. */
 const UPDATE_CHECK_MS = 60 * 60 * 1000;
@@ -26,7 +27,6 @@ const UPDATE_CHECK_MS = 60 * 60 * 1000;
 let state: PwaState = { needRefresh: false, canInstall: false };
 const listeners = new Set<() => void>();
 let installPrompt: InstallPromptEvent | null = null;
-let updateWorker: ((reloadPage?: boolean) => Promise<void>) | null = null;
 
 /** Replace part of the state and tell the subscribed components. */
 function setState(change: Partial<PwaState>): void {
@@ -36,14 +36,9 @@ function setState(change: Partial<PwaState>): void {
 
 /** Default registration through vite-plugin-pwa, loaded only when it is needed. */
 const registerWithPlugin: Register = (options) => {
-    let update: ((reloadPage?: boolean) => Promise<void>) | null = null;
-    const ready = import('virtual:pwa-register').then(({ registerSW }) => {
-        update = registerSW({ ...options, immediate: true });
+    void import('virtual:pwa-register').then(({ registerSW }) => {
+        registerSW({ ...options, immediate: true });
     });
-    return async (reloadPage) => {
-        await ready;
-        await update?.(reloadPage);
-    };
 };
 
 /**
@@ -65,7 +60,7 @@ export function startPwa(register: Register = registerWithPlugin): void {
     if (!('serviceWorker' in navigator)) {
         return;
     }
-    updateWorker = register({
+    register({
         onNeedRefresh: () => setState({ needRefresh: true }),
         onRegisteredSW: (_url, registration) => {
             if (registration) {
@@ -75,9 +70,39 @@ export function startPwa(register: Register = registerWithPlugin): void {
     });
 }
 
-/** Activate the waiting version and reload the page. */
+/**
+ * Save the open files, activate the waiting version and reload the page once.
+ *
+ * vite-plugin-pwa's update function only asks the waiting worker to take over and reloads on a
+ * workbox `controlling` event that is not sent when the page was opened without a worker (first
+ * visit) or when the update was found by the hourly check, so Reload did nothing. Here the page
+ * reloads when the new worker takes control (`controllerchange`) or reaches `activated` (pages
+ * without a worker get no `controllerchange`), and right away when no worker is waiting, because
+ * the active worker then already serves the new version.
+ */
 export async function applyUpdate(): Promise<void> {
-    await updateWorker?.(true);
+    await flushAutosave().catch(() => undefined);
+    let reloaded = false;
+    const reload = () => {
+        if (!reloaded) {
+            reloaded = true;
+            window.location.reload();
+        }
+    };
+    const registration =
+        'serviceWorker' in navigator ? await navigator.serviceWorker.getRegistration() : undefined;
+    const waiting = registration?.waiting;
+    if (!waiting) {
+        reload();
+        return;
+    }
+    navigator.serviceWorker.addEventListener('controllerchange', reload, { once: true });
+    waiting.addEventListener('statechange', () => {
+        if (waiting.state === 'activated') {
+            reload();
+        }
+    });
+    waiting.postMessage({ type: 'SKIP_WAITING' });
 }
 
 /** Hide the new version notice; the new version is used the next time the app opens. */
