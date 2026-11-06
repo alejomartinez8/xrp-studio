@@ -1,7 +1,7 @@
 # 013 — Welcome screen
 
-What the editor area shows when no tab is open, in three parts: start a new project, continue a
-recent one, and start from an example.
+What the editor area shows when no tab is open, in four parts: start a new project, continue a
+recent one, start from an example, and hide the shell until a project is open.
 
 ## Part 1 — New project
 
@@ -150,8 +150,44 @@ blocks make it move. Working programs to start from and change are the quickest 
 | Examples | ![Light](images/013-examples-light.png) | ![Dark](images/013-examples-dark.png) |
 | Example opened | ![Light](images/013-example-open-light.png) | ![Dark](images/013-example-open-dark.png) |
 
+## Part 4 — Shell only with a project open
+
+### Problem
+
+The shell takes a third of the screen under the welcome screen, where nothing can run yet. For a
+child it is an empty black box with no purpose.
+
+### Solution
+
+- `src/utils/shell-visibility.ts` (new): `syncShellVisibility(model)` maximizes the editor tabset
+  while it has no tabs, which hides the shell tabset with flexlayout's own maximize (the terminal
+  stays mounted, so its state and robot output are kept). The first open tab restores the layout,
+  and closing the last tab hides the shell again.
+- It only acts when the editor tabset changes between empty and not empty, so a maximize or restore
+  the user chooses with projects open is kept.
+- `xrplayout.tsx`: runs it once when the model is created and on every model change
+  (`onModelChange`).
+- Connecting the robot from the welcome screen shows no shell output; it appears as soon as a
+  project is opened, which running a program needs anyway.
+
+### Files
+
+- New: `src/utils/shell-visibility.ts`, `src/utils/tests/shell-visibility.spec.ts`.
+- Changed: `src/components/xrplayout.tsx` (3 lines).
+
+### How to test
+
+1. `npx vitest run src/utils/tests/shell-visibility.spec.ts`: 2 tests.
+2. No tab open: the welcome screen fills the editor area and there is no shell.
+3. Open or create a project: the shell shows below the editor. Reload: still there.
+4. Close the last tab: the shell hides and the welcome screen fills the area again.
+
+The **Examples** screenshots above show the welcome screen without the shell, and **Example
+opened** shows it back with a project open.
+
 ## Upstream
 
 Fork-specific (kids UI). `createNewFile` / `EVENT_NEW_PROJECT` and `AppMgr.removeHandler` could
-serve XRPWeb too. Creating a new file with content (`NewFileData.content`) is a small change XRPWeb
+serve XRPWeb too. Hiding the shell with no tabs open is a small, separate change XRPWeb could take
+on its own. Creating a new file with content (`NewFileData.content`) is a small change XRPWeb
 could use for its own examples.

@@ -33,6 +33,7 @@ import Dialog from '@components/dialogs/dialog';
 import ConfirmationDlg from '@components/dialogs/confirmdlg';
 import { swapStylesheet } from '@/utils/swap-stylesheet';
 import WelcomeScreen from '@components/welcome/welcome-screen';
+import { syncShellVisibility } from '@/utils/shell-visibility';
 
 /**
  *  Layout-React's layout JSON to specify the XRPWeb's single page application's layout
@@ -110,6 +111,7 @@ const layout_json: IJsonModel = {
 };
 
 const model = Model.fromJson(layout_json);
+syncShellVisibility(model);
 EditorMgr.getInstance().setLayoutModel(model);
 let layoutRef: React.RefObject<Layout> = {
     current: null,
@@ -443,6 +445,7 @@ function XRPLayout({ forwardedref }: XRPLayoutProps) {
                 onAction={handleActions}
                 onRenderTab={onRenderTab}
                 onTabSetPlaceHolder={renderTabSetPlaceHolder}
+                onModelChange={syncShellVisibility}
             />
             <Dialog isOpen={false} toggleDialog={toggleDialog} ref={dialogRef}>
                 {dialogContent}
