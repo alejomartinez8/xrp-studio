@@ -20,7 +20,7 @@ function AskDialog() {
                 aria-labelledby="ask-title"
                 aria-describedby="ask-message"
                 data-testid="ask-dialog"
-                className="bg-white flex w-full max-w-md flex-col gap-4 rounded-lg border border-mountain-mist-300 p-6 shadow-lg dark:border-shark-600 dark:bg-shark-950"
+                className="flex w-full max-w-md flex-col gap-4 rounded-lg border border-mountain-mist-300 bg-mountain-mist-50 p-6 shadow-lg dark:border-shark-600 dark:bg-shark-950"
             >
                 <h1
                     id="ask-title"
