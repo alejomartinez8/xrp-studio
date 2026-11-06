@@ -19,8 +19,9 @@ One friendly top bar for everyone (no separate "kids mode"):
     below 1280 px).
   - **Help (?)**: the former Help menu (guides, forum, change log, privacy).
   - **Settings (⚙)**: Language and Theme rows that show the current choice and open their pickers;
-    below them, the former ⋮ items (Dashboard, Drivers, Backup/Restore, Firmware,
-    Settings, AI chat when enabled).
+    below them, the "Keep me signed in" switch (spec 020) and the former ⋮ items (Dashboard,
+    Drivers, Backup/Restore, Firmware, AI chat when enabled). The old Settings dialog, which
+    repeated Language and Theme, is no longer in the menu.
   - **Language picker:** a dialog with one card per language (native and English name), so it
     scales beyond two languages. Languages are listed once in `src/utils/i18n/languages.ts`, also
     used by the Settings dialog.

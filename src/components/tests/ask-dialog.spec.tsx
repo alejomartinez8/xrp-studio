@@ -13,12 +13,12 @@ describe('AskDialog', () => {
         let second!: Promise<string>;
         act(() => {
             first = ask({
-                title: 'account.deviceTitle',
-                message: 'account.deviceMessage',
-                values: { name: 'Ana' },
+                title: 'account.moveTitle',
+                message: 'account.moveMessage',
+                values: { count: '3' },
                 choices: [
-                    { value: 'own', label: 'account.deviceOwn', primary: true },
-                    { value: 'shared', label: 'account.deviceShared' },
+                    { value: 'move', label: 'account.moveYes', primary: true },
+                    { value: 'leave', label: 'account.moveNo' },
                 ],
             });
             second = ask({
@@ -28,10 +28,10 @@ describe('AskDialog', () => {
             });
         });
 
-        expect(screen.getByRole('alertdialog')).toHaveTextContent('Is this device yours?');
-        expect(screen.getByRole('alertdialog')).toHaveTextContent('Ana, is this computer');
-        fireEvent.click(screen.getByRole('button', { name: "It's shared" }));
-        expect(await first).toBe('shared');
+        expect(screen.getByRole('alertdialog')).toHaveTextContent('Projects on this device');
+        expect(screen.getByRole('alertdialog')).toHaveTextContent('There are 3 projects');
+        fireEvent.click(screen.getByRole('button', { name: 'Leave them here' }));
+        expect(await first).toBe('leave');
 
         expect(screen.getByRole('alertdialog')).toHaveTextContent('Changes not saved');
         fireEvent.click(screen.getByRole('button', { name: 'Stay signed in' }));

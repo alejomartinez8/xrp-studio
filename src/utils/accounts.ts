@@ -21,11 +21,12 @@ import { isDriveSyncEnabled } from '@/utils/offline';
  * Accounts on this device (spec 020). Each one has its own space of projects (an IndexedDB
  * database); without an account the device's guest space is used.
  *
- * - At the first sign-in on a device the user says whether it is theirs or shared. On their own
- *   device the session is remembered and the projects stay. On a shared device the session is not
- *   remembered, it ends after {@link IDLE_SIGN_OUT_MS} without use, and the projects are removed
- *   from the device when it ends, or the next time the app opens if it was closed without
- *   signing out.
+ * - The device setting "Keep me signed in" ({@link isKeepSignedIn}, off by default, in the
+ *   settings menu) tells whether the device is the user's own. Off, the device counts as shared:
+ *   the session is not remembered, it ends after {@link IDLE_SIGN_OUT_MS} without use, and the
+ *   projects are removed from the device when it ends, or the next time the app opens if it was
+ *   closed without signing out. On, the session is remembered and the projects stay. A teacher
+ *   sets it once for the device.
  * - Signing out uploads what is left, warns when that is not possible, and removes the account's
  *   projects from this device. They stay in Drive and come back at the next sign-in.
  */
@@ -78,8 +79,32 @@ function writeActive(active: ActiveAccount | null): void {
     }
 }
 
-function ownAccounts(): string[] {
-    return readJson<string[]>(StorageKeys.OWN_ACCOUNTS) ?? [];
+/** Whether the device keeps the session and the projects (its own device); off by default. */
+export function isKeepSignedIn(): boolean {
+    try {
+        return localStorage.getItem(StorageKeys.KEEP_SIGNED_IN) === 'on';
+    } catch {
+        return false;
+    }
+}
+
+/**
+ * Turns "Keep me signed in" on or off. It applies to the open session too: off starts the idle
+ * sign-out and marks the projects to be removed when the session ends; on stops both.
+ */
+export function setKeepSignedIn(on: boolean): void {
+    localStorage.setItem(StorageKeys.KEEP_SIGNED_IN, on ? 'on' : 'off');
+    const active = readActive();
+    if (!isDriveSyncEnabled || !active || active.shared === !on) {
+        return;
+    }
+    writeActive({ profile: active.profile, shared: !on });
+    if (on) {
+        stopIdleTimer();
+    } else {
+        localStorage.removeItem(StorageKeys.GOOGLE_SESSION);
+        startIdleTimer();
+    }
 }
 
 function local(): LocalDriveService {
@@ -232,37 +257,14 @@ export function setIdleSignOut(handler: (() => void) | null): void {
 }
 
 /**
- * A Google account signed in: ask whether the device is shared (first time), open the account's
- * space, offer the guest projects, and start syncing with its Drive.
+ * A Google account signed in: open the account's space (the session is kept or not following
+ * {@link isKeepSignedIn}), offer the guest projects, and start syncing with its Drive.
  */
 export async function enterAccount(profile: UserProfile): Promise<void> {
     if (!isDriveSyncEnabled) {
         return;
     }
-    const active = readActive();
-    let shared: boolean;
-    if (active?.profile.id === profile.id) {
-        shared = active.shared;
-    } else if (ownAccounts().includes(profile.id)) {
-        shared = false;
-    } else {
-        shared =
-            (await ask({
-                title: 'account.deviceTitle',
-                message: 'account.deviceMessage',
-                values: { name: profile.name || profile.email },
-                choices: [
-                    { value: 'own', label: 'account.deviceOwn', primary: true },
-                    { value: 'shared', label: 'account.deviceShared' },
-                ],
-            })) === 'shared';
-        if (!shared) {
-            localStorage.setItem(
-                StorageKeys.OWN_ACCOUNTS,
-                JSON.stringify([...ownAccounts(), profile.id]),
-            );
-        }
-    }
+    const shared = !isKeepSignedIn();
     writeActive({ profile, shared });
     if (shared) {
         localStorage.removeItem(StorageKeys.GOOGLE_SESSION);
