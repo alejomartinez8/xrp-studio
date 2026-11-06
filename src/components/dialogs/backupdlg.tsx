@@ -9,6 +9,7 @@
 import AppMgr from "@/managers/appmgr";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useDialogClose } from '@/components/dialogs/dialog-close';
 import ProgressBar from 'react-customizable-progressbar';
 import Button from "@/widgets/button";
 import { CommandToXRPMgr } from "@/managers/commandstoxrpmgr";
@@ -29,6 +30,7 @@ function BackupDlg({ toggleDialog }: BackupDlgProps) {
     const [progress, setProgress] = useState(0);
     const [progressItem, setProgressItem] = useState<string>('');
     const [isBackup, setIsBackup] = useState(false);
+    useDialogClose(isBackup ? undefined : toggleDialog);
 
     /*
      * Begin backup process

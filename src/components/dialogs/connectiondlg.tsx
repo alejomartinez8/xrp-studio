@@ -4,6 +4,7 @@ import Usb from '@assets/images/USB_icon.svg.png';
 import { ConnectionCMD, ListItem } from '@/utils/types';
 import { getRememberedXrp } from '@/utils/rememberedxrp';
 import { useTranslation } from 'react-i18next';
+import { useDialogClose } from '@/components/dialogs/dialog-close';
 import { useEffect, useState } from 'react';
 
 type ConnProps = {
@@ -24,6 +25,7 @@ interface ConnectionItem extends ListItem {
  */
 function ConnectionDlg(connprops: ConnProps) {
     const { t } = useTranslation();
+    useDialogClose('host');
     const [isBluetoothAvailable, setIsBluetoothAvailable] = useState<boolean>(true);
     const remembered = getRememberedXrp();
 

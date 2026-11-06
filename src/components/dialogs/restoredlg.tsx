@@ -8,6 +8,7 @@
 // See the GNU General Public License for more details
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useDialogClose } from '@/components/dialogs/dialog-close';
 import ProgressBar from 'react-customizable-progressbar';
 import Button from '@/widgets/button';
 import { Constants } from '@/utils/constants';
@@ -29,6 +30,7 @@ function RestoreDlg({ toggleDialog }: RestoreDlgProps) {
     const [progress, setProgress] = useState(0);
     const [progressItem, setProgressItem] = useState<string>('');
     const [isRestore, setIsRestore] = useState(false);
+    useDialogClose(isRestore ? undefined : toggleDialog);
 
     /**
      * Begin restore process
