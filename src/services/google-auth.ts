@@ -45,6 +45,11 @@ class GoogleAuthService {
     private _modeLogger = logger.child({ module: 'googleapi' });
     private _tokenExpiryTime: number = 0;
     private _restore: Promise<string | null> | undefined;
+    /**
+     * Called with each access token the hourly refresh gets, so the Drive service keeps using a
+     * valid one (set by the sign-in widget).
+     */
+    onAccessToken: ((token: string) => void) | null = null;
     
     constructor() {
         this._googleAuthBackendUrl = import.meta.env.GOOGLE_AUTH_URL;
@@ -184,6 +189,7 @@ class GoogleAuthService {
             try {
                 const token = await this.getAccessToken();
                 this._accessToken = token;
+                this.onAccessToken?.(token);
             } catch (error) {
                 this._modeLogger.error(`Error refreshing access token: ${error}`);
             }
