@@ -44,6 +44,19 @@ Hooks in upstream files:
 ![Saved indicator, light](images/019-autosave-light.png)
 ![Saved indicator, dark](images/019-autosave-dark.png)
 
+## Fix: Google Drive saves
+
+- **Problem:** with Google sign-in, two things made autosave unreliable:
+  - When Drive refused a write, the indicator still said "Saved", because the Drive upload
+    reports a failure by returning nothing instead of an error.
+  - The app gets a new Google access token every hour, but the Drive service kept the one from
+    sign-in, so every save failed after about an hour.
+- **Solution:**
+  - Autosave treats an empty answer from the upload as a failure: the change is kept, the
+    indicator shows "Couldn't save", and it tries again later.
+  - The sign-in service hands each new access token to the Drive service
+    (`onAccessToken` in `src/services/google-auth.ts`, set in `src/widgets/login.tsx`).
+
 ## Files
 
 - New: `src/utils/autosave.ts`, `src/components/navbar/save-status.tsx`, tests in
@@ -51,6 +64,8 @@ Hooks in upstream files:
 - Changed: `src/managers/editormgr.ts`, `src/components/blockly.tsx`,
   `src/components/MonacoEditor.tsx`, `src/components/xrplayout.tsx`, `src/components/navbar.tsx`,
   `src/main.tsx`, `src/utils/i18n/locales/{en,es}/{en,es}.json` (`autosave`).
+- Drive fix: `src/utils/autosave.ts`, `src/services/google-auth.ts`, `src/widgets/login.tsx`, tests
+  in `src/utils/tests/autosave.spec.ts` and `src/services/tests/google-auth.spec.ts`.
 
 ## How to test
 
@@ -60,7 +75,11 @@ Hooks in upstream files:
 2. Open the Square example and move a block: same as step 1.
 3. In a build with Google sign-in, signed in: edit, wait for "Saved", and check the file in Drive.
    Go offline and edit: "Couldn't save". Back online: "Saved".
-4. With a robot: Run a My projects or Drive file after editing; the robot runs the latest
+4. Same build, signed in: leave the app open for more than an hour, then edit. "Saved" appears and
+   the change is in Drive.
+5. Same build: remove the app's access in your Google account settings and edit. The indicator
+   shows "Couldn't save", not "Saved".
+6. With a robot: Run a My projects or Drive file after editing; the robot runs the latest
    version. Files from Robot memory: Save still writes to the robot. **Pending: needs a robot.**
 
 ## Upstream

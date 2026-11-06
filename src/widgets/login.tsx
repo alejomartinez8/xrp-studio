@@ -135,6 +135,7 @@ function GoogleLoginButton({ logoutCallback, onSuccess, compact }: LoginProps) {
             setIsLogin(true);
             setIsSigningIn(false);
             driveService.setAccessToken(accessToken);
+            authService.onAccessToken = (token) => driveService.setAccessToken(token);
             await ensureXrpCodeFolder();
             onSuccess(profile);
         },

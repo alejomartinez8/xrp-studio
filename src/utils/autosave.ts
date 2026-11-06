@@ -31,10 +31,22 @@ const listeners = new Set<() => void>();
 let status: AutosaveStatus = 'idle';
 let retryTimer: ReturnType<typeof setTimeout> | null = null;
 
-/** Default writer: the same upsert the Save menu used, through the active drive service. */
-const saveToDrive: SaveFile = async ({ gpath, name, mimeType, content }) => {
+/**
+ * Default writer: the same upsert the Save menu used, through the active drive service. The
+ * upsert returns `null` instead of throwing when Drive refuses the write, so that is turned into
+ * an error to keep the change and show "Couldn't save".
+ */
+export const saveToDrive: SaveFile = async ({ gpath, name, mimeType, content }) => {
     const blob = new Blob([content], { type: mimeType });
-    await AppMgr.getInstance().driveService.upsertFileToGoogleDrive(blob, name, mimeType, gpath);
+    const file = await AppMgr.getInstance().driveService.upsertFileToGoogleDrive(
+        blob,
+        name,
+        mimeType,
+        gpath,
+    );
+    if (!file) {
+        throw new Error(`Drive did not save ${name}`);
+    }
 };
 
 let saveFile: SaveFile = saveToDrive;

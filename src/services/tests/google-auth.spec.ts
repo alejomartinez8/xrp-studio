@@ -75,3 +75,28 @@ describe('GoogleAuthService.restoreSession', () => {
         expect(localStorage.getItem(StorageKeys.GOOGLE_SESSION)).toBeNull();
     });
 });
+
+describe('GoogleAuthService refresh', () => {
+    beforeEach(() => {
+        localStorage.clear();
+        vi.useFakeTimers({ toFake: ['setTimeout'] });
+    });
+
+    afterEach(() => {
+        vi.useRealTimers();
+        vi.unstubAllGlobals();
+    });
+
+    it('hands each refreshed access token to onAccessToken', async () => {
+        localStorage.setItem(StorageKeys.GOOGLE_SESSION, 'true');
+        fakeBackend(200);
+        const service = new GoogleAuthService();
+        const onAccessToken = vi.fn();
+        service.onAccessToken = onAccessToken;
+        await service.restoreSession();
+        expect(onAccessToken).not.toHaveBeenCalled();
+
+        await vi.advanceTimersByTimeAsync(3599 * 1000);
+        expect(onAccessToken).toHaveBeenCalledWith('restored');
+    });
+});

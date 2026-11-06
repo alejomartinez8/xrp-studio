@@ -4,6 +4,7 @@ import { EditorType } from '@/utils/types';
 const sessions = new Map<string, Record<string, unknown>>();
 const markSessionSaved = vi.fn();
 const auth = { isLogin: true };
+const upsert = vi.fn();
 
 vi.mock('@/managers/editormgr', () => ({
     default: {
@@ -15,7 +16,12 @@ vi.mock('@/managers/editormgr', () => ({
 }));
 
 vi.mock('@/managers/appmgr', () => ({
-    default: { getInstance: () => ({ authService: auth }) },
+    default: {
+        getInstance: () => ({
+            authService: auth,
+            driveService: { upsertFileToGoogleDrive: upsert },
+        }),
+    },
 }));
 
 import {
@@ -23,6 +29,7 @@ import {
     AUTOSAVE_RETRY_MS,
     flushAutosave,
     resetAutosave,
+    saveToDrive,
     scheduleAutosave,
     startAutosave,
 } from '@/utils/autosave';
@@ -132,5 +139,13 @@ describe('autosave', () => {
         await flushAutosave();
         await vi.advanceTimersByTimeAsync(AUTOSAVE_DELAY_MS * 2);
         expect(save).not.toHaveBeenCalled();
+    });
+
+    it('treats a write Drive refused as a failure', async () => {
+        const snapshot = { gpath: 'g-a', name: 'a.py', mimeType: 'text/plain', content: 'x' };
+        upsert.mockResolvedValueOnce({ id: 'g-a' });
+        await expect(saveToDrive(snapshot)).resolves.toBeUndefined();
+        upsert.mockResolvedValueOnce(null);
+        await expect(saveToDrive(snapshot)).rejects.toThrow('a.py');
     });
 });
