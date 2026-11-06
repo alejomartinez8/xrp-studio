@@ -21,6 +21,7 @@ import { FontSize } from '@/utils/types';
 import { Constants } from '@/utils/constants';
 import { useTranslation } from 'react-i18next';
 import { whenReady } from '@codingame/monaco-vscode-python-default-extension';
+import { scheduleAutosave } from '@/utils/autosave';
 
 const languageId = 'python';
 
@@ -360,6 +361,7 @@ const MonacoEditor = ({
                             EditorMgr.getInstance().getEditorSession(tabId) as EditorSession,
                             code,
                         );
+                        scheduleAutosave(tabId);
                     }
                 });
 

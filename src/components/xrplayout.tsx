@@ -24,6 +24,7 @@ import { EditorType, FileType, NewFileData } from '@/utils/types';
 import { useLocalStorage } from 'usehooks-ts';
 import { StorageKeys } from '@/utils/localstorage';
 import EditorMgr, { EditorStore } from '@/managers/editormgr';
+import { flushAutosave, isAutosaved } from '@/utils/autosave';
 import { CreateEditorTab } from '@/utils/editorUtils';
 import XRPDashboard from '@/components/dashboard/xrp-dashboard';
 import AIChat from '@/components/chat/ai-chat';
@@ -348,7 +349,9 @@ function XRPLayout({ forwardedref }: XRPLayoutProps) {
                 {
                     console.log('Delete Node:', action.data);
                     const isDirty = EditorMgr.getInstance().hasSessionChanged(action.data.node);
-                    if (isDirty) {
+                    if (isAutosaved(action.data.node)) {
+                        void flushAutosave(action.data.node);
+                    } else if (isDirty) {
                         setDialogContent(
                             <ConfirmationDlg
                                 acceptCallback={handleDeleteTabConfirmation}

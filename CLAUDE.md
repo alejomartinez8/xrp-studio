@@ -43,6 +43,9 @@ All builds are also an installable app (PWA, `pwa-plugin.ts`, `src/utils/pwa.ts`
 worker precaches the whole build, so the hosted app opens without internet after the first visit;
 updates wait for the user's Reload (spec 018).
 
+Files in My projects or Google Drive save themselves (`src/utils/autosave.ts`, spec 019); Save
+no longer writes them to the robot, Run does. Robot-memory files keep the manual save.
+
 My projects (no login needed) is used when Google sign-in is not available:
 `isLocalProjectsEnabled` in `src/utils/offline.ts` (offline builds, or no `GOOGLE_AUTH_URL`).
 Builds with Google keep XRPWeb's behaviour unchanged. `src/services/local-drive.ts` implements the
@@ -81,6 +84,8 @@ plugin serves them in dev. Server variables: `OAUTH_CLIENT_ID`, `OAUTH_CLIENT_SE
 
 `docs/specs/` has one spec per change (problem, solution, files, how to test, upstream status) and
 `pending-upgrades.md`. Add or update a spec with every change; they are shared with the XRPWeb team.
+Write them for any reader: what changes and how to check it in the app, not this repo's
+tooling (no npm or test commands, no hosting previews). Unit tests are listed under Files.
 
 ## Conventions
 

@@ -13,9 +13,11 @@ import { GoogleClientIdContext } from '@/utils/google-client-id';
 import { ThemeInit } from '../.flowbite-react/init';
 import { isOfflineBuild } from '@/utils/offline';
 import { startPwa } from '@/utils/pwa';
+import { startAutosave } from '@/utils/autosave';
 
 initAiBuddyAccess();
 startPwa();
+startAutosave();
 applyBlocklyLocale(i18n.language);
 
 function Root() {

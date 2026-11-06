@@ -74,6 +74,8 @@ import { isAiBuddyMenuEnabled } from '@/utils/aiBuddyAccess';
 import ConnectionStatus from '@components/navbar/connection-status';
 import NavDropdown from '@components/navbar/nav-dropdown';
 import QuickSettings from '@components/navbar/quick-settings';
+import SaveStatus from '@components/navbar/save-status';
+import { flushAutosave } from '@/utils/autosave';
 import LanguageDialog from '@components/dialogs/language-dlg';
 import ThemeDialog from '@components/dialogs/theme-dlg';
 import Login from '@/widgets/login';
@@ -1205,6 +1207,7 @@ function NavBar({ layoutref }: NavBarProps) {
                     const connectionType = AppMgr.getInstance().getConnectionType();
                     const beginExecution = async () => {
                         try {
+                            await flushAutosave();
                             // Save all unsaved editors before running
                             await EditorMgr.getInstance().saveAllUnsavedEditors(activeTab);
 
@@ -1798,6 +1801,7 @@ function NavBar({ layoutref }: NavBarProps) {
                         )}
                     </div>
                 ))}
+                <SaveStatus />
                 {/* place the joystick icon here after the menu*/}
                 <img
                     className={`mt-1 ${isGamepadConnected ? 'visible' : 'hidden'}`}
