@@ -1,4 +1,7 @@
-# 007 — My projects and robot memory
+# 007 — My projects
+
+Projects without a robot or a Google account, and the robot's files one click away. Two parts:
+projects kept in the browser, then when they are used and how to switch to the robot's memory.
 
 ## Problem
 
@@ -8,11 +11,51 @@ XRPWeb stores projects in one of two places:
   Save write to it. Needs a connected robot.
 - **Google Drive** (signed in): projects live in Drive; Run copies the program to the robot.
 
-With neither a robot nor Google, nothing can be created or opened. My projects (spec 002) filled
-that gap, but only in offline builds, and once on, it hid the robot's files even with a robot
-connected, which XRPWeb's default mode relies on.
+With neither a robot nor Google, the File menu is disabled and the editor stays empty. This blocks:
 
-## Solution
+- Students practicing at home without a robot.
+- Schools that do not allow Google accounts for kids.
+- Teachers preparing programs before class.
+
+## Part 1 — Projects in the browser
+
+### Solution
+
+Projects are kept in the browser (IndexedDB), with no account and no robot required.
+
+- `LocalDriveService` implements the same interface as `GoogleDriveService` (create, read, update,
+  rename, move, delete, list, folder tree) on top of IndexedDB.
+- `AppMgr` uses `LocalDriveService` when My projects is enabled (Part 2), and a `LocalSession`
+  widget replaces the Google sign-in button: it signs in to the local drive automatically on
+  startup.
+- Because the local drive behaves like Google Drive, the existing code paths work unchanged: file
+  tree, New / Open / Save, autosave, and Run (which copies the program to the XRP when connected).
+- The root `XRPCode` folder is created once, even when React's StrictMode mounts twice.
+
+### Files
+
+- New: `src/services/local-drive.ts` (service, IndexedDB and in-memory stores),
+  `src/widgets/local-session.tsx`.
+- Hooks: `src/managers/appmgr.ts` (service selection), `src/widgets/login.tsx` (local session),
+  `src/components/folder-tree.tsx` (skip the Google Drive first-login notice),
+  `src/components/xrplayout.tsx` (no Google Drive icon on local tabs).
+
+### How to test
+
+1. `npm run dev:offline`, with no robot connected.
+2. File → New File → Blockly, name it, Submit: the editor opens and the file appears in the tree.
+3. Add a block, File → Save File, reload the page: the file and the block are still there.
+4. Rename, move and delete files and folders from the tree.
+
+Automated: `src/services/tests/local-drive.spec.ts` (create/read/update, folder tree, rename, move,
+recursive delete, persistence, single root folder under concurrent calls).
+
+## Part 2 — When My projects is used, and the robot's memory
+
+The first version only worked in offline builds, and once on, it hid the robot's files even with a
+robot connected, which XRPWeb's default mode relies on.
+
+### Solution
 
 Fill the gap without changing XRPWeb's two modes:
 
@@ -30,7 +73,7 @@ Fill the gap without changing XRPWeb's two modes:
   message asking to choose My projects again.
 - The tree header under the switch reads "In this browser".
 
-## Files
+### Files
 
 - New: `src/utils/local-projects.ts` (`startMyProjects`, `showRobotMemory`, `isRobotConnected`),
   `src/components/storage-switch.tsx`, `src/utils/i18n/locales/{en,es}/local-projects.json` (My
@@ -40,7 +83,7 @@ Fill the gap without changing XRPWeb's two modes:
   `navbar.tsx`, `session.ts` and `i18n/index.ts` check `isLocalProjectsEnabled` instead of
   `isOfflineBuild`.
 
-## How to test
+### How to test
 
 Without a robot (tested):
 
@@ -59,13 +102,19 @@ With a robot (**not tested yet**; needs a real XRP):
 Automated: `src/components/tests/storage-switch.spec.tsx` (disabled without a robot, switching,
 return to My projects on disconnect, follows sign-in events) and the locale override tests.
 
-## Screenshots
+### Screenshots
 
 | Light (normal build, no Google) | Dark |
 | --- | --- |
 | ![Light](images/my-projects-en.png) | ![Dark](images/my-projects-dark.png) |
 
+## Known limitations
+
+- Projects live in one browser profile. Export to PC is the backup path; Drive backup is in the
+  backlog.
+
 ## Upstream
 
-Answers [Open-STEM/XRPWeb#336](https://github.com/Open-STEM/XRPWeb/issues/336) without changing
-the existing modes: projects without a robot or an account, and the robot's files one click away.
+Proposed as a feature request: [Open-STEM/XRPWeb#336](https://github.com/Open-STEM/XRPWeb/issues/336).
+This answers it without changing the existing modes. The local drive service can be reused as is;
+the way it is activated would follow the team's answer.

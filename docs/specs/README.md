@@ -10,21 +10,20 @@ be proposed to XRPWeb.
 | # | Spec | Status | Upstream |
 | --- | --- | --- | --- |
 | 001 | [Offline build](001-offline-build.md) | Done | Possible, behind a build flag |
-| 002 | [Local projects in the browser](002-local-projects.md) | Done | Proposed as an issue ([Open-STEM/XRPWeb#336](https://github.com/Open-STEM/XRPWeb/issues/336)) |
 | 003 | [Spanish translation fixes](003-spanish-translations.md) | Done | Sent ([Open-STEM/XRPWeb#337](https://github.com/Open-STEM/XRPWeb/pull/337)) |
 | 004 | [Friendly theme and block editor](004-friendly-theme.md) | Done | Block editor parts possible; app theme is fork-specific |
 | 005 | [Maintenance: lockfile, Tailwind config, minor updates](005-maintenance.md) | Done | Possible |
 | 006 | [Top bar](006-navbar.md) | Done | Fork-specific layout |
-| 007 | [My projects and robot memory](007-my-projects.md) | Done; robot behaviour to be tested | Answers [Open-STEM/XRPWeb#336](https://github.com/Open-STEM/XRPWeb/issues/336) |
-| 008 | [Google sign-in server](008-google-auth-server.md) | Done; tested locally | Possible as a reference |
-| 009 | [Keep the Google session after a reload](009-restore-google-session.md) | Done | Possible; depends on their backend |
+| 007 | [My projects: projects in the browser, robot memory](007-my-projects.md) | Done; robot behaviour to be tested | Answers [Open-STEM/XRPWeb#336](https://github.com/Open-STEM/XRPWeb/issues/336) |
+| 008 | [Google sign-in: server, keep the session after a reload](008-google-auth-server.md) | Done | Server as a reference; session restore possible |
 | 010 | [Theme switch fixes](010-theme-switch.md) | Done | Possible (XRPWeb bugs) |
 | 011 | [Files from My projects open with their blocks](011-open-file-blocks.md) | Done | Possible (XRPWeb race) |
 | 012 | [Opening projects: single tap, reopen the last project](012-opening-projects.md) | Done | Single tap possible behind a flag; reopen is fork-specific |
-| 013 | [Welcome screen](013-welcome-screen.md) | Done | Fork-specific (kids UI) |
+| 013 | [Welcome screen: new project, recent projects](013-welcome-screen.md) | Done | Fork-specific (kids UI) |
 | 014 | [Lighter first load](014-lighter-first-load.md) | Done | Possible |
-| 015 | [Recent projects on the welcome screen](015-recent-projects.md) | Done | Fork-specific (kids UI) |
 | — | [Pending upgrades and backlog](pending-upgrades.md) | Backlog | Each one as its own change |
+
+Numbers 002, 009 and 015 were merged into 007, 008 and 013, so each goal has one spec.
 
 ## Principles
 
