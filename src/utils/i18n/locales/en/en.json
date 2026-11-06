@@ -346,5 +346,11 @@
         "reload": "Reload",
         "later": "Later",
         "install": "Install app"
+    },
+    "autosave": {
+        "saving": "Saving…",
+        "saved": "Saved",
+        "error": "Couldn't save",
+        "retry": "Your changes are kept in this browser and will be saved again soon."
     }
 }

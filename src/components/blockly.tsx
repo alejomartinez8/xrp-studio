@@ -15,6 +15,7 @@ import { blockThemeOptions } from '@components/blockly/block-theme';
 import { activeBlockTheme } from '@/theme';
 import { kidFriendlyToolbox, registerToolboxUi } from '@components/blockly/toolbox-ui';
 import { parseBlocksJson } from '@components/blockly/blocks-content';
+import { scheduleAutosave } from '@/utils/autosave';
 
 registerFieldColour(); //Plugin needs to be registered. Used for the Color LED on the non beta board. 
 registerToolboxUi();
@@ -530,6 +531,7 @@ function BlocklyEditor({ tabId, tabName }: BlocklyEditorProps) {
                 EditorMgr.getInstance().updateEditorSessionChange(tabId, true);
                 const code = blocklyToPython(workspace);
                 EditorMgr.getInstance().SaveToLocalStorage(EditorMgr.getInstance().getEditorSession(tabId) as EditorSession, code);
+                scheduleAutosave(tabId);
             } catch (e) {
                 console.warn('Failed to serialize Blockly workspace:', e);
             }

@@ -8,6 +8,7 @@ import { Workspace } from 'react-blockly';
 import i18n from '@/utils/i18n';
 import { GoogleDriveFile } from '@/services/google-drive';
 import { rememberLastProject } from '@/utils/last-project';
+import { flushAutosave, isAutosaved, scheduleAutosave } from '@/utils/autosave';
 
 /**
  * EditorSession - Editor session object
@@ -377,6 +378,13 @@ export default class EditorMgr {
                 return;
             }
 
+            if (isAutosaved(id)) {
+                session.content = code;
+                scheduleAutosave(id);
+                await flushAutosave(id);
+                return;
+            }
+
             const isConnected = AppMgr.getInstance().getConnection()?.isConnected() ?? false;
             if (!isConnected && !AppMgr.getInstance().authService.isLogin) {
                 // show a dialog to inform user to connect to XRP or login to Google Drive
@@ -517,6 +525,25 @@ export default class EditorMgr {
         const session = this.editorSessions.get(id);
         if (session) {
             session.isModified = hasChanged;
+            this.SelectEditorTab(id);
+        }
+    }
+
+    /**
+     * markSessionSaved - an autosave wrote the session's file (spec 019): clear the changed dot
+     * and the unsaved flag kept for a reload. Redraws the tab only when it is the active one, so a
+     * background save does not switch tabs.
+     */
+    public markSessionSaved(id: string) {
+        const session = this.editorSessions.get(id);
+        if (!session) {
+            return;
+        }
+        session.isModified = false;
+        if (session.content !== undefined) {
+            this.SaveToLocalStorage(session, session.content);
+        }
+        if (this.getActiveEditorId() === id) {
             this.SelectEditorTab(id);
         }
     }

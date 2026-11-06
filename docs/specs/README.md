@@ -23,6 +23,7 @@ be proposed to XRPWeb.
 | 014 | [Lighter first load](014-lighter-first-load.md) | Done | Possible |
 | 017 | [Close button on modals](017-modal-close-button.md) | Done | Possible |
 | 018 | [Installable app that works offline](018-installable-app.md) | Done | Possible |
+| 019 | [Automatic save](019-autosave.md) | Done; robot behaviour to be tested | Possible behind a setting |
 | — | [Pending upgrades and backlog](pending-upgrades.md) | Backlog | Each one as its own change |
 
 Numbers 002, 009 and 015 were merged into 007, 008 and 013, so each goal has one spec.

@@ -346,5 +346,11 @@
         "reload": "Recargar",
         "later": "Más tarde",
         "install": "Instalar app"
+    },
+    "autosave": {
+        "saving": "Guardando…",
+        "saved": "Guardado",
+        "error": "No se pudo guardar",
+        "retry": "Tus cambios quedan en este navegador y se volverán a guardar en un momento."
     }
 }
