@@ -96,13 +96,15 @@ describe('accounts', () => {
     it('moves the guest projects into the account when the user accepts', async () => {
         const guest = new MemoryDriveStore();
         stores.set(GUEST_DB_NAME, guest);
-        await guest.put({ id: 'g-root', name: 'XRPCode', mimeType: FOLDER_MIME_TYPE });
+        const times = { createdTime: 't', modifiedTime: 't' };
+        await guest.put({ id: 'g-root', name: 'XRPCode', mimeType: FOLDER_MIME_TYPE, ...times });
         await guest.put({
             id: 'g-file',
             name: 'car.py',
             mimeType: 'text/x-python',
             parents: ['g-root'],
             content: 'x',
+            ...times,
         });
         ask.mockResolvedValueOnce('own').mockResolvedValueOnce('move');
         await accounts.enterAccount(profile);
