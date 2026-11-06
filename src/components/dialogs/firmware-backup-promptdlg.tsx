@@ -8,6 +8,7 @@
 // See the GNU General Public License for more details
 import Button from '@/widgets/button';
 import { useTranslation } from 'react-i18next';
+import { useDialogClose } from '@/components/dialogs/dialog-close';
 import { IoWarning } from 'react-icons/io5';
 
 type FirmwareBackupPromptDlgProps = {
@@ -29,6 +30,7 @@ function FirmwareBackupPromptDlg({
     onCancel,
 }: FirmwareBackupPromptDlgProps) {
     const { t } = useTranslation();
+    useDialogClose(onCancel);
 
     return (
         <div className="flex h-auto w-[34rem] max-w-[95vw] flex-col gap-3 rounded-md border border-mountain-mist-700 p-8 shadow-md transition-all dark:border-shark-500 dark:bg-shark-950">

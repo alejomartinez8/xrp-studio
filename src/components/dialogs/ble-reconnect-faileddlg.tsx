@@ -64,6 +64,7 @@ function BleReconnectFailedDlg({
                 btnCancelLabel={secondaryLabel}
                 btnAcceptCallback={onRetry}
                 btnCancelCallback={onSecondary}
+                closeCallback="host"
             />
         </div>
     );

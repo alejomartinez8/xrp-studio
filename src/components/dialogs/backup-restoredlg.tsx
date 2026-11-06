@@ -11,6 +11,7 @@ import AppMgr from '@/managers/appmgr';
 import Button from '@/widgets/button';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useDialogClose } from '@/components/dialogs/dialog-close';
 
 type BackupRestoreDlgProps = {
     /**
@@ -30,6 +31,7 @@ type BackupRestoreDlgProps = {
  */
 function BackupRestoreDlg({toggleDialog, onBackup, onRestore}: BackupRestoreDlgProps) {
     const { t } = useTranslation();
+    useDialogClose(toggleDialog);
     const [isBackRestoreDisabled, setIsBackRestoreDisabled] = useState(true);
     const [isBluetoothConnection, setIsBluetoothConnection] = useState(false);
 
