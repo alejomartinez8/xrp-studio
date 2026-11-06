@@ -21,6 +21,7 @@ be proposed to XRPWeb.
 | 012 | [Opening projects: single tap, reopen the last project](012-opening-projects.md) | Done | Single tap possible behind a flag; reopen is fork-specific |
 | 013 | [Welcome screen: new project, recent projects](013-welcome-screen.md) | Done | Fork-specific (kids UI) |
 | 014 | [Lighter first load](014-lighter-first-load.md) | Done | Possible |
+| 016 | [Open projects quickly and without errors](016-faster-project-open.md) | Done | Empty-file fix possible; search is fork-only |
 | — | [Pending upgrades and backlog](pending-upgrades.md) | Backlog | Each one as its own change |
 
 Numbers 002, 009 and 015 were merged into 007, 008 and 013, so each goal has one spec.

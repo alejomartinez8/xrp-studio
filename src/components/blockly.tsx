@@ -14,6 +14,7 @@ import moment from 'moment';
 import { blockThemeOptions } from '@components/blockly/block-theme';
 import { activeBlockTheme } from '@/theme';
 import { kidFriendlyToolbox, registerToolboxUi } from '@components/blockly/toolbox-ui';
+import { parseBlocksJson } from '@components/blockly/blocks-content';
 
 registerFieldColour(); //Plugin needs to be registered. Used for the Color LED on the non beta board. 
 registerToolboxUi();
@@ -192,8 +193,10 @@ function loadBlocksIntoWorkspace(ws: Workspace, session: EditorSession) {
         return;
     }
     const lines = session.content.split('##XRPBLOCKS ');
-    const blockContent = lines.length > 1 ? lines[1]! : lines[0]!;
-    Blockly.serialization.workspaces.load(JSON.parse(blockContent), ws);
+    const blockContent = parseBlocksJson(lines.length > 1 ? lines[1] : lines[0]);
+    if (blockContent) {
+        Blockly.serialization.workspaces.load(blockContent, ws);
+    }
 }
 
 /**
@@ -370,7 +373,10 @@ function BlocklyEditor({ tabId, tabName }: BlocklyEditorProps) {
                 if (ws && session && session.hasBeenLoaded !== true) {
                     try {
                         Blockly.Events.disable();
-                        Blockly.serialization.workspaces.load(JSON.parse(loadContent.content), ws);
+                        const blocks = parseBlocksJson(loadContent.content);
+                        if (blocks) {
+                            Blockly.serialization.workspaces.load(blocks, ws);
+                        }
                         session.hasBeenLoaded = true;
                     } finally {
                         Blockly.Events.enable();

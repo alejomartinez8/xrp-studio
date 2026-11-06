@@ -1,5 +1,4 @@
 import * as Blockly from 'blockly/core';
-import '@blockly/toolbox-search';
 import { createElement } from 'react';
 import { createRoot } from 'react-dom/client';
 import type { IconType } from 'react-icons';
@@ -28,6 +27,7 @@ import {
 import i18n from '@/utils/i18n';
 import { colourBlocksByCategory, themeToolbox } from '@components/blockly/block-theme';
 import { activeBlockTheme } from '@/theme';
+import { registerToolboxSearch } from '@components/blockly/toolbox-search-category';
 import '@components/blockly/toolbox-ui.css';
 
 /**
@@ -157,8 +157,12 @@ class XrpCollapsibleToolboxCategory extends Blockly.CollapsibleToolboxCategory {
     }
 }
 
-/** Register the kid-friendly categories in place of Blockly's defaults. Call once at startup. */
+/**
+ * Register the kid-friendly categories in place of Blockly's defaults, and the block search
+ * field. Call once at startup.
+ */
 export function registerToolboxUi(): void {
+    registerToolboxSearch();
     Blockly.registry.register(
         Blockly.registry.Type.TOOLBOX_ITEM,
         Blockly.ToolboxCategory.registrationName,
