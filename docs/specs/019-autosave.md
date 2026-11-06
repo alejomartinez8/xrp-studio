@@ -27,7 +27,7 @@ themselves. Files opened from Robot memory keep the manual save to the robot.
 - **Save no longer writes to the robot.** Run already copies the program to the robot before
   running it (`saveAllFilesInGoogleDriveToXRP` and the active file). Save and Ctrl+S still work:
   they write at once.
-- **Indicator** `src/components/navbar/save-status.tsx` (new), next to the File and View menus:
+- **Indicator** in the status bar at the bottom (see spec 020), next to the storage icon:
   "Saving…", "Saved", or "Couldn't save" with a tooltip saying the changes are kept and will be
   saved again. It is hidden until the first change.
 - **No unsaved-tab prompt for these files.** Closing a tab writes its last change. The changed
@@ -38,7 +38,7 @@ Hooks in upstream files:
   listeners.
 - `editormgr.ts`: the autosave branch in `saveEditor`, plus `markSessionSaved`.
 - `xrplayout.tsx`: closing a tab.
-- `navbar.tsx`: Run and the indicator.
+- `navbar.tsx`: Run.
 - `main.tsx`: `startAutosave()`.
 
 ![Saved indicator, light](images/019-autosave-light.png)
@@ -59,7 +59,7 @@ Hooks in upstream files:
 
 ## Files
 
-- New: `src/utils/autosave.ts`, `src/components/navbar/save-status.tsx`, tests in
+- New: `src/utils/autosave.ts`, tests in
   `src/utils/tests/autosave.spec.ts`.
 - Changed: `src/managers/editormgr.ts`, `src/components/blockly.tsx`,
   `src/components/MonacoEditor.tsx`, `src/components/xrplayout.tsx`, `src/components/navbar.tsx`,

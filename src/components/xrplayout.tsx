@@ -4,9 +4,11 @@ import {
     IJsonModel,
     TabNode,
     TabSetNode,
+    BorderNode,
     Action,
     Actions,
     ITabRenderValues,
+    ITabSetRenderValues,
 } from 'flexlayout-react';
 import React, { useEffect, useRef, useState } from 'react';
 import * as Blockly from 'blockly/core';
@@ -14,7 +16,6 @@ import BlocklyEditor from '@components/blockly';
 import MonacoEditor from '@components/python/lazy-monaco-editor';
 import XRPShell from '@components/xrpshell';
 import FolderIcon from '@assets/images/folder-24.png';
-import ShellIcon from '@assets/images/shell.svg';
 import GoogleDriveLogo from '@assets/images/Google_Drive-Logo.svg';
 //import treeDaaJson from '@/utils/testdata';
 import AppMgr, { EventType, Themes } from '@/managers/appmgr';
@@ -34,7 +35,9 @@ import Dialog from '@components/dialogs/dialog';
 import ConfirmationDlg from '@components/dialogs/confirmdlg';
 import { swapStylesheet } from '@/utils/swap-stylesheet';
 import WelcomeScreen from '@components/welcome/welcome-screen';
-import { syncShellVisibility } from '@/utils/shell-visibility';
+import { isShellVisible, syncShellVisibility, toggleTerminal } from '@/utils/shell-visibility';
+import { SideBarIcon } from '@components/side-bar-icon';
+import { VscFiles, VscTerminal } from 'react-icons/vsc';
 
 /**
  *  Layout-React's layout JSON to specify the XRPWeb's single page application's layout
@@ -45,6 +48,7 @@ const layout_json: IJsonModel = {
         tabSetEnableDrag: false,
         tabSetEnableDrop: false,
         tabEnableRename: false,
+        splitterSize: 6,
     },
     borders: [
         {
@@ -53,7 +57,7 @@ const layout_json: IJsonModel = {
             enableDrop: false,
             enableAutoHide: true,
             size: 300,
-            selected: 0,
+            selected: -1,
             children: [
                 {
                     type: 'tab',
@@ -181,6 +185,7 @@ function XRPLayout({ forwardedref }: XRPLayoutProps) {
     const { t } = useTranslation();
     const [dialogContent, setDialogContent] = useState<React.ReactNode>(null);
     const dialogRef = useRef<HTMLDialogElement>(null);
+    const [shellVisible, setShellVisible] = useState(() => isShellVisible(model));
 
     /**
      * changeTheme - set the system selected theme
@@ -390,7 +395,11 @@ function XRPLayout({ forwardedref }: XRPLayoutProps) {
      */
     const onRenderTab = (node: TabNode, renderValues: ITabRenderValues) => {
         // Override the content to use the translated tab names
-        if (node.getId() === Constants.FOLDER_TAB_ID) {
+        if (node.getId() === Constants.FOLDER_TAB_ID && isLocalProjectsEnabled) {
+            renderValues.leading = <SideBarIcon icon={VscFiles} label={t('explorer')} />;
+            renderValues.content = null;
+            return renderValues;
+        } else if (node.getId() === Constants.FOLDER_TAB_ID) {
             renderValues.leading = (
                 <img
                     src={FolderIcon}
@@ -405,19 +414,7 @@ function XRPLayout({ forwardedref }: XRPLayoutProps) {
                 />
             );
         } else if (node.getId() === Constants.SHELL_TAB_ID) {
-            renderValues.leading = (
-                <img
-                    src={ShellIcon}
-                    alt="icon"
-                    style={{
-                        width: '16px',
-                        height: '16px',
-                        marginRight: '0px',
-                        flexShrink: 0,
-                        minWidth: '16px',
-                    }}
-                />
-            );
+            renderValues.leading = <VscTerminal size={16} aria-hidden="true" className="shrink-0" />;
         } else if (!isLocalProjectsEnabled && EditorMgr.getInstance().getEditorSession(node.getId())?.gpath) {
             // Only Google Drive files carry a real gpath (file id). New local/XRP
             // files and the Dashboard/AI Buddy tabs use an empty gpath, so a
@@ -439,6 +436,31 @@ function XRPLayout({ forwardedref }: XRPLayoutProps) {
         return renderValues;
     };
 
+    /**
+     * onRenderTabSet - adds the Terminal toggle below the Explorer icon in the left side bar
+     * (XRP Studio, spec 021).
+     */
+    const onRenderTabSet = (node: TabSetNode | BorderNode, renderValues: ITabSetRenderValues) => {
+        if (node instanceof BorderNode && node.getLocation().getName() === 'left') {
+            renderValues.stickyButtons.push(
+                <SideBarIcon
+                    key="terminal"
+                    icon={VscTerminal}
+                    label={t('terminal')}
+                    selected={shellVisible}
+                    onClick={() => toggleTerminal(model)}
+                    testId="terminal-toggle"
+                />,
+            );
+        }
+    };
+
+    /** Keeps the shell rule applied and the Terminal icon in step with the layout. */
+    const onModelChange = (changed: Model) => {
+        syncShellVisibility(changed);
+        setShellVisible(isShellVisible(changed));
+    };
+
     return (
         <>
             <Layout
@@ -447,8 +469,9 @@ function XRPLayout({ forwardedref }: XRPLayoutProps) {
                 factory={factory}
                 onAction={handleActions}
                 onRenderTab={onRenderTab}
+                onRenderTabSet={onRenderTabSet}
                 onTabSetPlaceHolder={renderTabSetPlaceHolder}
-                onModelChange={syncShellVisibility}
+                onModelChange={onModelChange}
             />
             <Dialog isOpen={false} toggleDialog={toggleDialog} ref={dialogRef}>
                 {dialogContent}

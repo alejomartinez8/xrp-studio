@@ -1,9 +1,8 @@
-/* Toolbox rows: taller, bolder, with a separator line. */
+/* Toolbox rows: taller and bolder. */
 .blocklyToolboxCategory {
     min-height: 40px;
     display: flex;
     align-items: center;
-    border-bottom: 1px solid rgba(127, 127, 127, 0.2);
 }
 
 .blocklyToolboxCategoryLabel {
@@ -17,12 +16,23 @@
     width: 100%;
 }
 
+/** The row content ignores the pointer in Blockly, so the input must take it back to be clickable. */
 #toolbox-search-input input {
+    pointer-events: auto;
     width: calc(100% - 16px);
     padding: 6px 12px;
     border: 1px solid rgba(127, 127, 127, 0.4);
     border-radius: 16px;
     font-size: 14px;
+    background: #ffffff;
+    box-shadow: none;
+    outline: none;
+}
+
+#toolbox-search-input input:focus {
+    border-color: #0969da;
+    box-shadow: 0 0 0 1px #0969da;
+    outline: none;
 }
 
 .xrpToolboxIcon {
@@ -32,11 +42,28 @@
 }
 
 .dark #toolbox-search-input input {
-    background: #2b2b2b;
-    color: #ddd;
+    background: #21262d;
+    background-image: none;
+    color: #e6edf3;
+    border-color: #30363d;
+}
+
+.dark #toolbox-search-input input:focus {
+    border-color: #388bfd;
+    box-shadow: 0 0 0 1px #388bfd;
 }
 
 .dark .blocklyToolboxCategoryIconClosed,
 .dark .blocklyToolboxCategoryIconOpen {
     filter: invert(1);
+}
+
+/* Separators only add space: no line across the toolbox. */
+.blocklyTreeSeparator {
+    border-color: transparent;
+}
+
+/** The search row never takes the selected category colour: it stays flat like the panel. */
+div#toolbox-search-input.blocklyToolboxCategory {
+    background-color: transparent !important;
 }
