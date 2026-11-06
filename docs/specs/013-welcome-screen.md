@@ -1,7 +1,7 @@
 # 013 — Welcome screen
 
-What the editor area shows when no tab is open, in two parts: start a new project, and continue a
-recent one.
+What the editor area shows when no tab is open, in four parts: start a new project, continue a
+recent one, start from an example, and hide the shell until a project is open.
 
 ## Part 1 — New project
 
@@ -97,7 +97,97 @@ had to find it in the Folders panel, among many files and folders.
 | --- | --- |
 | ![Light](images/recent-projects-light.png) | ![Dark](images/recent-projects-dark.png) |
 
+## Part 3 — Examples
+
+### Problem
+
+A child who has never programmed the robot starts from an empty workspace and does not know which
+blocks make it move. Working programs to start from and change are the quickest way in.
+
+### Solution
+
+- Below the recent projects, **Start from an example** shows four cards, each with an icon and one
+  sentence: **Drive and turn**, **Square**, **Avoid obstacles** and **Follow a line**.
+- `src/utils/examples.ts` (new): the four blocks programs as Blockly JSON, built only from blocks
+  in the XRP toolbox (block texts follow the app language on their own). Each one starts with
+  "Wait for button press", so the robot does not drive off in the child's hand:
+  - Drive and turn: straight 30 cm, turn 180°, straight 30 cm, LED on.
+  - Square: repeat 4 times: straight 20 cm, turn 90°.
+  - Avoid obstacles: forever: if the distance sensor reads less than 20 cm, stop and turn 90°;
+    otherwise drive at effort 0.5.
+  - Follow a line: forever: if the left reflectance is higher than the right one, slow the left
+    wheel (0.2, 0.5); otherwise slow the right wheel (0.5, 0.2).
+- Tapping a card goes through the same naming step as a new project, with the example's title
+  already typed (accents dropped, so "Seguir la línea" becomes `Seguir la linea`). If that name is
+  taken, the first free number is suggested (`Square 2`). The copy is saved in the user's projects
+  and opened; the example itself never changes.
+- `navbar.tsx` (`createNewFile`): the new file is created with `NewFileData.content` when it has
+  one (empty otherwise, as before), and the editor tab loads that content when it mounts.
+
+### Files
+
+- New: `src/utils/examples.ts`, `src/utils/tests/examples.spec.ts`.
+- Changed: `src/components/welcome/welcome-screen.tsx` and its tests, `src/components/navbar.tsx`
+  (`createNewFile` uses `data.content`), `src/utils/i18n/locales/{en,es}/{en,es}.json`
+  (`welcome.examplesTitle`, `welcome.examples.*`).
+
+### How to test
+
+1. `npx vitest run src/utils/tests/examples.spec.ts src/components/welcome`: 7 tests. Every example
+   loads into a Blockly workspace and generates the expected Python
+   (`board.wait_for_button()`, `differentialDrive.straight(30, 0.5)`, `for count in range(4):`,
+   `(rangefinder.distance()) < 20`, `(reflectance.get_left()) > (reflectance.get_right())`).
+2. My projects, no tab open: tap **Square**. The name step shows `Square`; press Enter:
+   `Square.blocks` opens with its blocks. Reload: the blocks are still there.
+3. Close the tab and tap **Square** again: `Square 2` is suggested.
+4. Spanish UI: "Empieza con un ejemplo"; **Evitar obstáculos** suggests `Evitar obstaculos` and the
+   blocks show in Spanish.
+5. With a robot (not tested yet): run each example and adjust distances, angles, efforts and the
+   line comparison if needed.
+
+| | Light | Dark |
+| --- | --- | --- |
+| Examples | ![Light](images/013-examples-light.png) | ![Dark](images/013-examples-dark.png) |
+| Example opened | ![Light](images/013-example-open-light.png) | ![Dark](images/013-example-open-dark.png) |
+
+## Part 4 — Shell only with a project open
+
+### Problem
+
+The shell takes a third of the screen under the welcome screen, where nothing can run yet. For a
+child it is an empty black box with no purpose.
+
+### Solution
+
+- `src/utils/shell-visibility.ts` (new): `syncShellVisibility(model)` maximizes the editor tabset
+  while it has no tabs, which hides the shell tabset with flexlayout's own maximize (the terminal
+  stays mounted, so its state and robot output are kept). The first open tab restores the layout,
+  and closing the last tab hides the shell again.
+- It only acts when the editor tabset changes between empty and not empty, so a maximize or restore
+  the user chooses with projects open is kept.
+- `xrplayout.tsx`: runs it once when the model is created and on every model change
+  (`onModelChange`).
+- Connecting the robot from the welcome screen shows no shell output; it appears as soon as a
+  project is opened, which running a program needs anyway.
+
+### Files
+
+- New: `src/utils/shell-visibility.ts`, `src/utils/tests/shell-visibility.spec.ts`.
+- Changed: `src/components/xrplayout.tsx` (3 lines).
+
+### How to test
+
+1. `npx vitest run src/utils/tests/shell-visibility.spec.ts`: 2 tests.
+2. No tab open: the welcome screen fills the editor area and there is no shell.
+3. Open or create a project: the shell shows below the editor. Reload: still there.
+4. Close the last tab: the shell hides and the welcome screen fills the area again.
+
+The **Examples** screenshots above show the welcome screen without the shell, and **Example
+opened** shows it back with a project open.
+
 ## Upstream
 
 Fork-specific (kids UI). `createNewFile` / `EVENT_NEW_PROJECT` and `AppMgr.removeHandler` could
-serve XRPWeb too.
+serve XRPWeb too. Hiding the shell with no tabs open is a small, separate change XRPWeb could take
+on its own. Creating a new file with content (`NewFileData.content`) is a small change XRPWeb
+could use for its own examples.

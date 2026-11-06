@@ -1,7 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { IconType } from 'react-icons';
+import { TbArrowBackUp, TbRadar, TbRoute, TbSquare } from 'react-icons/tb';
 import AppMgr, { EventType, LoginStatus } from '@/managers/appmgr';
 import { Constants } from '@/utils/constants';
+import {
+    Example,
+    ExampleId,
+    EXAMPLES,
+    exampleContent,
+    suggestedExampleName,
+} from '@/utils/examples';
 import { getUsernameFromEmail } from '@/utils/google-utils';
 import {
     cleanProjectName,
@@ -15,11 +24,23 @@ import logger from '@/utils/logger';
 import blockIcon from '@assets/images/blockly.svg';
 import pythonIcon from '@assets/images/python-svgrepo-com.svg';
 
-/** The project being named: its kind, the folder it goes in and the names already there. */
+/**
+ * The project being named: its kind, the folder it goes in, the names already there and, for a
+ * copy of an example, its content.
+ */
 type Draft = {
     kind: ProjectKind;
     folderId: string;
     existingNames: string[];
+    content?: string;
+};
+
+/** Icon of each example card. */
+const EXAMPLE_ICONS: Record<ExampleId, IconType> = {
+    driveAndTurn: TbArrowBackUp,
+    square: TbSquare,
+    avoidObstacles: TbRadar,
+    followLine: TbRoute,
 };
 
 const welcomeLogger = logger.child({ module: 'welcome' });
@@ -30,7 +51,9 @@ const welcomeLogger = logger.child({ module: 'welcome' });
  * suggested, so the child thinks of one that is easy to find later); it is saved right away in the
  * user's projects (My projects or Google Drive) and opened, without the New File dialog. Without a place
  * to save projects (signed out of Google), it asks to sign in first. Below, the most recent
- * projects open with one tap.
+ * projects open with one tap, and examples start a blocks project from a working program: the
+ * example's name is suggested (with a number when taken) and the copy goes through the same
+ * naming step.
  */
 function WelcomeScreen() {
     const { t, i18n } = useTranslation();
@@ -94,8 +117,11 @@ function WelcomeScreen() {
         }
     }, [draft]);
 
-    /** Look up the projects folder and the names already in it, then ask for a name. */
-    const startProject = async (kind: ProjectKind) => {
+    /**
+     * Look up the projects folder and the names already in it, then ask for a name: empty for a
+     * new project, or the example's title for a copy of an example.
+     */
+    const startProject = async (kind: ProjectKind, example?: Example) => {
         const appMgr = AppMgr.getInstance();
         if (!appMgr.authService.isLogin) {
             setNeedsSignIn(true);
@@ -110,8 +136,21 @@ function WelcomeScreen() {
             }
             const files = await driveService.getFileListByFolderId(folder.id);
             const existingNames = files.map((file) => file.name);
-            setName('');
-            setDraft({ kind, folderId: folder.id, existingNames });
+            setName(
+                example
+                    ? suggestedExampleName(
+                          cleanProjectName(t(`welcome.examples.${example.id}.title`)),
+                          projectExtension(kind),
+                          existingNames,
+                      )
+                    : '',
+            );
+            setDraft({
+                kind,
+                folderId: folder.id,
+                existingNames,
+                content: example ? exampleContent(example) : undefined,
+            });
         } catch (error) {
             welcomeLogger.error(
                 `Could not start a project: ${error instanceof Error ? error.message : String(error)}`,
@@ -138,7 +177,10 @@ function WelcomeScreen() {
             `${name.trim()}${extension}`,
             username,
         );
-        appMgr.emit(EventType.EVENT_NEW_PROJECT, JSON.stringify(data));
+        appMgr.emit(
+            EventType.EVENT_NEW_PROJECT,
+            JSON.stringify(draft.content ? { ...data, content: draft.content } : data),
+        );
         setDraft(null);
     };
 
@@ -280,6 +322,39 @@ function WelcomeScreen() {
                         </ul>
                     </section>
                 )}
+                <section className="flex w-full max-w-3xl flex-col gap-3">
+                    <h3 className="text-lg font-semibold text-shark-700 dark:text-mountain-mist-200">
+                        {t('welcome.examplesTitle')}
+                    </h3>
+                    <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                        {EXAMPLES.map((example) => {
+                            const Icon = EXAMPLE_ICONS[example.id];
+                            return (
+                                <li key={example.id}>
+                                    <button
+                                        type="button"
+                                        data-testid={`example-${example.id}`}
+                                        onClick={() => void startProject('blocks', example)}
+                                        disabled={isBusy}
+                                        className="flex w-full items-center gap-3 rounded-xl border-2 border-mountain-mist-200 bg-shark-50 px-4 py-3 text-left transition hover:border-curious-blue-300 hover:shadow-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-curious-blue-400 disabled:cursor-wait disabled:opacity-60 dark:border-shark-700 dark:bg-shark-800 dark:hover:border-curious-blue-500"
+                                    >
+                                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-curious-blue-100 text-curious-blue-700 dark:bg-curious-blue-900 dark:text-curious-blue-200">
+                                            <Icon size={24} aria-hidden="true" />
+                                        </span>
+                                        <span className="flex min-w-0 flex-col">
+                                            <span className="font-semibold text-shark-800 dark:text-mountain-mist-100">
+                                                {t(`welcome.examples.${example.id}.title`)}
+                                            </span>
+                                            <span className="text-sm text-shark-600 dark:text-mountain-mist-300">
+                                                {t(`welcome.examples.${example.id}.hint`)}
+                                            </span>
+                                        </span>
+                                    </button>
+                                </li>
+                            );
+                        })}
+                    </ul>
+                </section>
                 <p role="status" className={hint}>
                     {needsSignIn
                         ? t('welcome.signInFirst')

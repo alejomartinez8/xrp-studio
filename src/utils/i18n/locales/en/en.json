@@ -320,6 +320,25 @@
         "namePlaceholder": "Type a name",
         "recentTitle": "Your recent projects",
         "justNow": "Just now",
-        "moreHint": "Find all your projects in the Folders panel."
+        "moreHint": "Find all your projects in the Folders panel.",
+        "examplesTitle": "Start from an example",
+        "examples": {
+            "driveAndTurn": {
+                "title": "Drive and turn",
+                "hint": "Drive forward, turn around and come back"
+            },
+            "square": {
+                "title": "Square",
+                "hint": "Drive in a square with a repeat loop"
+            },
+            "avoidObstacles": {
+                "title": "Avoid obstacles",
+                "hint": "Turn when the distance sensor sees something close"
+            },
+            "followLine": {
+                "title": "Follow a line",
+                "hint": "Follow a dark line with the reflectance sensors"
+            }
+        }
     }
 }
