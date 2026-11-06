@@ -36,7 +36,7 @@ function StatusBar() {
             role="status"
             aria-label={t('statusBar')}
             style={{ height: STATUS_BAR_HEIGHT_PX }}
-            className="flex items-center gap-3 border-t border-mountain-mist-300 bg-mountain-mist-100 px-3 text-mountain-mist-800 dark:border-shark-700 dark:bg-shark-900 dark:text-mountain-mist-300"
+            className="flex items-center gap-3 bg-[var(--app-frame)] px-3 text-mountain-mist-800 dark:text-mountain-mist-300"
         >
             <span
                 data-testid="sync-status"

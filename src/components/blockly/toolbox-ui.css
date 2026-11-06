@@ -1,9 +1,8 @@
-/* Toolbox rows: taller, bolder, with a separator line. */
+/* Toolbox rows: taller and bolder. */
 .blocklyToolboxCategory {
     min-height: 40px;
     display: flex;
     align-items: center;
-    border-bottom: 1px solid rgba(127, 127, 127, 0.2);
 }
 
 .blocklyToolboxCategoryLabel {
@@ -32,11 +31,16 @@
 }
 
 .dark #toolbox-search-input input {
-    background: #2b2b2b;
+    background: transparent;
     color: #ddd;
 }
 
 .dark .blocklyToolboxCategoryIconClosed,
 .dark .blocklyToolboxCategoryIconOpen {
     filter: invert(1);
+}
+
+/* Separators only add space: no line across the toolbox. */
+.blocklyTreeSeparator {
+    border-color: transparent;
 }

@@ -29,7 +29,7 @@ function App() {
 
     return (
         <>
-            <header className="bg-curious-blue-700 dark:bg-mountain-mist-950">
+            <header className="bg-curious-blue-700 dark:bg-[var(--app-frame)]">
                 <Navbar layoutref={xrpLayoutRef} />
             </header>
             <main className="relative h-[calc(100vh-84px)]">

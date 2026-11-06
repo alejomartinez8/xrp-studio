@@ -25,6 +25,7 @@ be proposed to XRPWeb.
 | 018 | [Installable app that works offline](018-installable-app.md) | Done | Possible |
 | 019 | [Automatic save](019-autosave.md) | Done; robot behaviour to be tested | Possible behind a setting |
 | 020 | [Projects in the browser, synced with your account](020-drive-sync.md) | Part (a) done; part (b) in the backlog | Fork-only for now |
+| 021 | [Layout: side bar, Terminal toggle, rounded panels](021-layout.md) | Done | Fork-specific (kids UI) |
 | — | [Pending upgrades and backlog](pending-upgrades.md) | Backlog | Each one as its own change |
 
 Numbers 002, 009 and 015 were merged into 007, 008 and 013, so each goal has one spec.

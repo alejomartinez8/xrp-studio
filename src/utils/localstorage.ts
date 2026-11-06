@@ -14,6 +14,7 @@ const StorageKeys = {
     LAST_PROJECT: 'LastProject',
     ACCOUNT: 'Account',
     OWN_ACCOUNTS: 'OwnAccounts',
+    TERMINAL: 'Terminal',
   } as const;
   
   export type StorageKeysType = (typeof StorageKeys)[keyof typeof StorageKeys];

@@ -1,7 +1,13 @@
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { Actions, DockLocation, Model, TabSetNode } from 'flexlayout-react';
 import { Constants } from '@/utils/constants';
-import { syncShellVisibility } from '@/utils/shell-visibility';
+import {
+    isShellVisible,
+    isTerminalOn,
+    syncShellVisibility,
+    toggleTerminal,
+} from '@/utils/shell-visibility';
+import { StorageKeys } from '@/utils/localstorage';
 
 /** A model with an empty editor tabset above the shell tabset, as in the app layout. */
 function layoutModel(): Model {
@@ -44,8 +50,42 @@ function openTab(model: Model, id: string): void {
     );
 }
 
+/** A layout model that applies the shell rule on every change, as the app does. */
+function syncedModel(): Model {
+    const model = layoutModel();
+    model.addChangeListener(() => syncShellVisibility(model));
+    syncShellVisibility(model);
+    return model;
+}
+
 describe('syncShellVisibility', () => {
+    beforeEach(() => localStorage.clear());
+
+    it('keeps the terminal off by default, even with a project open', () => {
+        const model = syncedModel();
+        openTab(model, 'a');
+        expect(isTerminalOn()).toBe(false);
+        expect(shellHidden(model)).toBe(true);
+    });
+
+    it('toggles the terminal while a project is open and remembers the choice', () => {
+        const model = syncedModel();
+        openTab(model, 'a');
+        toggleTerminal(model);
+        expect(isShellVisible(model)).toBe(true);
+        expect(localStorage.getItem(StorageKeys.TERMINAL)).toBe('on');
+
+        const next = syncedModel();
+        openTab(next, 'b');
+        expect(isShellVisible(next)).toBe(true);
+
+        toggleTerminal(next);
+        expect(isShellVisible(next)).toBe(false);
+        expect(isTerminalOn()).toBe(false);
+    });
+
     it('hides the shell with no projects open and shows it while one is open', () => {
+        localStorage.setItem(StorageKeys.TERMINAL, 'on');
         const model = layoutModel();
         model.addChangeListener(() => syncShellVisibility(model));
         syncShellVisibility(model);
@@ -59,6 +99,7 @@ describe('syncShellVisibility', () => {
     });
 
     it('keeps a maximize chosen by the user while projects are open', () => {
+        localStorage.setItem(StorageKeys.TERMINAL, 'on');
         const model = layoutModel();
         model.addChangeListener(() => syncShellVisibility(model));
         syncShellVisibility(model);

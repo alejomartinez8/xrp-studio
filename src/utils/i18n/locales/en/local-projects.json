@@ -1,5 +1,5 @@
 {
-    "GoogleDriveStorage": "My projects",
+    "GoogleDriveStorage": "Explorer",
     "not-google-drive-file": "This file is not in My projects. Please save it to the XRP instead.",
     "backup-restore": {
         "description": "Backup or restore your XRP Robot files. Click the button below to begin. Note that your XRP must be connected before performing a backup or restore."

@@ -2,8 +2,7 @@ import { ConnectionState } from '@/connections/connection';
 import AppMgr, { EventType } from '@/managers/appmgr';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AiOutlineFileAdd } from "react-icons/ai";
-import { AiOutlineFolderAdd } from "react-icons/ai";
+import { VscNewFile, VscNewFolder } from 'react-icons/vsc';
 
 interface FolderHeaderProps {
     newFolderCallback: () => void;
@@ -50,11 +49,11 @@ function FolderHeader({newFolderCallback, newFileCallback }: FolderHeaderProps) 
                 }
             </div>
             <div className="flex flex-row gap-1">
-                <button title={t('newFolder')} onClick={newFolderCallback} disabled={isRunning}>
-                    <AiOutlineFolderAdd className={`${isRunning ? 'opacity-50' : 'opacity-100'}`} size={'1.5em'} />
-                </button>
                 <button title={t('newFile')} className={`${isRunning ? 'opacity-50' : 'opacity-100'}`} onClick={newFileCallback} disabled={isRunning}>
-                    <AiOutlineFileAdd size={'1.4em'} />
+                    <VscNewFile size={18} />
+                </button>
+                <button title={t('newFolder')} onClick={newFolderCallback} disabled={isRunning}>
+                    <VscNewFolder className={`${isRunning ? 'opacity-50' : 'opacity-100'}`} size={18} />
                 </button>
             </div>
         </div>
