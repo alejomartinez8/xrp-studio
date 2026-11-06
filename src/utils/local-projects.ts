@@ -3,6 +3,7 @@ import { CommandToXRPMgr } from '@/managers/commandstoxrpmgr';
 import { UserProfile } from '@/services/google-auth';
 import LocalDriveService from '@/services/local-drive';
 import { Constants } from '@/utils/constants';
+import { openActiveSpace } from '@/utils/accounts';
 
 /**
  * Switching between the two places projects can live when "My projects" is enabled:
@@ -38,14 +39,16 @@ export function isMyProjectsActive(): boolean {
 
 /**
  * Open the My projects session: make sure the root folder exists and mark the session as signed
- * in. Returns the profile for the sign-in callback, which loads the project tree.
+ * in. Opens the space of the account remembered on this device, if any (spec 020), else the guest
+ * space. Returns the profile for the sign-in callback, which loads the project tree.
  */
 export async function startMyProjects(): Promise<UserProfile> {
     const appMgr = AppMgr.getInstance();
+    const profile = (await openActiveSpace()) ?? LOCAL_PROFILE;
     await (appMgr.driveService as LocalDriveService).ensureRootFolder(Constants.XRPCODE);
-    appMgr.authService.userProfile = LOCAL_PROFILE;
+    appMgr.authService.userProfile = profile;
     appMgr.authService.isLogin = true;
-    return LOCAL_PROFILE;
+    return profile;
 }
 
 /**

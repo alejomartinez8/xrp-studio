@@ -91,4 +91,30 @@ describe('LocalDriveService', () => {
         const tree = await reopened.buildTree(Constants.XRPCODE);
         expect(await reopened.getFileContents(tree.children![0].id)).toBe('saved');
     });
+    it('marks changes for sync and keeps synced deletions as hidden records', async () => {
+        const changes: number[] = [];
+        drive.onChange = () => changes.push(1);
+        const file = await drive.uploadFile(new Blob(['a']), 'a.py', 'text/x-python', rootId);
+        expect((await drive.getRecord(file!.id))?.dirty).toBe(true);
+        expect(changes.length).toBeGreaterThan(0);
+
+        await drive.putRecord({
+            ...(await drive.getRecord(file!.id))!,
+            driveId: 'r1',
+            dirty: false,
+        });
+        const local = await drive.uploadFile(new Blob(['b']), 'b.py', 'text/x-python', rootId);
+        await drive.DeleteFile(file!.id);
+        await drive.DeleteFile(local!.id);
+
+        expect(await drive.getFileListByFolderId(rootId)).toHaveLength(0);
+        expect(await drive.getRecord(file!.id)).toMatchObject({ deleted: true, dirty: true });
+        expect(await drive.getRecord(local!.id)).toBeUndefined();
+    });
+
+    it('switches to another store and forgets the cached records', async () => {
+        await drive.uploadFile(new Blob(['a']), 'a.py', 'text/x-python', rootId);
+        drive.useStore(new MemoryDriveStore());
+        expect(await drive.allRecords()).toHaveLength(0);
+    });
 });

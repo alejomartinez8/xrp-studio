@@ -13,6 +13,16 @@ export interface LocalDriveRecord {
     createdTime: string;
     modifiedTime: string;
     content?: string;
+    /** Id of the copy in the signed-in account's Drive, once uploaded (spec 020). */
+    driveId?: string;
+    /** Drive's modified time of that copy when this record last matched it. */
+    syncedTime?: string;
+    /** Parent folder (local id) when this record last matched Drive, to detect moves. */
+    syncedParent?: string;
+    /** Changed in this browser and not uploaded yet. */
+    dirty?: boolean;
+    /** Deleted in this browser; kept until Drive moves its copy to the trash. */
+    deleted?: boolean;
 }
 
 /** Persistence backend for LocalDriveService (IndexedDB in the app, memory in tests). */
@@ -22,7 +32,8 @@ export interface LocalDriveStore {
     delete(id: string): Promise<void>;
 }
 
-const DB_NAME = 'xrp-studio';
+/** Database of the guest space: the projects of whoever uses the app without signing in. */
+export const GUEST_DB_NAME = 'xrp-studio';
 const DB_VERSION = 1;
 const STORE_NAME = 'drive';
 
@@ -49,11 +60,25 @@ function blobToText(blob: Blob): Promise<string> {
 /** IndexedDB-backed store: projects survive reloads and work without a network. */
 export class IndexedDbDriveStore implements LocalDriveStore {
     private _db: Promise<IDBDatabase> | null = null;
+    private _name: string;
+
+    /** @param name database name: the guest space, or one per signed-in account */
+    constructor(name: string = GUEST_DB_NAME) {
+        this._name = name;
+    }
+
+    /** Close the connection, so the database can be deleted. */
+    async close(): Promise<void> {
+        if (this._db) {
+            (await this._db).close();
+            this._db = null;
+        }
+    }
 
     private db(): Promise<IDBDatabase> {
         if (!this._db) {
             this._db = new Promise((resolve, reject) => {
-                const request = indexedDB.open(DB_NAME, DB_VERSION);
+                const request = indexedDB.open(this._name, DB_VERSION);
                 request.onupgradeneeded = () => {
                     request.result.createObjectStore(STORE_NAME, { keyPath: 'id' });
                 };
@@ -81,6 +106,16 @@ export class IndexedDbDriveStore implements LocalDriveStore {
     }
 }
 
+/** Delete a whole database (an account's space on this device). */
+export function deleteDriveDatabase(name: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.deleteDatabase(name);
+        request.onsuccess = () => resolve();
+        request.onblocked = () => resolve();
+        request.onerror = () => reject(request.error);
+    });
+}
+
 /** In-memory store, used by tests. */
 export class MemoryDriveStore implements LocalDriveStore {
     private _records = new Map<string, LocalDriveRecord>();
@@ -100,8 +135,13 @@ export class MemoryDriveStore implements LocalDriveStore {
 
 /**
  * LocalDriveService - a drop-in replacement for GoogleDriveService that keeps files in the
- * browser instead of Google Drive. Used by offline builds so the existing "Google Drive"
- * code paths (file tree, open, save, autosave, run) work without an account or a network.
+ * browser instead of Google Drive, so the existing "Google Drive" code paths (file tree, open,
+ * save, autosave, run) work without an account or a network.
+ *
+ * Every change marks the record `dirty` and notifies {@link onChange}; Drive sync (spec 020)
+ * uploads it. A deleted record that has a copy in Drive stays as a hidden `deleted` record until
+ * sync moves that copy to the Drive trash. {@link useStore} switches between the guest space and
+ * a signed-in account's space.
  */
 class LocalDriveService extends GoogleDriveService {
     private _store: LocalDriveStore;
@@ -109,11 +149,60 @@ class LocalDriveService extends GoogleDriveService {
     private _loading: Promise<Map<string, LocalDriveRecord>> | null = null;
     private _localLogger = logger.child({ module: 'localdrive' });
     private _rootFolders = new Map<string, Promise<GoogleDriveFile>>();
+    /** Called after each change made through the app (not by sync). */
+    onChange: (() => void) | null = null;
 
     constructor(store: LocalDriveStore = new IndexedDbDriveStore()) {
         super();
         this._store = store;
         this.setAccessToken('local');
+    }
+
+    /** The store in use. */
+    get store(): LocalDriveStore {
+        return this._store;
+    }
+
+    /** Use another store (another account's space) from now on. */
+    useStore(store: LocalDriveStore): void {
+        this._store = store;
+        this._records = null;
+        this._loading = null;
+        this._rootFolders.clear();
+    }
+
+    /** Every record, deleted ones included (for sync). */
+    async allRecords(): Promise<LocalDriveRecord[]> {
+        return [...(await this.records()).values()].map((r) => ({ ...r }));
+    }
+
+    /** One record, deleted or not (for sync). */
+    async getRecord(id: string): Promise<LocalDriveRecord | undefined> {
+        const record = (await this.records()).get(id);
+        return record ? { ...record } : undefined;
+    }
+
+    /** Store a record as given, without marking it changed (for sync). */
+    async putRecord(record: LocalDriveRecord): Promise<void> {
+        (await this.records()).set(record.id, { ...record });
+        await this._store.put({ ...record });
+    }
+
+    /** Remove a record for good, without marking anything changed (for sync). */
+    async removeRecord(id: string): Promise<void> {
+        (await this.records()).delete(id);
+        await this._store.delete(id);
+    }
+
+    /** Records the app can see: everything but deleted ones. */
+    private async visible(): Promise<LocalDriveRecord[]> {
+        return [...(await this.records()).values()].filter((r) => !r.deleted);
+    }
+
+    /** Store a change made through the app: marks it for upload and notifies the listener. */
+    private async change(record: LocalDriveRecord): Promise<void> {
+        await this.save({ ...record, dirty: true });
+        this.onChange?.();
     }
 
     private async records(): Promise<Map<string, LocalDriveRecord>> {
@@ -161,8 +250,9 @@ class LocalDriveService extends GoogleDriveService {
             createdTime: now,
             modifiedTime: now,
             content,
+            dirty: true,
         };
-        await this.save(record);
+        await this.change(record);
         return record;
     }
 
@@ -190,8 +280,7 @@ class LocalDriveService extends GoogleDriveService {
     }
 
     async getFileListByFolderId(folderId: string): Promise<GoogleDriveFile[]> {
-        const records = await this.records();
-        return [...records.values()]
+        return (await this.visible())
             .filter((r) => r.parents?.includes(folderId))
             .sort((a, b) => a.name.localeCompare(b.name))
             .map((r) => this.toDriveFile(r));
@@ -202,7 +291,7 @@ class LocalDriveService extends GoogleDriveService {
         folderName: string,
         parentFolderId?: string,
     ): Promise<GoogleDriveFile | null> {
-        const folders = [...(await this.records()).values()].filter(
+        const folders = (await this.visible()).filter(
             (r) => r.mimeType === FOLDER_MIME_TYPE && r.name === folderName,
         );
         const match = parentFolderId
@@ -212,7 +301,8 @@ class LocalDriveService extends GoogleDriveService {
     }
 
     async getFolderName(folderId: string): Promise<string | null> {
-        return (await this.records()).get(folderId)?.name ?? null;
+        const record = (await this.records()).get(folderId);
+        return record && !record.deleted ? record.name : null;
     }
 
     async downloadFile(
@@ -220,7 +310,7 @@ class LocalDriveService extends GoogleDriveService {
         downloadFileName?: string,
     ): Promise<{ blob: Blob; fileName: string; mimeType: string } | null> {
         const record = (await this.records()).get(fileId);
-        if (!record) {
+        if (!record || record.deleted) {
             this._localLogger.error(`File not found: ${fileId}`);
             return null;
         }
@@ -233,7 +323,7 @@ class LocalDriveService extends GoogleDriveService {
 
     async getFileContents(fileId: string): Promise<string | null> {
         const record = (await this.records()).get(fileId);
-        return record ? (record.content ?? '') : null;
+        return record && !record.deleted ? (record.content ?? '') : null;
     }
 
     async uploadFile(
@@ -259,7 +349,7 @@ class LocalDriveService extends GoogleDriveService {
         parentFolderId?: string,
     ): Promise<GoogleDriveFile | null> {
         const existing = existingFileId ? (await this.records()).get(existingFileId) : undefined;
-        if (!existing) {
+        if (!existing || existing.deleted) {
             const created = await this.create(
                 fileName,
                 mimeType,
@@ -275,25 +365,38 @@ class LocalDriveService extends GoogleDriveService {
             content: await blobToText(fileBlob),
             modifiedTime: new Date().toISOString(),
         };
-        await this.save(updated);
+        await this.change(updated);
         return this.toDriveFile(updated);
     }
 
     async renameFile(fileId: string, newName: string): Promise<void> {
         const record = (await this.records()).get(fileId);
-        if (record) {
-            await this.save({ ...record, name: newName, modifiedTime: new Date().toISOString() });
+        if (record && !record.deleted) {
+            await this.change({ ...record, name: newName, modifiedTime: new Date().toISOString() });
         }
     }
 
-    /** Delete a file, or a folder and everything inside it, like Google Drive. */
+    /**
+     * Delete a file, or a folder and everything inside it, like Google Drive. A record with a copy
+     * in Drive is kept, hidden, until sync moves that copy to the Drive trash.
+     */
     async DeleteFile(fileId: string): Promise<void> {
+        await this.deleteTree(fileId);
+        this.onChange?.();
+    }
+
+    private async deleteTree(fileId: string): Promise<void> {
         const records = await this.records();
         for (const child of [...records.values()].filter((r) => r.parents?.includes(fileId))) {
-            await this.DeleteFile(child.id);
+            await this.deleteTree(child.id);
         }
-        records.delete(fileId);
-        await this._store.delete(fileId);
+        const record = records.get(fileId);
+        if (record?.driveId) {
+            await this.save({ ...record, deleted: true, dirty: true });
+        } else {
+            records.delete(fileId);
+            await this._store.delete(fileId);
+        }
     }
 
     async trashFile(fileId: string): Promise<void> {
@@ -302,11 +405,11 @@ class LocalDriveService extends GoogleDriveService {
 
     async moveFile(fileId: string, oldParentId: string, newParentId: string): Promise<void> {
         const record = (await this.records()).get(fileId);
-        if (!record) {
+        if (!record || record.deleted) {
             throw new Error(`File not found: ${fileId}`);
         }
         const parents = (record.parents ?? []).filter((p) => p !== oldParentId);
-        await this.save({ ...record, parents: [...parents, newParentId] });
+        await this.change({ ...record, parents: [...parents, newParentId] });
     }
 }
 

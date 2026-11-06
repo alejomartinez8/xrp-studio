@@ -15,6 +15,7 @@ import GoogleAuthService from '@/services/google-auth';
 import GoogleDriveService from '@/services/google-drive';
 import LocalDriveService from '@/services/local-drive';
 import { isLocalProjectsEnabled } from '@/utils/offline';
+import DriveApi from '@/services/drive-api';
 
 export enum Themes {
     DARK = 'dark',
@@ -124,6 +125,7 @@ export default class AppMgr {
     private _driveService: GoogleDriveService = isLocalProjectsEnabled
         ? new LocalDriveService()
         : new GoogleDriveService();
+    private _remoteDriveService = new DriveApi();
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -150,6 +152,14 @@ export default class AppMgr {
      */
     public get driveService(): GoogleDriveService {
         return this._driveService;
+    }
+
+    /**
+     * The signed-in account's Google Drive, which My projects syncs with (spec 020). The app's
+     * files go through {@link driveService}; this one is only used by sign-in and sync.
+     */
+    public get remoteDriveService(): DriveApi {
+        return this._remoteDriveService;
     }
 
     /**

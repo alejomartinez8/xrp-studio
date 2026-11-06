@@ -8,7 +8,8 @@ import { useTranslation } from 'react-i18next';
 import { Constants } from '@/utils/constants';
 import { useGoogleClientId } from '@/utils/google-client-id';
 import GoogleLogo from '@assets/images/google-logo.svg';
-import { isLocalProjectsEnabled } from '@/utils/offline';
+import { isDriveSyncEnabled, isLocalProjectsEnabled } from '@/utils/offline';
+import { getActiveAccount, leaveAccount, setIdleSignOut } from '@/utils/accounts';
 import LocalSession from './local-session';
 import CompactAccount, { AccountPlaceholder } from './compact-account';
 
@@ -69,10 +70,18 @@ function GoogleLoginButton({ logoutCallback, onSuccess, compact }: LoginProps) {
     const [tooltip, setTooltip] = useState<string>('');
     const restoreStarted = useRef(false);
     const authService = AppMgr.getInstance().authService;
+    /**
+     * Whether a Google account is signed in. With Drive sync (spec 020) `authService.isLogin`
+     * means "My projects is open", so the account comes from `getActiveAccount()`.
+     */
+    const googleSignedIn = () =>
+        isDriveSyncEnabled ? getActiveAccount() !== null : authService.isLogin;
     const [isRestoring, setIsRestoring] = useState<boolean>(
-        () => !authService.isLogin && authService.hasSavedSession,
+        () => !googleSignedIn() && authService.hasSavedSession,
     );
-    const driveService = AppMgr.getInstance().driveService;
+    const driveService = isDriveSyncEnabled
+        ? AppMgr.getInstance().remoteDriveService
+        : AppMgr.getInstance().driveService;
     const loginLogger = logger.child({ module: 'login' });
 
     const SCOPE = 'https://www.googleapis.com/auth/drive.file';
@@ -154,7 +163,9 @@ function GoogleLoginButton({ logoutCallback, onSuccess, compact }: LoginProps) {
                 }
                 await finalizeLogin(profile, token.access_token);
             } catch (error) {
-                authService.isLogin = false;
+                if (!isDriveSyncEnabled) {
+                    authService.isLogin = false;
+                }
                 setIsLogin(false);
                 setIsSigningIn(false);
                 if (error instanceof Error) {
@@ -185,7 +196,18 @@ function GoogleLoginButton({ logoutCallback, onSuccess, compact }: LoginProps) {
         },
     });
 
-    const googleLogout = () => {
+    const googleLogout = async () => {
+        if (isDriveSyncEnabled) {
+            if (!(await leaveAccount())) {
+                return;
+            }
+            setIsLogin(false);
+            setUserProfile(EMPTY_PROFILE);
+            setPictureLoadFailed(false);
+            setIsSigningIn(false);
+            logoutCallback();
+            return;
+        }
         authService.logOut().then(() => {
             setIsLogin(false);
             authService.userProfile = EMPTY_PROFILE;
@@ -209,6 +231,14 @@ function GoogleLoginButton({ logoutCallback, onSuccess, compact }: LoginProps) {
     );
 
     useEffect(() => {
+        if (isDriveSyncEnabled) {
+            const account = getActiveAccount();
+            setIsLogin(account !== null);
+            if (account) {
+                setUserProfile(account);
+            }
+            return;
+        }
         if (!authService.isLogin) {
             setIsLogin(false);
             setTooltip('googleLoginTooltip');
@@ -247,7 +277,15 @@ function GoogleLoginButton({ logoutCallback, onSuccess, compact }: LoginProps) {
     ]);
 
     useEffect(() => {
-        if (restoreStarted.current || authService.isLogin) {
+        if (!isDriveSyncEnabled) {
+            return;
+        }
+        setIdleSignOut(() => void googleLogout());
+        return () => setIdleSignOut(null);
+    });
+
+    useEffect(() => {
+        if (restoreStarted.current || (!isDriveSyncEnabled && authService.isLogin)) {
             return;
         }
         restoreStarted.current = true;
@@ -255,6 +293,8 @@ function GoogleLoginButton({ logoutCallback, onSuccess, compact }: LoginProps) {
             const profile = accessToken ? await fetchDriveUserProfile(accessToken) : null;
             if (accessToken && profile) {
                 await finalizeLogin(profile, accessToken);
+            } else if (isDriveSyncEnabled) {
+                setIsLogin(false);
             }
             setIsRestoring(false);
         });
@@ -272,7 +312,7 @@ function GoogleLoginButton({ logoutCallback, onSuccess, compact }: LoginProps) {
                 picture={showProfileImage ? userProfile.picture : undefined}
                 onPictureError={() => setPictureLoadFailed(true)}
                 onSignIn={googleSignIn}
-                onSignOut={googleLogout}
+                onSignOut={() => void googleLogout()}
             />
         );
     }
@@ -308,7 +348,7 @@ function GoogleLoginButton({ logoutCallback, onSuccess, compact }: LoginProps) {
             )}
             <div className="flex flex-col items-end gap-1">
                 <Button
-                    onClicked={isLogin ? googleLogout : googleSignIn}
+                    onClicked={isLogin ? () => void googleLogout() : googleSignIn}
                     tooltip={t(tooltip)}
                     disabled={isSigningIn}
                 >
@@ -325,7 +365,8 @@ function GoogleLoginButton({ logoutCallback, onSuccess, compact }: LoginProps) {
 }
 
 /**
- * Google sign-in button. Held back until the OAuth client ID has been fetched -
+ * Google sign-in button. With Drive sync (spec 020), My projects opens right away
+ * (`LocalSession`) and the button only signs in to sync with the account's Drive. Held back until the OAuth client ID has been fetched -
  * useGoogleLogin throws on an empty ID, which would take down the file tree
  * that hosts this widget. In the top bar, a saved session shows the avatar placeholder during
  * that wait, so the bar does not shift when the widget appears.
@@ -333,8 +374,20 @@ function GoogleLoginButton({ logoutCallback, onSuccess, compact }: LoginProps) {
 function Login(props: LoginProps) {
     const clientId = useGoogleClientId();
 
-    if (isLocalProjectsEnabled) {
+    if (isLocalProjectsEnabled && !isDriveSyncEnabled) {
         return <LocalSession onSuccess={props.onSuccess} />;
+    }
+    if (isDriveSyncEnabled) {
+        return (
+            <>
+                <LocalSession onSuccess={props.onSuccess} />
+                {clientId ? (
+                    <GoogleLoginButton {...props} />
+                ) : props.compact && AppMgr.getInstance().authService.hasSavedSession ? (
+                    <AccountPlaceholder />
+                ) : null}
+            </>
+        );
     }
     if (clientId) {
         return <GoogleLoginButton {...props} />;

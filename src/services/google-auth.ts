@@ -346,7 +346,8 @@ class GoogleAuthService {
      * browser did not end with a sign-out. The backend keeps the refresh token in its own
      * HttpOnly cookie, so the app only asks for a new access token; when the backend cannot give
      * one (no stored session, or a backend that keys sessions by handshake), the hint is cleared
-     * and the user signs in as usual.
+     * and the user signs in as usual. Without a network the hint is kept, so the session is
+     * restored the next time the app opens online.
      */
     private async tryRestoreSession(): Promise<string | null> {
         if (!this.hasSavedSession) {
@@ -363,7 +364,9 @@ class GoogleAuthService {
             return token;
         } catch {
             this._refreshToken = null;
-            localStorage.removeItem(StorageKeys.GOOGLE_SESSION);
+            if (navigator.onLine !== false) {
+                localStorage.removeItem(StorageKeys.GOOGLE_SESSION);
+            }
             return null;
         }
     }

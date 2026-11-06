@@ -13,8 +13,13 @@ export const isOfflineBuild: boolean = import.meta.env.VITE_OFFLINE === 'true';
 
 /**
  * Whether "My projects" (projects kept in the browser, see LocalDriveService) is the project
- * store. It is used when Google sign-in is not available: in offline builds and in builds without
- * a Google auth backend (`GOOGLE_AUTH_URL`). Builds with Google keep XRPWeb's behaviour unchanged.
+ * store. Always on since spec 020: every build opens straight into My projects, without signing
+ * in. XRPWeb's Google Drive code paths stay behind this flag.
  */
-export const isLocalProjectsEnabled: boolean =
-    isOfflineBuild || !import.meta.env.GOOGLE_AUTH_URL;
+export const isLocalProjectsEnabled: boolean = true;
+
+/**
+ * Whether signing in with Google syncs My projects with the account's Drive (spec 020): builds
+ * with a Google auth backend (`GOOGLE_AUTH_URL`) that are not offline builds.
+ */
+export const isDriveSyncEnabled: boolean = !isOfflineBuild && !!import.meta.env.GOOGLE_AUTH_URL;

@@ -5,6 +5,8 @@ import XRPLayout from '@components/xrplayout';
 import AppMgr from '@/managers/appmgr';
 import { prefetchPythonEditor } from '@components/python/prefetch-python-editor';
 import UpdateNotice from '@components/update-notice';
+import StatusBar from '@components/status-bar';
+import AskDialog from '@components/ask-dialog';
 
 function App() {
     const xrpLayoutRef = useRef();
@@ -30,10 +32,12 @@ function App() {
             <header className="bg-curious-blue-700 dark:bg-mountain-mist-950">
                 <Navbar layoutref={xrpLayoutRef} />
             </header>
-            <main className="relative h-[calc(100vh-56px)]">
+            <main className="relative h-[calc(100vh-84px)]">
                 <XRPLayout forwardedref={xrpLayoutRef} />
             </main>
+            <StatusBar />
             <UpdateNotice />
+            <AskDialog />
         </>
     );
 }

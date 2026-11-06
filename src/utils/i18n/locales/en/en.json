@@ -352,5 +352,27 @@
         "saved": "Saved",
         "error": "Couldn't save",
         "retry": "Your changes are kept in this browser and will be saved again soon."
-    }
+    },
+    "account": {
+        "deviceTitle": "Is this device yours?",
+        "deviceMessage": "{{name}}, is this computer or tablet yours, or is it shared (school, library)? On a shared device you are signed out after 30 minutes without use, and your projects are removed from it (they stay in your account).",
+        "deviceOwn": "It's mine",
+        "deviceShared": "It's shared",
+        "moveTitle": "Projects on this device",
+        "moveMessage": "There are {{count}} projects on this device that are not in any account. Move them to your account?",
+        "moveYes": "Move to my account",
+        "moveNo": "Leave them here",
+        "unsyncedTitle": "Changes not saved to your account",
+        "unsyncedMessage": "Some changes could not be saved to your account (no internet?). If you sign out now, they are lost. Connect to the internet and wait for the cloud to show a check.",
+        "unsyncedStay": "Stay signed in",
+        "unsyncedLeave": "Sign out anyway",
+        "thisDevice": "this device"
+    },
+    "sync": {
+        "synced": "Saved in your account",
+        "syncing": "Saving to your account…",
+        "offline": "No connection: your changes are kept on this device and will be saved to your account when the internet is back",
+        "local": "Saved on this device only. Sign in to have your projects on any device."
+    },
+    "statusBar": "Status bar"
 }
