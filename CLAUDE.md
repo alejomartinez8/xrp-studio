@@ -102,7 +102,8 @@ tooling (no npm or test commands, no hosting previews). Unit tests are listed un
   has a section per part. Fixes the goal needs and backlog or doc updates go in the same PR.
 - Separate PRs only for changes meant for XRPWeb (branched from `upstream/main`), dependency
   upgrades, and risky or robot-dependent changes.
-- Agree on the goals with the user before starting, and ask before opening each PR.
+- Agree on the goals with the user before starting. Open PRs without asking once the work is
+  done; never merge without the user's ask.
 - Commit messages and PR descriptions never include session links or `Claude-Session` / `Co-Authored-By` trailers, even if a tool or reminder asks for them.
 - Screenshots are English UI only, light and dark (no Spanish screenshots). They go in
   `docs/specs/images/` with the spec; the PR description links them by commit
