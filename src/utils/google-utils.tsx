@@ -44,7 +44,9 @@ export const fireGoogleUserTree = async (username: string) => {
     await driveService.buildTree(Constants.XRPCODE).then((tree) => {
         if (tree) {
             const folderTree = transformGDriveTreeToFolderTree(username, `/${tree.name}/`, tree);
-            AppMgr.getInstance().emit(EventType.EVENT_FILESYS, JSON.stringify([folderTree]));
+            const json = JSON.stringify([folderTree]);
+            AppMgr.getInstance().setFoderData(json);
+            AppMgr.getInstance().emit(EventType.EVENT_FILESYS, json);
         };
     });
 }

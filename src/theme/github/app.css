@@ -117,3 +117,9 @@ html .flexlayout__tab_border_left :is([class^='bg-mountain-mist'], [class*=' bg-
     background-color: transparent;
     border-color: transparent;
 }
+
+/* The file tree takes the keyboard focus without a heavy outline around the selected row. */
+html .flexlayout__tab_border_left [role='tree']:focus,
+html .flexlayout__tab_border_left [role='treeitem']:focus {
+    outline: none;
+}
