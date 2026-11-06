@@ -54,14 +54,13 @@ Hooks in upstream files:
 
 ## How to test
 
-1. `npx vitest run src/utils/tests/autosave.spec.ts`: 5 tests.
-2. `npm run dev:offline`, then New Python project. Type: "Saving…" then "Saved" appears next to
-   View, with no dialog. Close the tab right after typing: no prompt. Reload and open the file:
-   the last change is there.
-3. Open the Square example and move a block: same as step 2.
-4. Google Drive build (Vercel preview), signed in: edit, wait for "Saved", and check the file in
-   Drive. Turn the network off and edit: "Couldn't save". Turn it back on: "Saved".
-5. With a robot: Run a My projects or Drive file after editing; the robot runs the latest
+1. In a build with My projects, create a Python project and type: "Saving…" then "Saved" appears
+   next to View, with no dialog. Close the tab right after typing: no prompt. Reload and open the
+   file: the last change is there.
+2. Open the Square example and move a block: same as step 1.
+3. In a build with Google sign-in, signed in: edit, wait for "Saved", and check the file in Drive.
+   Go offline and edit: "Couldn't save". Back online: "Saved".
+4. With a robot: Run a My projects or Drive file after editing; the robot runs the latest
    version. Files from Robot memory: Save still writes to the robot. **Pending: needs a robot.**
 
 ## Upstream

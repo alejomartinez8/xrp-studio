@@ -84,6 +84,8 @@ plugin serves them in dev. Server variables: `OAUTH_CLIENT_ID`, `OAUTH_CLIENT_SE
 
 `docs/specs/` has one spec per change (problem, solution, files, how to test, upstream status) and
 `pending-upgrades.md`. Add or update a spec with every change; they are shared with the XRPWeb team.
+Write them for any reader: what changes and how to check it in the app, not this repo's
+tooling (no npm or test commands, no hosting previews). Unit tests are listed under Files.
 
 ## Conventions
 
