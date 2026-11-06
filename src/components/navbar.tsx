@@ -25,7 +25,6 @@ import forum from '@assets/images/forum.svg';
 import curriculum from '@assets/images/curriculum.svg';
 import changelog from '@assets/images/changelog.svg';
 import privacy from '@assets/images/privacy.svg';
-import settings from '@assets/images/settings.svg';
 import chatbot from '@assets/images/chatbot.svg';
 import gamepad from '@assets/images/gamepad.svg';
 import bugs from '@assets/images/bugs.svg';
@@ -56,7 +55,6 @@ import { MenuDataItem } from '@/widgets/menutypes';
 import MenuItem from '@/widgets/menu';
 import AppMgr, { EventType, LoginStatus } from '@/managers/appmgr';
 import { ConnectionState } from '@/connections/connection';
-import SettingsDlg from '@/components/dialogs/settings';
 import NewFileDlg from '@/components/dialogs/newfiledlg';
 import { Constants } from '@/utils/constants';
 import { CommandToXRPMgr } from '@/managers/commandstoxrpmgr';
@@ -1335,15 +1333,6 @@ function NavBar({ layoutref }: NavBarProps) {
     }
 
     /**
-     * onSettingsClicked - handle the setting button click event
-     */
-    function onSettingsClicked() {
-        setMoreMenuOpen(false);
-        setDialogContent(<SettingsDlg toggleDialog={toggleDialog} />);
-        toggleDialog();
-    }
-
-    /**
      * openFirmwareLoaderDialog - swap the current dialog out for the firmware loader
      */
     function openFirmwareLoaderDialog() {
@@ -1733,11 +1722,6 @@ function NavBar({ layoutref }: NavBarProps) {
             label: t('firmwareLoader'),
             iconImage: firmwareLoaderIcon,
             clicked: onFirmwareLoaderClicked,
-        },
-        {
-            label: t('settings'),
-            iconImage: settings,
-            clicked: onSettingsClicked,
         },
     ];
 

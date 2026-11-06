@@ -57,39 +57,52 @@ describe('accounts', () => {
         vi.useRealTimers();
     });
 
-    it('asks once whether the device is the user’s and remembers the answer', async () => {
+    it('keeps the session on a device set to keep it signed in, without asking', async () => {
         await accounts.openActiveSpace();
-        ask.mockResolvedValueOnce('own');
+        accounts.setKeepSignedIn(true);
         await accounts.enterAccount(profile);
 
-        expect(ask).toHaveBeenCalledWith(expect.objectContaining({ title: 'account.deviceTitle' }));
+        expect(ask).not.toHaveBeenCalled();
         expect(accounts.getActiveAccount()).toEqual(profile);
-        expect(JSON.parse(localStorage.getItem(StorageKeys.OWN_ACCOUNTS)!)).toEqual(['ana']);
         expect(stores.has(accounts.accountDatabase('ana'))).toBe(true);
         expect(sync.startSync).toHaveBeenCalled();
         expect(sync.syncNow).toHaveBeenCalledWith({ pull: true });
-
-        await accounts.leaveAccount();
-        ask.mockClear();
-        await accounts.enterAccount(profile);
-        expect(ask).not.toHaveBeenCalled();
+        expect(JSON.parse(localStorage.getItem(StorageKeys.ACCOUNT)!).shared).toBe(false);
     });
 
-    it('on a shared device forgets the session and signs out after a while without use', async () => {
+    it('treats the device as shared by default: forgets the session and signs out after a while', async () => {
         vi.useFakeTimers();
         const signOut = vi.fn();
         accounts.setIdleSignOut(signOut);
         localStorage.setItem(StorageKeys.GOOGLE_SESSION, '1');
-        ask.mockResolvedValueOnce('shared');
+        expect(accounts.isKeepSignedIn()).toBe(false);
         await accounts.enterAccount(profile);
 
+        expect(ask).not.toHaveBeenCalled();
         expect(localStorage.getItem(StorageKeys.GOOGLE_SESSION)).toBeNull();
-        expect(localStorage.getItem(StorageKeys.OWN_ACCOUNTS)).toBeNull();
         vi.advanceTimersByTime(accounts.IDLE_SIGN_OUT_MS - 1000);
         window.dispatchEvent(new Event('pointerdown'));
         vi.advanceTimersByTime(accounts.IDLE_SIGN_OUT_MS - 1000);
         expect(signOut).not.toHaveBeenCalled();
         vi.advanceTimersByTime(1000);
+        expect(signOut).toHaveBeenCalledTimes(1);
+    });
+
+    it('applies the switch to the open session', async () => {
+        vi.useFakeTimers();
+        const signOut = vi.fn();
+        accounts.setIdleSignOut(signOut);
+        await accounts.enterAccount(profile);
+        expect(JSON.parse(localStorage.getItem(StorageKeys.ACCOUNT)!).shared).toBe(true);
+
+        accounts.setKeepSignedIn(true);
+        expect(JSON.parse(localStorage.getItem(StorageKeys.ACCOUNT)!).shared).toBe(false);
+        vi.advanceTimersByTime(accounts.IDLE_SIGN_OUT_MS + 1000);
+        expect(signOut).not.toHaveBeenCalled();
+
+        accounts.setKeepSignedIn(false);
+        expect(JSON.parse(localStorage.getItem(StorageKeys.ACCOUNT)!).shared).toBe(true);
+        vi.advanceTimersByTime(accounts.IDLE_SIGN_OUT_MS + 1000);
         expect(signOut).toHaveBeenCalledTimes(1);
     });
 
@@ -106,7 +119,7 @@ describe('accounts', () => {
             content: 'x',
             ...times,
         });
-        ask.mockResolvedValueOnce('own').mockResolvedValueOnce('move');
+        ask.mockResolvedValueOnce('move');
         await accounts.enterAccount(profile);
 
         expect(ask).toHaveBeenLastCalledWith(
@@ -122,7 +135,6 @@ describe('accounts', () => {
     });
 
     it('asks before signing out with changes not uploaded, and removes the copy on leave', async () => {
-        ask.mockResolvedValueOnce('own');
         await accounts.enterAccount(profile);
         sync.hasUnsyncedChanges.mockResolvedValue(true);
 

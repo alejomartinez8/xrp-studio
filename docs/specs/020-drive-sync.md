@@ -25,12 +25,15 @@ it. Two parts:
   sees the device's guest projects.
 - Each account has its own space on the device, so two children on one computer do not see each
   other's projects.
-- The first time an account signs in on a device the app asks **"Is this device yours?"**:
-  - **It's mine:** the session is remembered and the projects stay on the device.
-  - **It's shared:** the session is not remembered, the account signs out after 30 minutes
-    without use, and its projects are removed from the device when the session ends. If the app
-    was closed without signing out, they are removed the next time it opens, before any tab is
-    shown.
+- The settings menu (⚙) has a **"Keep me signed in"** switch for the device, **off by default**
+  (shown only where accounts can sync). There is no question at sign-in; a teacher or adult sets
+  it once for the device:
+  - **Off (shared device):** the session is not remembered, the account signs out after 30
+    minutes without use, and its projects are removed from the device when the session ends. If
+    the app was closed without signing out, they are removed the next time it opens, before any
+    tab is shown.
+  - **On (own device):** the session is remembered and the projects stay on the device.
+  - Changing the switch applies to the open session too. Its tooltip explains both modes.
 - If the device has guest projects, the first sign-in offers **"Move them to your account?"**.
 - **Signing out** first uploads what is left. If that is not possible (no internet), the app warns
   that those changes would be lost and lets the user stay signed in. Then the account's projects
@@ -62,9 +65,6 @@ A thin bar at the bottom of the screen, like MakeCode's. It has one indicator: a
 ![Status bar, synced, light](images/020-status-bar-light.png)
 ![Status bar, synced, dark](images/020-status-bar-dark.png)
 
-![Device question, light](images/020-device-question-light.png)
-![Device question, dark](images/020-device-question-dark.png)
-
 ### Part (a): wording
 
 - The project header says "My projects" instead of "Google Drive file system".
@@ -81,7 +81,7 @@ A thin bar at the bottom of the screen, like MakeCode's. It has one indicator: a
 - `session.ts`, `local-projects.ts`: open the account's space on sign-in and the guest space on
   sign-out.
 - `google-auth.ts`: an offline restore keeps the remembered session.
-- `main.tsx`: clear a shared session left open; `App.tsx`: status bar and question dialog.
+- `main.tsx`: clear a shared session left open; `App.tsx`: status bar and question dialog; `src/components/navbar/quick-settings.tsx`: the switch.
 
 ## Files
 
@@ -100,7 +100,8 @@ A thin bar at the bottom of the screen, like MakeCode's. It has one indicator: a
 ## How to test
 
 1. Open the app without signing in: My projects opens, the bar shows the laptop. Create a project.
-2. Sign in with Google: "Is this device yours?" → It's mine. "Move them to your account?" → Move.
+2. Open ⚙ and turn on "Keep me signed in". Sign in with Google; "Move them to your account?" →
+   Move.
    The cloud spins, then shows a check. The project is in the `XRPCode` folder of the account's
    Drive.
 3. Edit, rename, move and delete files: each change reaches Drive a few seconds later; deleted
@@ -110,10 +111,10 @@ A thin bar at the bottom of the screen, like MakeCode's. It has one indicator: a
    version is in the app. Change the same file here while offline and in Drive, then go online:
    both versions are there, this device's one named "… (this device)".
 6. Sign out: the account's projects leave the device and the guest projects show. Sign in again:
-   they come back without the device question.
-7. On another browser profile, sign in and choose It's shared: reload the page; the session is
-   gone and so are its projects and tabs. Sign in again as shared and leave it unused for 30
-   minutes: it signs out.
+   they come back at the next sign-in.
+7. With "Keep me signed in" off (the default), sign in and reload the page: the session is gone
+   and so are its projects and tabs. Sign in again and leave it unused for 30 minutes: it signs
+   out. Turn the switch on and reload: the session and projects stay.
 8. Offline build: no sign-in, the bar shows the laptop, everything else as in spec 007.
 
 ## Upstream

@@ -13,7 +13,7 @@ const StorageKeys = {
     GOOGLE_SESSION: 'GoogleSession',
     LAST_PROJECT: 'LastProject',
     ACCOUNT: 'Account',
-    OWN_ACCOUNTS: 'OwnAccounts',
+    KEEP_SIGNED_IN: 'KeepSignedIn',
     TERMINAL: 'Terminal',
   } as const;
   

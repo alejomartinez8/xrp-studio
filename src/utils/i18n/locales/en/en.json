@@ -356,10 +356,8 @@
         "retry": "Your changes are kept in this browser and will be saved again soon."
     },
     "account": {
-        "deviceTitle": "Is this device yours?",
-        "deviceMessage": "{{name}}, is this computer or tablet yours, or is it shared (school, library)? On a shared device you are signed out after 30 minutes without use, and your projects are removed from it (they stay in your account).",
-        "deviceOwn": "It's mine",
-        "deviceShared": "It's shared",
+        "keepSignedIn": "Keep me signed in",
+        "keepSignedInHint": "Turn on only on your own device. Off, you are signed out after 30 minutes without use and your projects are removed from this device (they stay in your account).",
         "moveTitle": "Projects on this device",
         "moveMessage": "There are {{count}} projects on this device that are not in any account. Move them to your account?",
         "moveYes": "Move to my account",

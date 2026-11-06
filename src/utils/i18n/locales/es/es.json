@@ -356,10 +356,8 @@
         "retry": "Tus cambios quedan en este navegador y se volverán a guardar en un momento."
     },
     "account": {
-        "deviceTitle": "¿Este equipo es tuyo?",
-        "deviceMessage": "{{name}}, ¿este computador o tablet es tuyo o es compartido (colegio, biblioteca)? En un equipo compartido se cierra tu sesión tras 30 minutos sin uso y tus proyectos se borran de él (quedan en tu cuenta).",
-        "deviceOwn": "Es mío",
-        "deviceShared": "Es compartido",
+        "keepSignedIn": "Mantener sesión iniciada",
+        "keepSignedInHint": "Actívalo solo en tu propio equipo. Apagado, la sesión se cierra tras 30 minutos sin uso y tus proyectos se quitan de este equipo (siguen en tu cuenta).",
         "moveTitle": "Proyectos en este equipo",
         "moveMessage": "Hay {{count}} proyectos en este equipo que no están en ninguna cuenta. ¿Pasarlos a tu cuenta?",
         "moveYes": "Pasar a mi cuenta",
