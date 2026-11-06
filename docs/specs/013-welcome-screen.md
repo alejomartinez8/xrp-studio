@@ -38,15 +38,14 @@ which children often use alongside other platforms, always offers something to c
 
 ### How to test
 
-1. `npx vitest run src/components/welcome src/utils/tests/new-project.spec.ts`: 5 tests.
-2. My projects, no tab open: the welcome screen shows. New blocks project asks for a name (empty,
+1. My projects, no tab open: the welcome screen shows. New blocks project asks for a name (empty,
    Create disabled); type `line follower` and press Enter: `line follower.blocks` opens and
    is in the folder tree. Close it: the welcome screen comes back.
-3. Typing the name of an existing project disables Create and says so; Back returns to the two
+2. Typing the name of an existing project disables Create and says so; Back returns to the two
    buttons.
-4. Spanish UI: "¿Qué quieres crear hoy?" and "Ponle nombre a tu proyecto"; typing
+3. Spanish UI: "¿Qué quieres crear hoy?" and "Ponle nombre a tu proyecto"; typing
    `Seguidor de línea` creates `Seguidor de linea.blocks`.
-5. Tablet and phone emulation: the buttons work with a tap and the screen scrolls when it does not
+4. Tablet and phone emulation: the buttons work with a tap and the screen scrolls when it does not
    fit.
 
 | | Light | Dark |
@@ -86,12 +85,11 @@ had to find it in the Folders panel, among many files and folders.
 
 ### How to test
 
-1. `npx vitest run src/utils/tests/recent-projects.spec.ts src/components/welcome`: 7 tests.
-2. My projects: create `square` (blocks), `zigzag` (Python) and `line follower` (blocks) from the
+1. My projects: create `square` (blocks), `zigzag` (Python) and `line follower` (blocks) from the
    welcome screen, closing each tab. The welcome screen lists them newest first, "Just now".
-3. Tap `zigzag`: `zigzag.py` opens. Close it: the list is back.
-4. Spanish UI: "Tus proyectos recientes", "Recién".
-5. Phone emulation: the cards stack and open with a tap.
+2. Tap `zigzag`: `zigzag.py` opens. Close it: the list is back.
+3. Spanish UI: "Tus proyectos recientes", "Recién".
+4. Phone emulation: the cards stack and open with a tap.
 
 | Light | Dark |
 | --- | --- |
@@ -133,16 +131,12 @@ blocks make it move. Working programs to start from and change are the quickest 
 
 ### How to test
 
-1. `npx vitest run src/utils/tests/examples.spec.ts src/components/welcome`: 7 tests. Every example
-   loads into a Blockly workspace and generates the expected Python
-   (`board.wait_for_button()`, `differentialDrive.straight(30, 0.5)`, `for count in range(4):`,
-   `(rangefinder.distance()) < 20`, `(reflectance.get_left()) > (reflectance.get_right())`).
-2. My projects, no tab open: tap **Square**. The name step shows `Square`; press Enter:
+1. My projects, no tab open: tap **Square**. The name step shows `Square`; press Enter:
    `Square.blocks` opens with its blocks. Reload: the blocks are still there.
-3. Close the tab and tap **Square** again: `Square 2` is suggested.
-4. Spanish UI: "Empieza con un ejemplo"; **Evitar obstáculos** suggests `Evitar obstaculos` and the
+2. Close the tab and tap **Square** again: `Square 2` is suggested.
+3. Spanish UI: "Empieza con un ejemplo"; **Evitar obstáculos** suggests `Evitar obstaculos` and the
    blocks show in Spanish.
-5. With a robot (not tested yet): run each example and adjust distances, angles, efforts and the
+4. With a robot (not tested yet): run each example and adjust distances, angles, efforts and the
    line comparison if needed.
 
 | | Light | Dark |
@@ -177,10 +171,9 @@ child it is an empty black box with no purpose.
 
 ### How to test
 
-1. `npx vitest run src/utils/tests/shell-visibility.spec.ts`: 2 tests.
-2. No tab open: the welcome screen fills the editor area and there is no shell.
-3. Open or create a project: the shell shows below the editor. Reload: still there.
-4. Close the last tab: the shell hides and the welcome screen fills the area again.
+1. No tab open: the welcome screen fills the editor area and there is no shell.
+2. Open or create a project: the shell shows below the editor. Reload: still there.
+3. Close the last tab: the shell hides and the welcome screen fills the area again.
 
 The **Examples** screenshots above show the welcome screen without the shell, and **Example
 opened** shows it back with a project open.

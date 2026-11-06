@@ -46,7 +46,7 @@ One friendly top bar for everyone (no separate "kids mode"):
 
 ## How to test
 
-1. `npm run dev:offline`: the bar shows File, View, Connect, ? and ⚙.
+1. In an offline build, the bar shows File, View, Connect, ? and ⚙.
 2. ⚙ → Language → Español, and ⚙ → Theme → Dark: the app switches language and theme immediately, and keeps
    them after a reload.
 3. ? lists the help links.

@@ -42,7 +42,7 @@ Projects are kept in the browser (IndexedDB), with no account and no robot requi
 
 ### How to test
 
-1. `npm run dev:offline`, with no robot connected.
+1. Open an offline build, with no robot connected.
 2. File → New File → Blockly, name it, Submit: the editor opens and the file appears in the tree.
 3. Add a block, File → Save File, reload the page: the file and the block are still there.
 4. Rename, move and delete files and folders from the tree.
@@ -87,7 +87,7 @@ Fill the gap without changing XRPWeb's two modes:
 
 Without a robot (tested):
 
-1. `npm run dev` (no Google configured) or `npm run dev:offline`.
+1. Open a build without Google sign-in, or an offline build.
 2. The switch shows My projects selected and Robot memory disabled.
 3. File → New File, add a block, Save, reload: the project is still there.
 

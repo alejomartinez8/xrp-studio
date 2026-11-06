@@ -28,11 +28,9 @@ Two bugs when switching between light and dark:
 
 ## How to test
 
-1. `npx vitest run src/utils/tests/swap-stylesheet.spec.ts`: 3 tests (waits for load, swaps on
-   error, cancelled swap).
-2. In the app, with the flexlayout stylesheets delayed 800 ms (Playwright route): switching theme
-   keeps the layout styled during the load (before: unstyled layout).
-3. Open a `.blocks` file, close its tab, reopen it, switch to Dark: tab bars, shell and blocks turn
+1. On a slow network (the layout stylesheets take almost a second to load): switching theme keeps
+   the layout styled during the load (before: unstyled layout).
+2. Open a `.blocks` file, close its tab, reopen it, switch to Dark: tab bars, shell and blocks turn
    dark (before: tab bars and shell stayed light). Switch back to Light: all light.
 
 Captured during the switch, with the stylesheet download delayed:

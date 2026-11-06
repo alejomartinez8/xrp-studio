@@ -103,24 +103,19 @@ On desktop (click) and with phone emulation (tap), in My projects with two `.blo
 
 ### Reopen the last project
 
-1. `npx vitest run src/utils/tests/last-project.spec.ts`: 5 tests (remember, nested lookup, opens
-   once, skips open tabs and deleted files, waits for the user's projects).
-2. My projects: create `robot.blocks`, add blocks, save, close the tab, reload: `robot.blocks`
+1. My projects: create `robot.blocks`, add blocks, save, close the tab, reload: `robot.blocks`
    opens with its blocks. Same with a Python file.
-3. Opening a file from the folder tree still loads it once (no duplicated blocks).
+2. Opening a file from the folder tree still loads it once (no duplicated blocks).
 
 ### Faster opening, without errors
 
-1. `npx vitest run src/components/blockly` (7 tests).
-2. Create a blocks project, close its tab without saving, and open it again from the folder tree:
+1. Create a blocks project, close its tab without saving, and open it again from the folder tree:
    it opens empty and the console has no "Unexpected end of JSON input".
-3. Open a second blocks file: the console has no `startSearch` warning.
-4. Type "forward" in the search field: the matching blocks appear. Type "zzzz": "No matching
+2. Open a second blocks file: the console has no `startSearch` warning.
+3. Type "forward" in the search field: the matching blocks appear. Type "zzzz": "No matching
    blocks found". In Spanish the field says "Buscar" and the hints are in Spanish.
-5. Click on the workspace and press Ctrl+B: the search field of that editor gets the focus. Close
+4. Click on the workspace and press Ctrl+B: the search field of that editor gets the focus. Close
    one of the two tabs and try again in the other.
-
-`npx vitest run`: 108 tests pass.
 
 ## Screenshots
 

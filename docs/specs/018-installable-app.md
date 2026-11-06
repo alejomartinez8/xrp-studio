@@ -55,16 +55,14 @@ open without internet.
 
 ## How to test
 
-1. `npx vitest run src/utils/tests/pwa.spec.ts`: 4 tests.
-2. `npm run build && npx vite preview --port 4173`, open http://localhost:4173 in Chrome.
-   DevTools > Application > Service workers: activated; Cache storage holds about 230 entries.
-3. DevTools > Network > Offline, reload: the app opens. Open an example (blocks) and a new Python
+1. Open a production build in Chrome. DevTools > Application > Service workers: activated; Cache storage holds about 230 entries.
+2. DevTools > Network > Offline, reload: the app opens. Open an example (blocks) and a new Python
    project: both work.
-4. Install: the ⚙ menu shows **Install app** (Chrome on a computer or Android); installing opens
+3. Install: the ⚙ menu shows **Install app** (Chrome on a computer or Android); installing opens
    the app in its own window and the row goes away.
-5. Update: rebuild with any change and reload the preview once; the notice appears. **Later**
+4. Update: publish a new build and reload the app once; the notice appears. **Later**
    hides it; **Reload** loads the new version.
-6. On the Vercel preview (HTTPS), repeat 3 and 4 on an Android tablet.
+5. On a build served over HTTPS, repeat 2 and 3 on an Android tablet.
 
 ## Upstream
 
