@@ -64,6 +64,9 @@ all differed. The screen looked busy.
   are no lines between the tab bar and the content, under the status bar, between toolbox rows
   or around the side panel's rows.
 
+- The toolbox search box can be clicked and typed in, has a flat focus outline and no gradient in
+  dark mode. Dialogs opened from the side panel keep their own colours.
+
 ## Files
 
 - `src/components/xrplayout.tsx`: the side bar starts collapsed; the folder tab renders the
@@ -113,6 +116,3 @@ Explorer and terminal open:
 
 Fork-specific (kids UI). XRPWeb could take the Explorer icon on its own; hiding the terminal by
 default suits a kids' editor more than XRPWeb's.
-
-- The toolbox search box can be clicked and typed in, has a flat focus outline and no gradient in
-  dark mode. Dialogs opened from the side panel keep their own colours.
