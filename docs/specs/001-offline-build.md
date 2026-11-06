@@ -40,9 +40,9 @@ paths stay in place and are skipped when the flag is on.
 
 ## How to test
 
-1. `npm run dev:offline` and open `http://localhost:3000` in Chrome or Edge.
-2. In DevTools → Network, reload: there are no requests outside `localhost`.
-3. Open a blocks file and drag a block: Blockly's sounds and cursors load from `localhost`.
+1. Open an offline build in Chrome or Edge.
+2. In DevTools → Network, reload: there are no requests to other sites.
+3. Open a blocks file and drag a block: Blockly's sounds and cursors load from the app itself.
 4. The Help menu shows "(online)" next to external links; the AI chat is not in the menu.
 
 Automated: `src/utils/tests/offline-locales.spec.ts` checks that offline overrides only replace

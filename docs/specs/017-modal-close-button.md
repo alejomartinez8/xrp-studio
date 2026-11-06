@@ -41,9 +41,8 @@ example in the power switch and battery dialogs).
 
 ## How to test
 
-1. `npx vitest run src/components/tests/dialog-close.spec.tsx` (5 tests).
-2. File > New File: the X closes it; open again and press Escape: it closes; it opens again.
-3. Connect XRP: the connections dialog has an X that closes it.
+1. File > New File: the X closes it; open again and press Escape: it closes; it opens again.
+2. Connect XRP: the connections dialog has an X that closes it.
 4. Language and theme dialogs show a single X (their own).
 5. With a robot: Run with the power switch off, close the warning with the X: Run is available
    again (same as Cancel).

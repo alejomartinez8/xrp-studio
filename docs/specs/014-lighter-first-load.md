@@ -33,7 +33,7 @@ blocks. On tablets and school networks that is most of the wait before the app c
 
 ## Measurements
 
-Production offline build served locally, first visit, JavaScript downloaded (Playwright):
+Production offline build, first visit, JavaScript downloaded:
 
 | | Before | After |
 | --- | --- | --- |
@@ -52,18 +52,15 @@ Production offline build served locally, first visit, JavaScript downloaded (Pla
 
 ## How to test
 
-1. `npx vitest run src/utils/tests/loaded-content.spec.ts src/utils/tests/idle-prefetch.spec.ts`:
-   6 tests.
-2. Open the app with DevTools > Network (JS) on a new visit: `@monaco-*.js` is not part of the
+1. Open the app with DevTools > Network (JS) on a new visit: `@monaco-*.js` is not part of the
    first load; it starts downloading only after the page has loaded (the load event).
-3. With Data Saver on (Chrome on Android), or `Object.defineProperty(navigator, 'connection',
+2. With Data Saver on (Chrome on Android), or `Object.defineProperty(navigator, 'connection',
    { value: { saveData: true } })` before load, `@monaco-*.js` is not downloaded until a Python
    file opens.
-4. Create a Python project from the welcome screen: the editor opens right away (or after a short
+3. Create a Python project from the welcome screen: the editor opens right away (or after a short
    "Opening the Python editor…" on a slow network), typing works. Reload: the file reopens with
    its content.
-5. Blocks project > View Python: the code shows in the dialog.
-6. `ANALYZE=true npm run build` writes `stats.html`; a normal build does not.
+4. Blocks project > View Python: the code shows in the dialog.
 
 ## Upstream
 

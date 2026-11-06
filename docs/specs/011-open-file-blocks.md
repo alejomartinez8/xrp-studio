@@ -27,7 +27,6 @@ reset whenever a workspace is injected.
    folder tree: the blocks are there (before: empty).
 2. Add blocks without saving and reload: the tab comes back with the blocks (before: empty).
 3. A new file starts empty; closing a file that was only opened does not ask about unsaved changes.
-4. `npx vitest run`: 103 tests pass.
 
 | Light | Dark |
 | --- | --- |
