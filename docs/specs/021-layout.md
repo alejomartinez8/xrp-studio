@@ -26,6 +26,13 @@ project open.
 - The panel's header reads "Explorer" ("Explorador") instead of "My projects", and its new file
   and new folder buttons use clearer icons (a page and a folder, each with a plus), new file
   first.
+- The file tree rows are lighter: folder and chevron icons in the same line style as the header
+  buttons, a soft rounded highlight for the hovered and the selected row (no dark bar), small
+  muted Rename and Delete icons that appear on hover (Delete turns red), and no outline box
+  around the tree.
+- Fix: the tree was empty the first time the panel was opened, because the panel starts closed
+  and the tree missed the list of projects sent at start. It now reads the last list when it
+  opens.
 
 ## Part 2 — Terminal icon, off by default
 
@@ -72,6 +79,8 @@ all differed. The screen looked busy.
 - `src/components/xrplayout.tsx`: the side bar starts collapsed; the folder tab renders the
   Explorer icon; the Terminal toggle is added to the side bar.
 - `src/components/side-bar-icon.tsx` (new): a side bar icon, as a tab or as a toggle button.
+- `src/components/folder-tree.tsx`, `src/utils/google-utils.tsx`: the row look; the last project
+  list is kept so a tree that opens later shows it.
 - `src/utils/shell-visibility.ts`: the shell shows with a project open and the terminal on;
   `toggleTerminal` and the remembered choice.
 - `src/utils/localstorage.ts`: `Terminal` key.
@@ -92,7 +101,8 @@ all differed. The screen looked busy.
 1. Open the app: the side bar shows two icons and no "Folders" text; the folder panel and the
    terminal are hidden.
 2. Hover each icon: "Explorer" and "Terminal". In Spanish: "Explorador" and "Terminal".
-3. Click Explorer: the projects panel opens. Click again: it closes.
+3. Click Explorer: the projects panel opens with the project list (also the first time). Hover a
+   file: Rename and Delete appear. Click again on the icon: it closes.
 4. On the welcome screen and with a project open, click Terminal: it shows under the editor.
    Click again: it hides. The tab shows the same icon as the side bar.
 5. Turn the terminal on and reload: it is still on.

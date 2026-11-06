@@ -1,15 +1,19 @@
 import { FolderItem } from '@/utils/types';
 import { Tree, NodeApi, NodeRendererProps } from 'react-arborist';
-import { RiArrowDownSFill, RiArrowRightSFill } from 'react-icons/ri';
 import { useEffect, useRef, useState } from 'react';
 import AppMgr, { EventType, LoginStatus } from '@/managers/appmgr';
 import useResizeObserver from 'use-resize-observer';
-import { FaRegFolder } from 'react-icons/fa';
 import { FaFileAlt } from 'react-icons/fa';
 import BlocklyIcon from '@/components/icons/blockly-icon';
 import MicropythonIcon from '@/components/icons/micropython-icon';
-import { MdEdit } from 'react-icons/md';
-import { MdDeleteOutline } from 'react-icons/md';
+import {
+    VscChevronDown,
+    VscChevronRight,
+    VscEdit,
+    VscFolder,
+    VscFolderOpened,
+    VscTrash,
+} from 'react-icons/vsc';
 import FolderHeader from './folder-header';
 import uniqueId from '@/utils/unique-id';
 import { CommandToXRPMgr } from '@/managers/commandstoxrpmgr';
@@ -136,6 +140,11 @@ function FolderTree(treeProps: TreeProps) {
                 }
             });
 
+            const lastTree = appMgrRef.current.getFolderData();
+            if (treeProps.isHeader && lastTree && lastTree.length > 0) {
+                setTreeData(lastTree);
+            }
+
             setHasSubscribed(true);
         }
     }, [isConnected]);
@@ -237,7 +246,7 @@ function FolderTree(treeProps: TreeProps) {
         } else if (node.data.name.includes('.blocks')) {
             Icon = BlocklyIcon;
         } else if (node.children) {
-            Icon = FaRegFolder;
+            Icon = node.isOpen ? VscFolderOpened : VscFolder;
         } else {
             Icon = FaFileAlt;
         }
@@ -246,7 +255,7 @@ function FolderTree(treeProps: TreeProps) {
             <div
                 ref={dragHandle}
                 style={style}
-                className={`group flex flex-row items-center justify-between hover:bg-matisse-400 dark:hover:bg-shark-500 ${node.isSelected ? 'bg-curious-blue-300 dark:bg-shark-400' : ''} ${isRunning ? 'pointer-events-none opacity-50' : 'pointer-events-auto opacity-100'}}`}
+                className={`group flex flex-row items-center justify-between rounded-md ${node.isSelected ? 'bg-curious-blue-600/15 dark:bg-curious-blue-400/20' : 'hover:bg-black/[0.07] dark:hover:bg-white/[0.12]'} ${isRunning ? 'pointer-events-none opacity-50' : 'pointer-events-auto opacity-100'}}`}
                 onClick={(e) => {
                     if (node.isInternal) node.toggle();
                     const onControl = (e.target as HTMLElement).closest('button, input') !== null;
@@ -276,32 +285,41 @@ function FolderTree(treeProps: TreeProps) {
                 }}
             >
                 <div className="flex flex-row items-center">
-                    {node.isLeaf === false &&
-                        (node.isOpen ? <RiArrowDownSFill /> : <RiArrowRightSFill />)}
-                    <span>
-                        <Icon />
+                    {node.isLeaf === false ? (
+                        node.isOpen ? (
+                            <VscChevronDown size={16} />
+                        ) : (
+                            <VscChevronRight size={16} />
+                        )
+                    ) : (
+                        <span className="w-4" />
+                    )}
+                    <span className="flex items-center text-mountain-mist-600 dark:text-mountain-mist-400">
+                        <Icon size={16} />
                     </span>
                     <span className="overflow-wrap mx-1 whitespace-nowrap">
                         {node.isEditing ? <Input node={node} /> : node.data.name}
                     </span>
                 </div>
                 {!treeProps.onSelected && (
-                    <div className="invisible flex flex-row items-center gap-1 px-2 group-hover:visible">
+                    <div className="invisible flex flex-row items-center gap-0.5 px-1 group-hover:visible">
                         <button
-                            className={`${isRunning ? 'pointer-events-none opacity-50' : 'pointer-events-auto opacity-100'}`}
+                            className={`hover:bg-black/10 dark:hover:bg-white/15 dark:hover:text-white flex h-5 w-5 items-center justify-center rounded text-mountain-mist-600 hover:text-mountain-mist-900 dark:text-mountain-mist-400 ${isRunning ? 'pointer-events-none opacity-50' : 'pointer-events-auto opacity-100'}`}
                             onClick={() => node.edit()}
                             title={t('rename')}
+                            aria-label={t('rename')}
                         >
-                            <MdEdit size={'1.5em'} />
+                            <VscEdit size={14} />
                         </button>
                         <button
-                            className={`${isRunning ? 'pointer-events-none opacity-50' : 'pointer-events-auto opacity-100'}`}
+                            className={`flex h-5 w-5 items-center justify-center rounded text-mountain-mist-600 hover:bg-red-500/15 hover:text-red-600 dark:text-mountain-mist-400 dark:hover:text-red-400 ${isRunning ? 'pointer-events-none opacity-50' : 'pointer-events-auto opacity-100'}`}
                             onClick={() => {
                                 tree.delete(node.id);
                             }}
                             title={t('delete')}
+                            aria-label={t('delete')}
                         >
-                            <MdDeleteOutline size={'1.5em'} />
+                            <VscTrash size={14} />
                         </button>
                     </div>
                 )}
@@ -820,7 +838,7 @@ function FolderTree(treeProps: TreeProps) {
                     data={treeData}
                     width={width}
                     height={height}
-                    rowHeight={24}
+                    rowHeight={28}
                     renderCursor={Cursor}
                     openByDefault={false}
                     initialOpenState={{ root: true }}
