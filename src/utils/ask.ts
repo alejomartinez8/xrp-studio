@@ -22,7 +22,7 @@ function notify(): void {
 }
 
 /**
- * Ask the user a question and wait for the answer (spec 020: shared device, moving guest
+ * Ask the user a question and wait for the answer (spec 005: shared device, moving guest
  * projects, signing out with changes not uploaded). Questions asked together are shown one after
  * the other. Rendered by `AskDialog`.
  */

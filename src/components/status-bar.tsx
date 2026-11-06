@@ -27,7 +27,7 @@ const SYNC_LABELS: Record<SyncStatus, string> = {
 export const STATUS_BAR_HEIGHT_PX = 28;
 
 /**
- * StatusBar - thin bar at the bottom of the screen (specs 019 and 020). It has one indicator: an
+ * StatusBar - thin bar at the bottom of the screen (specs 004 and 005). It has one indicator: an
  * icon for where the projects are kept (a device when no account is signed in, a cloud with a
  * check when they are saved in the account, a spinner while changes are uploaded, a crossed cloud
  * without connection) and, after the first change, the automatic save text ("Saving…", "Saved",

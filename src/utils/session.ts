@@ -50,7 +50,7 @@ export async function handleSignedIn(profile: UserProfile): Promise<boolean> {
 
 /**
  * Handle a sign-out: announce it and show the XRP's files again, or an empty tree. With Drive sync
- * (spec 020) the account's space was already closed (`leaveAccount`), so the guest's My projects
+ * (spec 005) the account's space was already closed (`leaveAccount`), so the guest's My projects
  * open instead.
  */
 export async function handleSignedOut(): Promise<void> {

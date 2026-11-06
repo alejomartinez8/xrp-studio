@@ -4,31 +4,21 @@ XRP Studio is a fork of [Open-STEM/XRPWeb](https://github.com/Open-STEM/XRPWeb) 
 classrooms and kids: it works without internet, keeps projects in the browser, and has a friendlier
 block editor. This folder documents each change so it can be reviewed, reused or proposed upstream.
 
-Each spec covers the problem, the solution, the files involved, how to test it and whether it could
-be proposed to XRPWeb.
+Specs are grouped by theme. Each one has a part per change, and each part covers the problem, the
+solution, the files involved, how to test it and whether it could be proposed to XRPWeb. A change
+extends the spec of its theme with a new part; a new spec is only for a really new theme.
 
-| # | Spec | Status | Upstream |
+| # | Spec | Parts | Upstream |
 | --- | --- | --- | --- |
-| 001 | [Offline build](001-offline-build.md) | Done | Possible, behind a build flag |
-| 003 | [Spanish translation fixes](003-spanish-translations.md) | Done | Sent ([Open-STEM/XRPWeb#337](https://github.com/Open-STEM/XRPWeb/pull/337)) |
-| 004 | [Friendly theme and block editor](004-friendly-theme.md) | Done | Block editor parts possible; app theme is fork-specific |
-| 005 | [Maintenance: lockfile, Tailwind config, minor updates](005-maintenance.md) | Done | Possible |
-| 006 | [Top bar](006-navbar.md) | Done | Fork-specific layout |
-| 007 | [My projects: projects in the browser, robot memory](007-my-projects.md) | Done; robot behaviour to be tested | Answers [Open-STEM/XRPWeb#336](https://github.com/Open-STEM/XRPWeb/issues/336) |
-| 008 | [Google sign-in: server, keep the session after a reload](008-google-auth-server.md) | Done | Server as a reference; session restore possible |
-| 010 | [Theme switch fixes](010-theme-switch.md) | Done | Possible (XRPWeb bugs) |
-| 011 | [Files from My projects open with their blocks](011-open-file-blocks.md) | Done | Possible (XRPWeb race) |
-| 012 | [Opening projects: single tap, reopen the last project, faster opening](012-opening-projects.md) | Done | Single tap possible behind a flag; empty-file fix possible; reopen and search are fork-only |
-| 013 | [Welcome screen: new project, recent projects, examples, shell only with a project](013-welcome-screen.md) | Done | Fork-specific (kids UI) |
-| 014 | [Lighter first load](014-lighter-first-load.md) | Done | Possible |
-| 017 | [Close button on modals](017-modal-close-button.md) | Done | Possible |
-| 018 | [Installable app that works offline](018-installable-app.md) | Done | Possible |
-| 019 | [Automatic save](019-autosave.md) | Done; robot behaviour to be tested | Possible behind a setting |
-| 020 | [Projects in the browser, synced with your account](020-drive-sync.md) | Part (a) done; part (b) in the backlog | Fork-only for now |
-| 021 | [Layout: side bar, Terminal toggle, rounded panels](021-layout.md) | Done | Fork-specific (kids UI) |
+| 001 | [Offline and installable app](001-offline-and-install.md) | Offline build; lighter first load; installable app that works offline | Possible, behind a build flag |
+| 002 | [Language and theme](002-language-and-theme.md) | Spanish translation fixes (sent, [Open-STEM/XRPWeb#337](https://github.com/Open-STEM/XRPWeb/pull/337)); friendly theme and block editor; theme switch fixes | Block editor parts and bug fixes possible; app theme is fork-specific |
+| 003 | [Layout and screens](003-layout-and-screens.md) | Top bar; welcome screen; close button on modals; layout (side bar, Terminal toggle, rounded panels, Explorer tree) | Fork-specific (kids UI); modal close button possible |
+| 004 | [File management](004-file-management.md) | My projects and robot memory (answers [Open-STEM/XRPWeb#336](https://github.com/Open-STEM/XRPWeb/issues/336)); files open with their blocks; opening projects; automatic save | Single tap, empty-file fix and autosave possible behind a flag; robot behaviour to be tested |
+| 005 | [Accounts and sync](005-accounts-and-sync.md) | Google sign-in server and session; accounts on a device, "Keep me signed in" and Drive sync | Server as a reference; sync is fork-only for now |
+| 006 | [Maintenance](006-maintenance.md) | Lockfile, Tailwind config, minor updates | Possible |
 | — | [Pending upgrades and backlog](pending-upgrades.md) | Backlog | Each one as its own change |
 
-Numbers 002, 009 and 015 were merged into 007, 008 and 013, so each goal has one spec.
+The earlier numbers 001 to 021 were merged into these six, so each theme has one spec.
 
 ## Principles
 

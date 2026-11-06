@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { answer, useQuestion } from '@/utils/ask';
 
 /**
- * AskDialog - shows the question asked with `ask()` (spec 020) as a modal card: title, message
+ * AskDialog - shows the question asked with `ask()` (spec 005) as a modal card: title, message
  * and one button per answer. There is no close button: every question needs an answer.
  */
 function AskDialog() {

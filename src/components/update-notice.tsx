@@ -4,7 +4,7 @@ import { applyUpdate, dismissUpdate, usePwaState } from '@/utils/pwa';
 
 /**
  * UpdateNotice - small card at the bottom of the screen when a new version of the installable app
- * is stored (spec 018). Reload switches to it; Later keeps working and the new version is used the
+ * is stored (spec 001). Reload switches to it; Later keeps working and the new version is used the
  * next time the app opens. It never reloads on its own, so no work is lost.
  */
 function UpdateNotice() {
