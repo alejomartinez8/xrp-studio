@@ -542,9 +542,10 @@ function NavBar({ layoutref }: NavBarProps) {
 
     /**
      * createNewFile - open a tab for a new file and create it in Google Drive (or My projects) or
-     * on the XRP. Shared by the New File dialog and the welcome screen (`EVENT_NEW_PROJECT`); the
-     * connection is read from the manager because the welcome screen calls it from an event
-     * handler, where React state is stale.
+     * on the XRP, with `data.content` when given (an example from the welcome screen) or empty.
+     * Shared by the New File dialog and the welcome screen (`EVENT_NEW_PROJECT`); the connection
+     * is read from the manager because the welcome screen calls it from an event handler, where
+     * React state is stale.
      */
     async function createNewFile(data: NewFileData) {
         const isConnected = AppMgr.getInstance().getConnection()?.isConnected() ?? false;
@@ -557,7 +558,7 @@ function NavBar({ layoutref }: NavBarProps) {
                 : data.name.includes('.blocks')
                   ? 'application/json'
                   : 'text/plain';
-            const blob = new Blob([''], { type: minetype });
+            const blob = new Blob([data.content ?? ''], { type: minetype });
             await driveService
                 .uploadFile(blob, data.name, minetype, data.parentId ?? undefined)
                 .then((file) => {
@@ -581,7 +582,7 @@ function NavBar({ layoutref }: NavBarProps) {
         } else if (isConnected) {
             // create the file in XRP
             await CommandToXRPMgr.getInstance()
-                .uploadFile(data.path, '')
+                .uploadFile(data.path, data.content ?? '')
                 .then(() => {
                     CommandToXRPMgr.getInstance().getOnBoardFSTree();
                 });

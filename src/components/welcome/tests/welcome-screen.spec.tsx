@@ -112,4 +112,39 @@ describe('WelcomeScreen', () => {
             gparentId: 'xrpcode',
         });
     });
+
+    it('starts a copy of an example with its name suggested and its blocks', async () => {
+        const appMgr = AppMgr.getInstance();
+        appMgr.authService.isLogin = true;
+        appMgr.authService.userProfile = {
+            id: 'local',
+            email: 'local@xrp-studio',
+            name: '',
+            picture: '',
+        };
+        vi.spyOn(appMgr.driveService, 'findFolderByName').mockResolvedValue({
+            id: 'xrpcode',
+            name: 'XRPCode',
+            mimeType: 'application/vnd.google-apps.folder',
+            kind: 'drive#file',
+        });
+        vi.spyOn(appMgr.driveService, 'getFileListByFolderId').mockResolvedValue([
+            { id: 'a', name: 'Square.blocks', mimeType: 'application/json', kind: 'drive#file' },
+        ]);
+
+        render(<WelcomeScreen />);
+        expect(screen.getByText('Start from an example')).toBeTruthy();
+        fireEvent.click(screen.getByTestId('example-square'));
+
+        const input = (await screen.findByLabelText('Name your project')) as HTMLInputElement;
+        expect(input.value).toBe('Square 2');
+        fireEvent.click(screen.getByText('Create'));
+
+        await waitFor(() => expect(emit).toHaveBeenCalled());
+        const [event, json] = emit.mock.calls[0] as [EventType, string];
+        expect(event).toBe(EventType.EVENT_NEW_PROJECT);
+        const data = JSON.parse(json) as { name: string; content: string };
+        expect(data.name).toBe('Square 2.blocks');
+        expect(JSON.parse(data.content).blocks.blocks[0].type).toBe('xrp_wait_for_button_press');
+    });
 });

@@ -320,6 +320,25 @@
         "namePlaceholder": "Escribe un nombre",
         "recentTitle": "Tus proyectos recientes",
         "justNow": "Recién",
-        "moreHint": "Todos tus proyectos están en el panel Carpetas."
+        "moreHint": "Todos tus proyectos están en el panel Carpetas.",
+        "examplesTitle": "Empieza con un ejemplo",
+        "examples": {
+            "driveAndTurn": {
+                "title": "Avanzar y girar",
+                "hint": "Avanza, da la vuelta y regresa"
+            },
+            "square": {
+                "title": "Cuadrado",
+                "hint": "Recorre un cuadrado con un bloque repetir"
+            },
+            "avoidObstacles": {
+                "title": "Evitar obstáculos",
+                "hint": "Gira cuando el sensor de distancia ve algo cerca"
+            },
+            "followLine": {
+                "title": "Seguir la línea",
+                "hint": "Sigue una línea oscura con los sensores de reflectancia"
+            }
+        }
     }
 }
