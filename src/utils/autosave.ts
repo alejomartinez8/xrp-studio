@@ -78,7 +78,7 @@ function scheduleRetry(): void {
     }, AUTOSAVE_RETRY_MS);
 }
 
-/** True when a tab's file lives in the project store and saves on its own (spec 019). */
+/** True when a tab's file lives in the project store and saves on its own (spec 004). */
 export function isAutosaved(id: string): boolean {
     const session = EditorMgr.getInstance().getEditorSession(id);
     return Boolean(session?.gpath) && AppMgr.getInstance().authService.isLogin;

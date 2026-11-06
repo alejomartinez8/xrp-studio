@@ -1,4 +1,7 @@
-# 005 — Maintenance: lockfile, Tailwind config, minor updates
+# 006 — Maintenance
+
+Dependency, lockfile and build upkeep. Pending upgrades and the backlog are in [pending-upgrades.md](pending-upgrades.md).
+
 
 ## Problem
 

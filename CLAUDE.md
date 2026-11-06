@@ -7,7 +7,7 @@ block editor, a simple UI for kids, Spanish first; desktop and Android tablet.
 ## Commands
 
 - `npm ci` (the lockfile is in sync; commit `package-lock.json` whenever dependencies change).
-  Some packages are pinned on purpose; see `docs/specs/005-maintenance.md` and
+  Some packages are pinned on purpose; see `docs/specs/006-maintenance.md` and
   `docs/specs/pending-upgrades.md` before updating them.
 - `npm run dev` / `npm run dev:offline` → http://localhost:3000 (Chrome or Edge; Web Serial does
   not exist in Firefox/Safari)
@@ -41,9 +41,9 @@ loaded and no client ID is requested, the AI chat is hidden, and telemetry is no
 
 All builds are also an installable app (PWA, `pwa-plugin.ts`, `src/utils/pwa.ts`): a service
 worker precaches the whole build, so the hosted app opens without internet after the first visit;
-updates wait for the user's Reload (spec 018).
+updates wait for the user's Reload (spec 001).
 
-Files in My projects or Google Drive save themselves (`src/utils/autosave.ts`, spec 019); Save
+Files in My projects or Google Drive save themselves (`src/utils/autosave.ts`, spec 004); Save
 no longer writes them to the robot, Run does. Robot-memory files keep the manual save.
 
 Every build opens straight into My projects (no login needed): `isLocalProjectsEnabled` in
@@ -54,7 +54,7 @@ unchanged; Run copies the program to the robot). The "My projects | Robot memory
 folder tree (`src/components/storage-switch.tsx`, `src/utils/local-projects.ts`) shows the
 connected robot's files as XRPWeb does without Google.
 
-Google sign-in only syncs (spec 020, `isDriveSyncEnabled`: builds with `GOOGLE_AUTH_URL` that are
+Google sign-in only syncs (spec 005, `isDriveSyncEnabled`: builds with `GOOGLE_AUTH_URL` that are
 not offline). `authService.isLogin` still means "projects session open"; the Google account is
 tracked in `src/utils/accounts.ts` (one IndexedDB space per account, own or shared device, guest
 projects, sign-out). `src/services/drive-sync.ts` copies the account's space to the Drive `XRPCode`
@@ -66,7 +66,7 @@ and `offline.json` (Help links marked "online") in offline builds, both in
 `src/utils/i18n/locales/{en,es}/`. Driver installation is allowed when My projects is enabled.
 
 Behaviour with a robot connected was designed from the code and still needs testing with a real
-robot; see `docs/specs/007-my-projects.md`.
+robot; see `docs/specs/004-file-management.md`.
 
 ## Google sign-in server
 
@@ -74,7 +74,7 @@ robot; see `docs/specs/007-my-projects.md`.
 refresh token in an HttpOnly cookie); `api/google-auth/` wraps them as Vercel functions and a Vite
 plugin serves them in dev. Server variables: `OAUTH_CLIENT_ID`, `OAUTH_CLIENT_SECRET`,
 `AUTH_SESSION_SECRET` (never `GOOGLE_`/`VITE_`, which Vite exposes to the browser); the app uses
-`GOOGLE_AUTH_URL=/api`. Setup in `docs/specs/008-google-auth-server.md`.
+`GOOGLE_AUTH_URL=/api`. Setup in `docs/specs/005-accounts-and-sync.md`.
 
 ## Themes
 
@@ -88,8 +88,11 @@ plugin serves them in dev. Server variables: `OAUTH_CLIENT_ID`, `OAUTH_CLIENT_SE
 
 ## Specs
 
-`docs/specs/` has one spec per change (problem, solution, files, how to test, upstream status) and
-`pending-upgrades.md`. Add or update a spec with every change; they are shared with the XRPWeb team.
+`docs/specs/` has one spec per theme (offline and install, language and theme, layout and screens,
+file management, accounts and sync, maintenance), each with a part per change (problem, solution,
+files, how to test, upstream status), and `pending-upgrades.md`. Extend the spec of the theme with
+a new part instead of creating a new spec; create one only for a really new theme, and list it in
+`docs/specs/README.md`. Update the specs with every change; they are shared with the XRPWeb team.
 Write them for any reader: what changes and how to check it in the app, not this repo's
 tooling (no npm or test commands, no hosting previews). Unit tests are listed under Files.
 
@@ -104,8 +107,8 @@ tooling (no npm or test commands, no hosting previews). Unit tests are listed un
 - Minimal changes to upstream files: prefer new files, flags and small hooks over rewrites.
   Do not delete upstream code; disable it behind a flag.
 - Pull upstream changes: `git fetch upstream && git merge upstream/main` on `main`.
-- One PR per goal: a user-visible outcome (for example "opening projects"), with one spec that
-  has a section per part. Fixes the goal needs and backlog or doc updates go in the same PR.
+- One PR per goal: a user-visible outcome (for example "opening projects"), with a part in the
+  spec of its theme. Fixes the goal needs and backlog or doc updates go in the same PR.
 - Separate PRs only for changes meant for XRPWeb (branched from `upstream/main`), dependency
   upgrades, and risky or robot-dependent changes.
 - Agree on the goals with the user before starting. Open PRs without asking once the work is

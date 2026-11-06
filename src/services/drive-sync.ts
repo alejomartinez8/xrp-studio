@@ -5,7 +5,7 @@ import LocalDriveService, { FOLDER_MIME_TYPE, LocalDriveRecord } from '@/service
 import { Constants } from '@/utils/constants';
 
 /**
- * Drive sync (spec 020): projects live in the browser (LocalDriveService); while a Google account
+ * Drive sync (spec 005): projects live in the browser (LocalDriveService); while a Google account
  * is signed in, its space is copied to the XRPCode folder of that account's Drive.
  *
  * - Push: every change made in the app is uploaded a moment later. Folders go first; deleted files

@@ -42,7 +42,7 @@ const registerWithPlugin: Register = (options) => {
 };
 
 /**
- * Starts the installable app (spec 018): registers the service worker, which stores the app for
+ * Starts the installable app (spec 001): registers the service worker, which stores the app for
  * offline use and reports a new version (`needRefresh`), checks for updates every hour while the
  * app is open, and keeps the browser's install prompt for the Install app button (`canInstall`).
  * Does nothing where service workers are not available (an `http://` address on the network).

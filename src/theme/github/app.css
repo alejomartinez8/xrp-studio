@@ -34,7 +34,7 @@ html .flexlayout__tab_button--selected {
     box-shadow: inset 0 -2px #fd8c73;
 }
 
-/* Left side bar (spec 021): square icon buttons, the open panel marked with the accent colour. */
+/* Left side bar (spec 003): square icon buttons, the open panel marked with the accent colour. */
 html .flexlayout__border_left .flexlayout__border_button {
     padding: 8px;
     margin: 0;
@@ -59,7 +59,7 @@ html .flexlayout__border_left .side-bar-toggle:hover {
 }
 
 /*
- * Rounded panels (spec 021, part 3): the side panel, the editor and the terminal are cards of one
+ * Rounded panels (spec 003, part 3): the side panel, the editor and the terminal are cards of one
  * colour floating on a frame colour with small gaps, like a modern code editor. The frame is
  * shared with the status bar, the side bar and, in dark mode, the navbar.
  */

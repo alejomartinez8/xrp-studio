@@ -14,7 +14,7 @@ type SideBarIconProps = {
 };
 
 /**
- * An icon in the left side bar, like an editor's activity bar (XRP Studio, spec 021). The
+ * An icon in the left side bar, like an editor's activity bar (XRP Studio, spec 003). The
  * flexlayout left border rotates its tabs by -90 degrees, so the icon is turned back upright.
  * Without `onClick` it is the content of a border tab (the Explorer), which flexlayout makes
  * clickable; with it, a toggle button of its own (the Terminal).
