@@ -14,10 +14,12 @@ import { ThemeInit } from '../.flowbite-react/init';
 import { isOfflineBuild } from '@/utils/offline';
 import { startPwa } from '@/utils/pwa';
 import { startAutosave } from '@/utils/autosave';
+import { startAccounts } from '@/utils/accounts';
 
 initAiBuddyAccess();
 startPwa();
 startAutosave();
+startAccounts();
 applyBlocklyLocale(i18n.language);
 
 function Root() {

@@ -19,10 +19,11 @@ should be its own change, tested in the app.
 
 | Feature | Notes |
 | --- | --- |
-| Drive backup for My projects | Signing in with Google (now working, spec 008) could back up My projects to Drive. Asked in Open-STEM/XRPWeb#336. |
 | Test My projects with a robot | Run from My projects, Robot memory switch, disconnect. See spec 007. |
 | Choose the editor | Blocks, Python, or blocks + Python side by side. |
-| Two-way Drive sync | Pull changes made on another device; conflict handling. |
+| Sync while signed in (spec 020, part b) | Part (a) brings Drive's changes in at sign-in, when the network comes back and after a failed sync. Part (b): pull regularly while signed in (Drive changes feed) so work from another device shows up, and name the device in conflict copies. |
+| Trash and archive in the app | Deleted files go to the Drive trash (30 days) but can only be restored from Drive. Show the trash in the app, or at least archived projects, as agentic apps do now. |
+| Explorer in a side bar | Replace the vertical "Folders" text tab with an activity bar icon (two files, tooltip "Explorer"), collapsed by default so the canvas has more room. Separate layout PR. |
 | Dracula theme | Second app theme; needs runtime CSS variables instead of build-time Tailwind colours. |
 | Configurable Drive folder name | `Constants.XRPCODE` is fixed to `XRPCode`. With its own OAuth client the fork only sees the folders it created, so users of both apps get two `XRPCode` folders. A build setting (default `XRPCode`) would avoid renaming it for XRPWeb users; the hardcoded `'/XRPCode/'` paths in `folder-tree.tsx`, `newfiledlg.tsx` and `filesaveasdlg.tsx` would need to use the constant first (they map Drive paths to `/gusers/<user>/` on the robot, so test Run with a robot). |
 | Battery level in the status pill | `batteryVoltage()` returns 0 while the REPL is busy; needs a robot to test safely. |

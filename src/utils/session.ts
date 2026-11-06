@@ -4,7 +4,9 @@ import { UserProfile } from '@/services/google-auth';
 import { Constants } from '@/utils/constants';
 import { fireGoogleUserTree, getUsernameFromEmail } from '@/utils/google-utils';
 import { StorageKeys } from '@/utils/localstorage';
-import { isLocalProjectsEnabled } from '@/utils/offline';
+import { isDriveSyncEnabled, isLocalProjectsEnabled } from '@/utils/offline';
+import { enterAccount } from '@/utils/accounts';
+import { LOCAL_PROFILE, startMyProjects } from '@/utils/local-projects';
 
 /**
  * Sign-in and sign-out handling, shared by the sign-in widget wherever it is shown. In XRP Studio
@@ -26,6 +28,9 @@ function isRobotConnected(): boolean {
  * show the Google Drive ownership notice.
  */
 export async function handleSignedIn(profile: UserProfile): Promise<boolean> {
+    if (isDriveSyncEnabled && profile.id !== LOCAL_PROFILE.id) {
+        await enterAccount(profile);
+    }
     AppMgr.getInstance().emit(EventType.EVENT_LOGIN_STATUS, LoginStatus.LOGGED_IN);
     const username = getUsernameFromEmail(profile.email);
     if (username !== undefined && isRobotConnected()) {
@@ -43,9 +48,17 @@ export async function handleSignedIn(profile: UserProfile): Promise<boolean> {
     return false;
 }
 
-/** Handle a sign-out: announce it and show the XRP's files again, or an empty tree. */
+/**
+ * Handle a sign-out: announce it and show the XRP's files again, or an empty tree. With Drive sync
+ * (spec 020) the account's space was already closed (`leaveAccount`), so the guest's My projects
+ * open instead.
+ */
 export async function handleSignedOut(): Promise<void> {
     await AppMgr.getInstance().authService.logOut();
+    if (isDriveSyncEnabled) {
+        await handleSignedIn(await startMyProjects());
+        return;
+    }
     AppMgr.getInstance().emit(EventType.EVENT_LOGIN_STATUS, LoginStatus.LOGGED_OUT);
     if (!isRobotConnected()) {
         AppMgr.getInstance().emit(EventType.EVENT_FILESYS, '{}');

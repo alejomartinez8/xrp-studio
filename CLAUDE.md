@@ -46,14 +46,20 @@ updates wait for the user's Reload (spec 018).
 Files in My projects or Google Drive save themselves (`src/utils/autosave.ts`, spec 019); Save
 no longer writes them to the robot, Run does. Robot-memory files keep the manual save.
 
-My projects (no login needed) is used when Google sign-in is not available:
-`isLocalProjectsEnabled` in `src/utils/offline.ts` (offline builds, or no `GOOGLE_AUTH_URL`).
-Builds with Google keep XRPWeb's behaviour unchanged. `src/services/local-drive.ts` implements the
+Every build opens straight into My projects (no login needed): `isLocalProjectsEnabled` in
+`src/utils/offline.ts` is always true. `src/services/local-drive.ts` implements the
 `GoogleDriveService` interface on top of IndexedDB, and `src/widgets/local-session.tsx` opens it on
 startup (it uses the same session slot as Google Drive, so the existing Drive code paths work
 unchanged; Run copies the program to the robot). The "My projects | Robot memory" switch above the
 folder tree (`src/components/storage-switch.tsx`, `src/utils/local-projects.ts`) shows the
 connected robot's files as XRPWeb does without Google.
+
+Google sign-in only syncs (spec 020, `isDriveSyncEnabled`: builds with `GOOGLE_AUTH_URL` that are
+not offline). `authService.isLogin` still means "projects session open"; the Google account is
+tracked in `src/utils/accounts.ts` (one IndexedDB space per account, own or shared device, guest
+projects, sign-out). `src/services/drive-sync.ts` copies the account's space to the Drive `XRPCode`
+folder through `src/services/drive-api.ts`; the status bar (`src/components/status-bar.tsx`) shows
+its cloud. The UI never says "Drive": it is the backend.
 
 Text overrides: `local-projects.json` (Drive wording → My projects) when My projects is enabled,
 and `offline.json` (Help links marked "online") in offline builds, both in
