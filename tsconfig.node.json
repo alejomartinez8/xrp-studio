@@ -10,7 +10,7 @@
     },
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
     "target": "ES2022",
-    "lib": ["ES2023"],
+    "lib": ["ES2023", "DOM"],
     "module": "ESNext",
     "skipLibCheck": true,
 
@@ -28,5 +28,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["vite.config.ts", "pwa-plugin.ts", "tailwind.config.ts", "tailwind-plugins.d.ts", "api", "server"]
+  "include": ["vite.config.ts", "pwa-plugin.ts", "tailwind.config.ts", "tailwind-plugins.d.ts", "api", "server", "playwright.config.ts", "e2e"]
 }

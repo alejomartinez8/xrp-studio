@@ -90,7 +90,8 @@ export function isKeepSignedIn(): boolean {
 
 /**
  * Turns "Keep me signed in" on or off. It applies to the open session too: off starts the idle
- * sign-out and marks the projects to be removed when the session ends; on stops both.
+ * sign-out and marks the projects to be removed when the session ends; on stops both and marks
+ * the session to be restored after a reload.
  */
 export function setKeepSignedIn(on: boolean): void {
     localStorage.setItem(StorageKeys.KEEP_SIGNED_IN, on ? 'on' : 'off');
@@ -100,6 +101,7 @@ export function setKeepSignedIn(on: boolean): void {
     }
     writeActive({ profile: active.profile, shared: !on });
     if (on) {
+        localStorage.setItem(StorageKeys.GOOGLE_SESSION, 'true');
         stopIdleTimer();
     } else {
         localStorage.removeItem(StorageKeys.GOOGLE_SESSION);

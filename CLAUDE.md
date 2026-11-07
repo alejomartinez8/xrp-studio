@@ -15,6 +15,10 @@ block editor, a simple UI for kids, Spanish first; desktop and Android tablet.
   `NODE_OPTIONS=--max-old-space-size=8192`). Vite 8 (Rolldown; spec 006) needs Node 20.19+ or 22.12+.
 - `npx vitest run` (single run; `npm test` stays in watch mode)
 - `npm run lint`
+- `npx playwright install chromium` once, then `npm run test:e2e`: browser tests of accounts and
+  sync against a fake Google (`e2e/support/google-mock.ts`, spec 005 part 3). They start their own
+  dev server on port 3100 with `GOOGLE_AUTH_URL=/api`; no credentials or internet needed. They do
+  not replace a manual test with a real Google account.
 
 ## Architecture
 

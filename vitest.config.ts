@@ -9,6 +9,7 @@ export default defineConfig({
         printBasicPrototype: true
     },
     setupFiles: ["./setupTests.ts"],
+    exclude: ["**/node_modules/**", "**/dist/**", "e2e/**"],
   },
   resolve: {
     alias: [
