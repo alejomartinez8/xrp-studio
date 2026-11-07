@@ -114,8 +114,10 @@ supported).
   same as before.
 - Three changes the new versions needed: the static copy plugin keeps the folder structure now, so
   the destinations in `vite.config.ts` are `./` (the layout styles, Blockly media and Gridstack
-  styles are still served from `node_modules/...`); and a test mocked `ResizeObserver` with an
-  arrow function, which is not a constructor.
+  styles are still served from `node_modules/...`); a test mocked `ResizeObserver` with an arrow
+  function, which is not a constructor; and the Google sign-in functions of the host (`api/`,
+  `server/`) lost their Node types, because the root `tsconfig.json` limits the types to
+  `vitest/globals` and Vitest 3 used to bring the Node ones in: `node` is now listed there too.
 - Result: no critical vulnerability is left. `npm audit` still lists 20 (2 high, 15 moderate, 3
   low): the 2 high ones are `flowbite-react` through `deepmerge-ts`, which needs an upstream
   update and needs attacker-controlled objects to matter, and the rest are in build and lint
@@ -130,7 +132,7 @@ part 2.
 ### Files
 
 - `package.json`, `package-lock.json` (regenerated with a plain `npm install` so `npm ci` works),
-  `vite.config.ts`, `eslint.config.js`, `setupTests.ts`, `src/jest-dom.d.ts` (new),
+  `tsconfig.json`, `vite.config.ts`, `eslint.config.js`, `setupTests.ts`, `src/jest-dom.d.ts` (new),
   `src/components/tests/folder-tree.spec.tsx`.
 
 ### How to test
