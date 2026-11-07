@@ -89,7 +89,7 @@ plugin serves them in dev. Server variables: `OAUTH_CLIENT_ID`, `OAUTH_CLIENT_SE
 ## Specs
 
 `docs/specs/` has one spec per theme (offline and install, language and theme, layout and screens,
-file management, accounts and sync, maintenance), each with a part per change (problem, solution,
+file management, accounts and sync, maintenance, automated testing), each with a part per change (problem, solution,
 files, how to test, upstream status), and `pending-upgrades.md`. Extend the spec of the theme with
 a new part instead of creating a new spec; create one only for a really new theme, and list it in
 `docs/specs/README.md`. Update the specs with every change; they are shared with the XRPWeb team.
