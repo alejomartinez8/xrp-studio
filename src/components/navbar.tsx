@@ -2035,6 +2035,7 @@ function NavBar({ layoutref }: NavBarProps) {
                                 {t('settings')}
                             </p>
                             <QuickSettings
+                                idPrefix="mobile-"
                                 onChooseLanguage={() => {
                                     close();
                                     onChooseLanguage();

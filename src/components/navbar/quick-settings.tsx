@@ -11,15 +11,17 @@ import { isDriveSyncEnabled } from '@/utils/offline';
 type QuickSettingsProps = {
     onChooseLanguage: () => void;
     onChooseTheme: () => void;
+    idPrefix?: string;
 };
 
 /**
  * QuickSettings - language and theme rows at the top of the settings menu, each showing the
  * current choice and opening its picker, the "Keep me signed in" switch of this device when
  * accounts can sync (off by default: a shared device signs out and clears its projects, spec 005),
- * and Install app while the browser offers it (spec 001).
+ * and Install app while the browser offers it (spec 001). The phone menu renders them a second
+ * time, so it passes an `idPrefix` to keep the element ids unique.
  */
-function QuickSettings({ onChooseLanguage, onChooseTheme }: QuickSettingsProps) {
+function QuickSettings({ onChooseLanguage, onChooseTheme, idPrefix = '' }: QuickSettingsProps) {
     const { t, i18n } = useTranslation();
     const { canInstall } = usePwaState();
     const [keepSignedIn, setKeep] = useState(isKeepSignedIn);
@@ -27,7 +29,7 @@ function QuickSettings({ onChooseLanguage, onChooseTheme }: QuickSettingsProps) 
     return (
         <div className="text-neutral-200 flex flex-col gap-3 px-4 pb-3 pt-1">
             <button
-                id="languageBtn"
+                id={`${idPrefix}languageBtn`}
                 type="button"
                 onClick={onChooseLanguage}
                 className="flex items-center justify-between gap-4 rounded-md px-2 py-1.5 hover:bg-matisse-400 dark:hover:bg-shark-500"
@@ -42,7 +44,7 @@ function QuickSettings({ onChooseLanguage, onChooseTheme }: QuickSettingsProps) 
                 </span>
             </button>
             <button
-                id="themeBtn"
+                id={`${idPrefix}themeBtn`}
                 type="button"
                 onClick={onChooseTheme}
                 className="flex items-center justify-between gap-4 rounded-md px-2 py-1.5 hover:bg-matisse-400 dark:hover:bg-shark-500"
@@ -58,7 +60,7 @@ function QuickSettings({ onChooseLanguage, onChooseTheme }: QuickSettingsProps) 
             </button>
             {isDriveSyncEnabled && (
                 <button
-                    id="keepSignedInBtn"
+                    id={`${idPrefix}keepSignedInBtn`}
                     type="button"
                     role="switch"
                     aria-checked={keepSignedIn}
@@ -85,7 +87,7 @@ function QuickSettings({ onChooseLanguage, onChooseTheme }: QuickSettingsProps) 
             )}
             {canInstall && (
                 <button
-                    id="installAppBtn"
+                    id={`${idPrefix}installAppBtn`}
                     type="button"
                     onClick={() => installApp()}
                     className="flex items-center gap-2 rounded-md px-2 py-1.5 hover:bg-matisse-400 dark:hover:bg-shark-500"

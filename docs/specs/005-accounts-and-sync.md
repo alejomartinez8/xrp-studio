@@ -355,6 +355,10 @@ rest of the page's clock is real.
   reload: after reloading the sign-in button was back. Now the session is remembered from the
   moment the switch is turned on. Check: sign in with the switch off, turn it on, reload: the
   account is still signed in.
+- The phone menu shows the settings a second time (hidden on a wide screen), so the language,
+  theme, "Keep me signed in" and Install app buttons were on the page twice with the same
+  element id. The phone menu's copies now have their own ids. Check: open the settings menu on a
+  wide screen and on a phone; both work as before.
 
 ### Files
 
@@ -362,7 +366,8 @@ rest of the page's clock is real.
   sign in, create projects and read the tree), `e2e/accounts.spec.ts` (the checks above),
   `playwright.config.ts`, `.github/workflows/e2e.yml` (runs them on every pull request).
 - Changed: `src/widgets/login.tsx` (logger created once), `src/utils/accounts.ts` (session remembered when
-  the switch is turned on), `package.json` (test runner),
+  the switch is turned on), `src/components/navbar/quick-settings.tsx` and
+  `src/components/navbar.tsx` (own ids in the phone menu), `package.json` (test runner),
   `vitest.config.ts` (leaves the browser tests alone), `tsconfig.node.json`, `.gitignore`.
 
 ### How to test
