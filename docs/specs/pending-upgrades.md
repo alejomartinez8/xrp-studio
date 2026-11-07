@@ -28,7 +28,7 @@ should be its own change, tested in the app.
 | Dracula theme | Second app theme; needs runtime CSS variables instead of build-time Tailwind colours. |
 | Configurable Drive folder name | `Constants.XRPCODE` is fixed to `XRPCode`. With its own OAuth client the fork only sees the folders it created, so users of both apps get two `XRPCode` folders. A build setting (default `XRPCode`) would avoid renaming it for XRPWeb users; the hardcoded `'/XRPCode/'` paths in `folder-tree.tsx`, `newfiledlg.tsx` and `filesaveasdlg.tsx` would need to use the constant first (they map Drive paths to `/gusers/<user>/` on the robot, so test Run with a robot). |
 | Battery level in the status pill | `batteryVoltage()` returns 0 while the REPL is busy; needs a robot to test safely. |
-| Faster builds with Rolldown | The production build takes about a minute, mostly bundling and minifying Monaco. Vite's Rust bundler (Rolldown, which replaces Rollup in newer Vite) should cut this a lot. SWC would not help: without Babel plugins, `@vitejs/plugin-react` already uses esbuild. Dependency upgrade, separate PR; check `manualChunks` and the Monaco workers still work. |
+| Vite 8 | `rolldown-vite` 7.3.1 is used today (spec 006, part 2). Vite 8 includes Rolldown itself, so the alias can go; it needs `@vitejs/plugin-react` 6 and Vitest 5. |
 
 ## Known issues
 
