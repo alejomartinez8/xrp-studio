@@ -20,6 +20,7 @@ should be its own change, tested in the app.
 | Feature | Notes |
 | --- | --- |
 | Test My projects with a robot | Run from My projects, Robot memory switch, disconnect. See spec 004. |
+| Hide the blocks menu on phones | On a small screen the toolbox and its block list take most of the width. Hide them once a block is picked, so the canvas is visible (like MakeCode and Scratch do on phones). |
 | Side bar on either side | Like VS Code's activity bar: vertical icon tabs (Explorer, Simulator, ...) that the user can place on the left or the right. Needed once the board simulator arrives. See the layout spec (003). |
 | Choose the editor | Blocks, Python, or blocks + Python side by side. |
 | Sync while signed in (spec 005, part b) | Part (a) brings Drive's changes in at sign-in, when the network comes back and after a failed sync. Part (b): pull regularly while signed in (Drive changes feed) so work from another device shows up, and name the device in conflict copies. |

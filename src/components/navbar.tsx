@@ -1844,7 +1844,17 @@ function NavBar({ layoutref }: NavBarProps) {
                 <div className={`flex h-full items-stretch ${isConnected ? 'hidden' : ''}`}>
                     <button
                         id="connectBtn"
-                        className="text-neutral-900 flex h-full min-w-0 items-center justify-center gap-2 rounded-l-3xl md:min-w-[200px] bg-shark-200 px-4 py-2 text-matisse-900 hover:bg-curious-blue-300 dark:bg-shark-600 dark:text-shark-100 dark:hover:bg-shark-500"
+                        title={
+                            rememberedXrp?.xrpId
+                                ? t('connectXRPNamed', { id: rememberedXrp.xrpId })
+                                : t('connectXRP')
+                        }
+                        aria-label={
+                            rememberedXrp?.xrpId
+                                ? t('connectXRPNamed', { id: rememberedXrp.xrpId })
+                                : t('connectXRP')
+                        }
+                        className="text-neutral-900 flex h-full min-w-0 items-center justify-center gap-2 rounded-l-3xl px-3 md:px-4 md:min-w-[200px] bg-shark-200 py-2 text-matisse-900 hover:bg-curious-blue-300 dark:bg-shark-600 dark:text-shark-100 dark:hover:bg-shark-500"
                         onClick={onConnectBtnClicked}
                     >
                         <svg width="20" height="20" viewBox="0 0 20 20">
@@ -1863,7 +1873,7 @@ function NavBar({ layoutref }: NavBarProps) {
                                 d="M2,18 L8,12"
                             ></path>
                         </svg>
-                        <span>
+                        <span className="hidden whitespace-nowrap md:inline">
                             {rememberedXrp?.xrpId
                                 ? t('connectXRPNamed', { id: rememberedXrp.xrpId })
                                 : t('connectXRP')}
