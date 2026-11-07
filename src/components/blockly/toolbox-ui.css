@@ -67,3 +67,19 @@
 div#toolbox-search-input.blocklyToolboxCategory {
     background-color: transparent !important;
 }
+
+/** Phones: a more compact toolbox leaves room for the blocks. */
+@media (max-width: 767px) {
+    .blocklyToolboxCategory {
+        min-height: 34px;
+    }
+
+    .blocklyToolboxCategoryLabel {
+        font-size: 13px;
+    }
+
+    #toolbox-search-input input {
+        padding: 4px 10px;
+        font-size: 13px;
+    }
+}

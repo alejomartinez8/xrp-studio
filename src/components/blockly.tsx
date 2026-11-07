@@ -178,6 +178,11 @@ function restoreViewport(ws: Workspace, viewport: BlocklyViewport) {
     svgWs.scroll(viewport.scrollX, viewport.scrollY);
 }
 
+/** The zoom a workspace starts at: smaller on phones (below 768 px) so more blocks fit. */
+function initialScale(): number {
+    return window.matchMedia?.('(max-width: 767px)').matches ? 0.75 : 1;
+}
+
 /** Zoom to fit and center all blocks — used only when a file is first opened. */
 function centerAndFit(ws: Workspace) {
     const svgWs = asSvgWorkspace(ws);
@@ -186,6 +191,9 @@ function centerAndFit(ws: Workspace) {
     }
     Blockly.svgResize(svgWs as unknown as Blockly.WorkspaceSvg);
     svgWs.zoomToFit();
+    if (svgWs.scale > initialScale()) {
+        svgWs.setScale(initialScale());
+    }
     svgWs.scrollCenter();
 }
 
@@ -593,8 +601,8 @@ function BlocklyEditor({ tabId, tabName }: BlocklyEditorProps) {
                     drag: true,
                     wheel: true},
                 zoom:{controls: true, wheel: false,
-                    startScale: 1, maxScale: 1, minScale: 0.1, scaleSpeed: 1.2,
-                pinch: false},
+                    startScale: initialScale(), maxScale: 2, minScale: 0.3, scaleSpeed: 1.2,
+                pinch: true},
 
                 trashcan: true,
                 media: 'node_modules/blockly/media/',

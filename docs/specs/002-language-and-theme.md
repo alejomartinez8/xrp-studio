@@ -68,6 +68,9 @@ The rest of the app looks like an IDE for adults.
   collapsed "Advanced" category. Grouping happens when the toolbox is built, so the plugin manager
   still finds Gamepad when it inserts the 3rd Party category.
 - **Canvas:** theme background and a sparser cross grid.
+- **Zoom:** the canvas can be zoomed in (up to 2x) and out with a pinch on touch screens and with
+  the + / - controls. On phones (below 768 px) it starts at 75% so more blocks fit, and the
+  toolbox rows and search box are more compact so the toolbox leaves room for the blocks.
 
 #### App theme (GitHub colours by default)
 
@@ -92,7 +95,7 @@ later; `src/components/blockly/block-theme.ts` applies any block theme to Blockl
 
 - New: `src/theme/` (types, index, `github/`), `src/components/blockly/block-theme.ts`,
   `src/components/blockly/toolbox-ui.ts` and `.css`.
-- Hooks: `src/components/blockly.tsx` (renderer, theme options, toolbox builder, grid),
+- Hooks: `src/components/blockly.tsx` (renderer, theme options, toolbox builder, grid, zoom),
   `tailwind.config.ts`, `src/main.tsx` (theme CSS), `src/utils/i18n/locales/{en,es}/blockly.json`
   ("Search", "Advanced").
 - Dependency: `@blockly/toolbox-search` 3.1.9.
@@ -105,6 +108,8 @@ later; `src/components/blockly/block-theme.ts` applies any block theme to Blockl
 4. Switch to the dark theme in Settings: labels and icons stay readable.
 5. Save and reload a project created before the change: it opens unchanged, and the generated
    Python is the same.
+6. On a phone, or a window narrower than 768 px: the canvas starts at 75%. Pinch with two fingers
+   (or use the + / - buttons): the blocks zoom in and out; the toolbox does not change size.
 
 Automated: `src/components/tests/block-theme.spec.ts` (category and subcategory colours, block
 colouring, built-in styles) and `src/components/tests/toolbox-ui.spec.ts` (Advanced grouping,
