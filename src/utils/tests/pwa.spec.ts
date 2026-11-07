@@ -149,4 +149,61 @@ describe('pwa', () => {
         pwa.startPwa(register);
         expect(register).not.toHaveBeenCalled();
     });
+    it('applies a new version by itself when reloading loses nothing', async () => {
+        fakeServiceWorker(null);
+        const pwa = await loadPwa();
+        let onNeedRefresh = () => {};
+        pwa.startPwa(
+            (options) => {
+                onNeedRefresh = options.onNeedRefresh;
+            },
+            () => true,
+        );
+        onNeedRefresh();
+        await vi.waitFor(() => expect(reload).toHaveBeenCalledTimes(1));
+    });
+
+    it('waits while reloading would lose work, then applies the new version', async () => {
+        vi.useFakeTimers();
+        fakeServiceWorker(null);
+        const pwa = await loadPwa();
+        let safe = false;
+        let onNeedRefresh = () => {};
+        pwa.startPwa(
+            (options) => {
+                onNeedRefresh = options.onNeedRefresh;
+            },
+            () => safe,
+        );
+        onNeedRefresh();
+        await vi.advanceTimersByTimeAsync(60 * 1000);
+        expect(reload).not.toHaveBeenCalled();
+        expect((await snapshot(pwa)).needRefresh).toBe(true);
+
+        safe = true;
+        await vi.advanceTimersByTimeAsync(31 * 1000);
+        expect(reload).toHaveBeenCalledTimes(1);
+        vi.useRealTimers();
+    });
+
+    it('removes the worker and its stored copy when the new version does not take over', async () => {
+        vi.useFakeTimers();
+        const waiting = waitingWorker();
+        const unregister = vi.fn(() => Promise.resolve(true));
+        const container = Object.assign(new EventTarget(), {
+            getRegistration: vi.fn(() => Promise.resolve({ waiting, unregister })),
+        });
+        Object.defineProperty(navigator, 'serviceWorker', { value: container, configurable: true });
+        const deleteCache = vi.fn(() => Promise.resolve(true));
+        vi.stubGlobal('caches', { keys: () => Promise.resolve(['a', 'b']), delete: deleteCache });
+        const pwa = await loadPwa();
+        await pwa.applyUpdate();
+        expect(reload).not.toHaveBeenCalled();
+
+        await vi.advanceTimersByTimeAsync(4000);
+        expect(unregister).toHaveBeenCalled();
+        expect(deleteCache).toHaveBeenCalledTimes(2);
+        expect(reload).toHaveBeenCalledTimes(1);
+        vi.useRealTimers();
+    });
 });

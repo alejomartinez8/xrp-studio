@@ -155,8 +155,8 @@ open without internet.
 
 #### Update notice
 
-- The service worker is registered with `registerType: 'prompt'`: a new version waits and never
-  reloads the page on its own, so a child does not lose work.
+- The service worker is registered with `registerType: 'prompt'`: a new version waits, and the
+  page is reloaded only when that loses nothing (see "Updates by themselves" below).
 - `src/utils/pwa.ts` (new) registers it from `main.tsx` (`startPwa()`), checks for an update every
   hour, and keeps a small state (`needRefresh`, `canInstall`) read with `usePwaState()`.
 - `src/components/update-notice.tsx` (new), rendered in `App.tsx`, shows "A new version of XRP
@@ -175,6 +175,19 @@ open without internet.
 ![Update notice, light](images/018-update-light.png)
 ![Update notice, dark](images/018-update-dark.png)
 
+#### Updates by themselves
+
+- A new version is applied automatically, with no tap, once reloading loses nothing: no robot is
+  connected, no program is running and no open file has unsaved changes (`isSafeToReload()` in
+  `src/utils/safe-to-reload.ts`). The open files that save themselves are written first.
+- While it is not safe (a robot is connected, a program runs, a robot-memory file is not saved),
+  the notice stays and the app tries again every 30 seconds and when the page becomes visible
+  again. **Reload** still works by hand.
+- Fix: on some phone browsers **Reload** did nothing because the waiting version never took over.
+  If it has not taken over after 3 seconds, the worker and its stored copy are removed and the page
+  reloads from the network, so the new version always loads. The offline copy is stored again
+  afterwards.
+
 #### Fix: Reload did nothing
 
 - **Problem:** clicking **Reload** left the old version on screen. The plugin's update function
@@ -188,7 +201,8 @@ open without internet.
 
 ### Files
 
-- New: `pwa-plugin.ts`, `src/utils/pwa.ts`, `src/components/update-notice.tsx`,
+- New: `pwa-plugin.ts`, `src/utils/pwa.ts`, `src/utils/safe-to-reload.ts`,
+  `src/components/update-notice.tsx`,
   `public/icons/*.png`, tests in `src/utils/tests/pwa.spec.ts` with the stub
   `src/utils/tests/stubs/pwa-register.ts`.
 - Changed: `vite.config.ts`, `vitest.config.ts` (stub alias), `tsconfig.node.json`,
@@ -204,7 +218,8 @@ open without internet.
 3. Install: the ⚙ menu shows **Install app** (Chrome on a computer or Android); installing opens
    the app in its own window and the row goes away.
 4. Update: publish a new build and reload the app once; the notice appears. **Later**
-   hides it; **Reload** saves the open files and loads the new version.
+   hides it; **Reload** saves the open files and loads the new version. With no robot connected
+   and nothing unsaved, the page reloads by itself a moment after the new version is found.
 5. Reload on a first visit: in a new browser profile, open the app once and wait until the
    offline copy is ready, publish a new build, then use DevTools > Application > Service workers
    > Update. The notice appears; **Reload** loads the new version.

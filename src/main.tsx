@@ -13,11 +13,13 @@ import { GoogleClientIdContext } from '@/utils/google-client-id';
 import { ThemeInit } from '../.flowbite-react/init';
 import { isOfflineBuild } from '@/utils/offline';
 import { startPwa } from '@/utils/pwa';
+import { isSafeToReload, watchProgramRunning } from '@/utils/safe-to-reload';
 import { startAutosave } from '@/utils/autosave';
 import { startAccounts } from '@/utils/accounts';
 
 initAiBuddyAccess();
-startPwa();
+watchProgramRunning();
+startPwa(undefined, isSafeToReload);
 startAutosave();
 startAccounts();
 applyBlocklyLocale(i18n.language);
