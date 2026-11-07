@@ -3,8 +3,6 @@ import { flushAutosave } from '@/utils/autosave';
 
 /** What the installable app can offer the user right now. */
 export type PwaState = {
-    /** A new version is stored and waits for Reload. */
-    needRefresh: boolean;
     /** The browser lets the app be installed (Chrome and Edge). */
     canInstall: boolean;
 };
@@ -17,26 +15,18 @@ type InstallPromptEvent = Event & {
 
 /** Registers the service worker and reports new versions. */
 type Register = (options: {
-    onNeedRefresh: () => void;
     onRegisteredSW: (url: string, registration: ServiceWorkerRegistration | undefined) => void;
 }) => void;
-
-/** How often an open app checks for a new version. */
-const UPDATE_CHECK_MS = 60 * 60 * 1000;
-
-/** How often a stored new version is applied if it could not be applied yet. */
-const AUTO_UPDATE_RETRY_MS = 30 * 1000;
 
 /** Time a version gets to take over before the update is forced. */
 const TAKE_OVER_TIMEOUT_MS = 3000;
 
-/** Tells when reloading the page loses nothing: no robot connected, no program running, no unsaved file. */
-export type SafeToReload = () => boolean;
+/** How often an open app checks for a new version. */
+const UPDATE_CHECK_MS = 60 * 60 * 1000;
 
-let state: PwaState = { needRefresh: false, canInstall: false };
+let state: PwaState = { canInstall: false };
 const listeners = new Set<() => void>();
 let installPrompt: InstallPromptEvent | null = null;
-let autoUpdateTimer: ReturnType<typeof setInterval> | null = null;
 
 /** Replace part of the state and tell the subscribed components. */
 function setState(change: Partial<PwaState>): void {
@@ -51,39 +41,23 @@ const registerWithPlugin: Register = (options) => {
     });
 };
 
-/**
- * Applies a stored new version by itself as soon as reloading loses nothing (`isSafe`), checking
- * again every few seconds and when the page becomes visible. Until then the notice stays, so the
- * user can also reload by hand.
- */
-function applyWhenSafe(isSafe: SafeToReload): void {
-    const attempt = () => {
-        if (state.needRefresh && isSafe()) {
-            if (autoUpdateTimer) {
-                clearInterval(autoUpdateTimer);
-                autoUpdateTimer = null;
-            }
-            void applyUpdate();
-        }
-    };
-    attempt();
-    if (state.needRefresh && !autoUpdateTimer) {
-        autoUpdateTimer = setInterval(attempt, AUTO_UPDATE_RETRY_MS);
-        document.addEventListener('visibilitychange', attempt);
-    }
-}
+/** Session key set when a stored version was just applied, so the page does not reload in a loop. */
+const APPLIED_KEY = 'PwaApplied';
+
+/** Time during which a second automatic update is not tried after one was applied. */
+const APPLIED_GUARD_MS = 20 * 1000;
 
 /**
  * Starts the installable app (spec 001): registers the service worker, which stores the app for
- * offline use and reports a new version (`needRefresh`), checks for updates every hour while the
- * app is open, and keeps the browser's install prompt for the Install app button (`canInstall`).
- * A new version is applied by itself once `isSafe` says reloading loses nothing. Does nothing
- * where service workers are not available (an `http://` address on the network).
+ * offline use, looks for a new version when the app opens and every hour while it is open, and
+ * keeps the browser's install prompt for the Install app button (`canInstall`).
+ *
+ * A new version is stored in the background and never changes the page being used. It is applied
+ * when the app is opened or the page is reloaded: if a stored version is waiting at that moment,
+ * it takes over and the page loads it. Does nothing where service workers are not available (an
+ * `http://` address on the network).
  */
-export function startPwa(
-    register: Register = registerWithPlugin,
-    isSafe: SafeToReload = () => false,
-): void {
+export function startPwa(register: Register = registerWithPlugin): void {
     window.addEventListener('beforeinstallprompt', (event) => {
         event.preventDefault();
         installPrompt = event as InstallPromptEvent;
@@ -97,16 +71,25 @@ export function startPwa(
         return;
     }
     register({
-        onNeedRefresh: () => {
-            setState({ needRefresh: true });
-            applyWhenSafe(isSafe);
-        },
         onRegisteredSW: (_url, registration) => {
-            if (registration) {
-                setInterval(() => registration.update(), UPDATE_CHECK_MS);
+            if (!registration) {
+                return;
             }
+            if (registration.waiting && !justApplied()) {
+                void applyUpdate();
+            }
+            setInterval(() => registration.update(), UPDATE_CHECK_MS);
         },
     });
+}
+
+/** Whether a stored version was applied a moment ago in this session. */
+function justApplied(): boolean {
+    try {
+        return Date.now() - Number(sessionStorage.getItem(APPLIED_KEY) ?? 0) < APPLIED_GUARD_MS;
+    } catch {
+        return false;
+    }
 }
 
 /**
@@ -121,6 +104,11 @@ export function startPwa(
  * few seconds, the worker and its stored copy are removed and the page reloads from the network.
  */
 export async function applyUpdate(): Promise<void> {
+    try {
+        sessionStorage.setItem(APPLIED_KEY, String(Date.now()));
+    } catch {
+        /* storage blocked: the page may try once more after the reload */
+    }
     await flushAutosave().catch(() => undefined);
     let reloaded = false;
     const reload = () => {
@@ -161,11 +149,6 @@ async function forceUpdate(registration: ServiceWorkerRegistration): Promise<voi
         const names = await caches.keys().catch(() => [] as string[]);
         await Promise.all(names.map((name) => caches.delete(name))).catch(() => undefined);
     }
-}
-
-/** Hide the new version notice; the new version is used the next time the app opens. */
-export function dismissUpdate(): void {
-    setState({ needRefresh: false });
 }
 
 /** Show the browser's install dialog. */

@@ -52,6 +52,7 @@ describe('pwa', () => {
 
     beforeEach(() => {
         reload.mockReset();
+        sessionStorage.clear();
         flushAutosave.mockClear();
         vi.stubGlobal('location', { ...window.location, reload });
     });
@@ -82,23 +83,6 @@ describe('pwa', () => {
         window.dispatchEvent(installEvent('dismissed'));
         await pwa.installApp();
         expect((await snapshot(pwa)).canInstall).toBe(true);
-    });
-
-    it('reports a new version and hides it on Later', async () => {
-        fakeServiceWorker(null);
-        const pwa = await loadPwa();
-        let onNeedRefresh = () => {};
-        pwa.startPwa((options) => {
-            onNeedRefresh = options.onNeedRefresh;
-        });
-        expect((await snapshot(pwa)).needRefresh).toBe(false);
-
-        onNeedRefresh();
-        expect((await snapshot(pwa)).needRefresh).toBe(true);
-        expect(reload).not.toHaveBeenCalled();
-
-        pwa.dismissUpdate();
-        expect((await snapshot(pwa)).needRefresh).toBe(false);
     });
 
     it('saves, activates the waiting version and reloads when it takes control', async () => {
@@ -149,41 +133,39 @@ describe('pwa', () => {
         pwa.startPwa(register);
         expect(register).not.toHaveBeenCalled();
     });
-    it('applies a new version by itself when reloading loses nothing', async () => {
-        fakeServiceWorker(null);
+    it('applies a stored version when the app opens', async () => {
+        const waiting = waitingWorker();
+        const container = fakeServiceWorker(waiting);
+        const registration = { waiting, update: vi.fn() };
         const pwa = await loadPwa();
-        let onNeedRefresh = () => {};
-        pwa.startPwa(
-            (options) => {
-                onNeedRefresh = options.onNeedRefresh;
-            },
-            () => true,
+        pwa.startPwa((options) => options.onRegisteredSW('/sw.js', registration as never));
+        await vi.waitFor(() =>
+            expect(waiting.postMessage).toHaveBeenCalledWith({ type: 'SKIP_WAITING' }),
         );
-        onNeedRefresh();
-        await vi.waitFor(() => expect(reload).toHaveBeenCalledTimes(1));
+
+        container.dispatchEvent(new Event('controllerchange'));
+        expect(reload).toHaveBeenCalledTimes(1);
     });
 
-    it('waits while reloading would lose work, then applies the new version', async () => {
-        vi.useFakeTimers();
+    it('leaves the page alone when no stored version is waiting', async () => {
         fakeServiceWorker(null);
+        const registration = { waiting: null, update: vi.fn() };
         const pwa = await loadPwa();
-        let safe = false;
-        let onNeedRefresh = () => {};
-        pwa.startPwa(
-            (options) => {
-                onNeedRefresh = options.onNeedRefresh;
-            },
-            () => safe,
-        );
-        onNeedRefresh();
-        await vi.advanceTimersByTimeAsync(60 * 1000);
+        pwa.startPwa((options) => options.onRegisteredSW('/sw.js', registration as never));
+        await Promise.resolve();
         expect(reload).not.toHaveBeenCalled();
-        expect((await snapshot(pwa)).needRefresh).toBe(true);
+    });
 
-        safe = true;
-        await vi.advanceTimersByTimeAsync(31 * 1000);
-        expect(reload).toHaveBeenCalledTimes(1);
-        vi.useRealTimers();
+    it('does not apply a version twice in a row, so the page cannot reload in a loop', async () => {
+        const waiting = waitingWorker();
+        fakeServiceWorker(waiting);
+        sessionStorage.setItem('PwaApplied', String(Date.now()));
+        const registration = { waiting, update: vi.fn() };
+        const pwa = await loadPwa();
+        pwa.startPwa((options) => options.onRegisteredSW('/sw.js', registration as never));
+        await Promise.resolve();
+        expect(waiting.postMessage).not.toHaveBeenCalled();
+        sessionStorage.removeItem('PwaApplied');
     });
 
     it('removes the worker and its stored copy when the new version does not take over', async () => {

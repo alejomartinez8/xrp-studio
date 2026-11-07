@@ -345,9 +345,6 @@
         }
     },
     "pwa": {
-        "updateReady": "Hay una versión nueva de XRP Studio.",
-        "reload": "Recargar",
-        "later": "Más tarde",
         "install": "Instalar app"
     },
     "autosave": {
