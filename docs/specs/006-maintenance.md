@@ -112,7 +112,7 @@ supported).
   The rules that ESLint 10 and the hooks plugin added (unused assignments, error causes, React
   Compiler checks) flag code inherited from XRPWeb, so they are off and the lint result is the
   same as before.
-- Two changes the new versions needed: the static copy plugin keeps the folder structure now, so
+- Three changes the new versions needed: the static copy plugin keeps the folder structure now, so
   the destinations in `vite.config.ts` are `./` (the layout styles, Blockly media and Gridstack
   styles are still served from `node_modules/...`); and a test mocked `ResizeObserver` with an
   arrow function, which is not a constructor.
