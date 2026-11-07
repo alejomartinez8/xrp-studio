@@ -64,7 +64,7 @@ in the backlog.
 
 ### Files
 
-- `package.json`, `package-lock.json`.
+- `package.json`, `package-lock.json`, `scripts/build.mjs` (new), `vercel.json`.
 
 ### How to test
 
@@ -73,6 +73,21 @@ in the backlog.
    red underline from Pyright, and the text is still there after reloading.
 3. With the app opened once and its offline copy ready, go offline and reload: the app opens.
 4. Open an example in the block editor: blocks and toolbox work.
+5. Introduce a type error in any source file and build: the build fails and shows the error.
+
+#### Faster install and build
+
+The hosted build (2 cores) took 1 min 42 s, of which `npm ci` was 66 s, the type check 11 s and the
+bundle 12 s. Two small changes:
+
+- The type check and the bundle run **at the same time** (`scripts/build.mjs`) instead of one after
+  the other, so the build lasts as long as the slower one. A type error still fails the build.
+  Locally the whole build went from about 18 s to about 13 s.
+- The hosted install uses `npm ci --prefer-offline --no-audit --no-fund` (`vercel.json`): it prefers
+  the downloads already stored and skips the vulnerability and funding requests.
+
+Try next, as its own change: a faster package manager (Bun or pnpm) for the install, which is most
+of the time left.
 
 ### Upstream
 
