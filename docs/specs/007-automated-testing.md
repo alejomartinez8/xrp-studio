@@ -28,7 +28,7 @@ release; each part says what it leaves out.
 - **Readable failures:** a failing check shows what the screen looked like, step by step, so
   anyone can see the problem without running it again.
 
-## Part 1 — Visual regression (Planned)
+## Part 1 — Visual regression
 
 ### Problem
 
@@ -38,18 +38,57 @@ any behaviour test, and nobody notices until a class sees it.
 
 ### Solution
 
-Screenshots of key screens compared with approved reference images. A difference beyond a small
-tolerance fails the check and shows the expected image, the new one and the difference. When a
-change is meant to alter the look, the reviewer approves the new images in the same change.
+Screenshots of key screens compared with approved reference images. A difference beyond a tiny
+tolerance (0.1% of the pixels) fails the check, and the report shows the expected image, the new
+one and the difference, side by side or overlaid. When a change is meant to alter the look, its
+author takes the screenshots again and the reviewer looks at the new images in the same change.
 
-Screens: the welcome screen; the block editor with one block of each toolbox category; the
-toolbox open, with search and the Advanced group; the Python editor; the settings menu; the phone
-menu. Each in light and dark, at desktop, tablet and phone sizes. Screenshots use the English UI;
-other languages are covered by Part 5.
+62 reference images, all in light and dark, English UI:
+
+| Screen | Sizes |
+| --- | --- |
+| Welcome screen | desktop (1280×800), tablet (800×1280), phone (390×844) |
+| Block editor with the "Follow a line" example | desktop, tablet, phone |
+| Toolbox with the Sensors group open, and with the Advanced group open | desktop |
+| Blocks of each of the 18 toolbox categories (the open category panel) | desktop |
+| Toolbox search for "drive" | desktop |
+| Python editor with a short program, after it is saved | desktop |
+| Settings menu | desktop |
+| Phone menu, top and scrolled to its settings | phone |
+
+Fonts and drawing differ slightly between computers, so the screenshots are always taken in the
+same fixed test machine (the official image of the test tool), both by the author and by the
+automatic checks on every pull request. The screens are captured once they are still: fonts and
+images loaded and nothing changing on the page for half a second (Blockly rebuilds the toolbox a
+few times while a project opens). Animations and the text cursor are turned off, and the small
+development badge that names the screen size is hidden. A check that fails once and passes on a
+second try is reported as flaky, not as a failure.
+
+The report of every pull request run is attached to it, so the images can be looked at without
+running anything.
 
 ### Not covered
 
-How the app looks in browsers other than Chrome and Edge (Web Serial only exists there).
+- How the app looks in browsers other than Chrome and Edge (Web Serial only exists there), and on
+  real devices: the tablet and phone sizes are a desktop browser with a small window and touch.
+- Screens that need a robot (Part 3) or a signed-in account; other languages (Part 5).
+- Movement: only still screens are compared, not animations or dragging.
+
+### Files
+
+- New: `e2e/visual/screens.spec.ts` (the screens), `e2e/visual/__screenshots__/` (the approved
+  images), `e2e/visual/screenshot.css` (hides the development badge), `scripts/e2e-docker.mjs`
+  (runs the browser tests in the test machine image).
+- Changed: `playwright.config.ts` (screenshot settings; visual tests only in the image),
+  `package.json` (scripts), `.github/workflows/e2e.yml` (runs every browser test in the image and
+  always attaches the report), `CLAUDE.md`.
+
+### How to test
+
+1. On a pull request, the end-to-end check passes and its report lists the visual tests.
+2. Change a block category colour or a menu style and run the checks: the affected screens fail and
+   the report shows the old image, the new one and the difference.
+3. Take the screenshots again: the new images replace the old ones in the change, ready for review.
 
 ### Upstream
 

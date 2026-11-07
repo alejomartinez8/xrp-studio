@@ -19,6 +19,11 @@ block editor, a simple UI for kids, Spanish first; desktop and Android tablet.
   sync against a fake Google (`e2e/support/google-mock.ts`, spec 005 part 3). They start their own
   dev server on port 3100 with `GOOGLE_AUTH_URL=/api`; no credentials or internet needed. They do
   not replace a manual test with a real Google account.
+- Visual regression (spec 007 part 1): `e2e/visual/` compares key screens with the approved images
+  in `e2e/visual/__screenshots__`. It only runs in the official Playwright Docker image, which
+  `npm run test:e2e:docker` uses (all e2e tests, as CI does); plain `npm run test:e2e` skips it.
+  After an intended visual change, `npm run test:visual:update`, look at the new images and commit
+  them with the change. Upgrading `@playwright/test` changes the image, so re-approve them then.
 
 ## Architecture
 

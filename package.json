@@ -17,7 +17,9 @@
     "lint": "eslint .",
     "preview": "vite preview --base=./ --open",
     "test": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:e2e:docker": "node scripts/e2e-docker.mjs",
+    "test:visual:update": "node scripts/e2e-docker.mjs --project visual --update-snapshots"
   },
   "dependencies": {
     "@blockly/field-colour": "^6.0.4",
