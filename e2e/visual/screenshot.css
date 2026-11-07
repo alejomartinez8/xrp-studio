@@ -1,0 +1,7 @@
+/**
+ * Applied only while a visual test takes a screenshot (spec 007, part 1): hides the development
+ * badge that names the current screen size, which is not part of the app.
+ */
+.debug-screens::before {
+    display: none !important;
+}
