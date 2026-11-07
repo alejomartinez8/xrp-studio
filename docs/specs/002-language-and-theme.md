@@ -70,7 +70,8 @@ The rest of the app looks like an IDE for adults.
 - **Canvas:** theme background and a sparser cross grid.
 - **Zoom:** the canvas can be zoomed in (up to 2x) and out with a pinch on touch screens and with
   the + / - controls. On phones (below 768 px) it starts at 75% so more blocks fit, and the
-  toolbox rows and search box are more compact so the toolbox leaves room for the blocks.
+  toolbox is small (short rows, 11 px labels, small icons and search box, about a third of the
+  screen width) so it leaves room for the blocks.
 
 #### App theme (GitHub colours by default)
 
