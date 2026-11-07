@@ -153,14 +153,21 @@ open without internet.
 - The first visit is not controlled by the service worker. After the precache finishes, any later
   visit opens without internet.
 
-#### Update notice
+#### Updates when the app opens
 
-- The service worker is registered with `registerType: 'prompt'`: a new version waits and never
-  reloads the page on its own, so a child does not lose work.
-- `src/utils/pwa.ts` (new) registers it from `main.tsx` (`startPwa()`), checks for an update every
-  hour, and keeps a small state (`needRefresh`, `canInstall`) read with `usePwaState()`.
-- `src/components/update-notice.tsx` (new), rendered in `App.tsx`, shows "A new version of XRP
-  Studio is ready." with **Reload** and **Later**.
+- A new version is downloaded in the background (the app looks for one when it opens and every
+  hour) and waits. It never changes the page being used and shows no notice, so a child does not
+  lose work and nothing moves on screen.
+- When the app is opened or the page is reloaded, a stored version that is waiting takes over and
+  the page loads it. The open files that save themselves are written first (autosave, spec 004).
+  The page reloads once more at that moment, and never in a loop.
+- `src/utils/pwa.ts` registers the worker from `main.tsx` (`startPwa()`) and keeps the install
+  state (`canInstall`) read with `usePwaState()`.
+- Fix: on some phone browsers a plain reload kept showing the old version, because a waiting
+  version only takes over when every open page is closed. Applying it at open solves that. If the
+  version has not taken over after 3 seconds, the worker and its stored copy are removed and the
+  page reloads from the network, so the new version always loads (the offline copy is stored
+  again afterwards).
 
 #### Install the app
 
@@ -172,23 +179,9 @@ open without internet.
 
 ![Install app in the settings menu, light](images/018-install-light.png)
 ![Install app in the settings menu, dark](images/018-install-dark.png)
-![Update notice, light](images/018-update-light.png)
-![Update notice, dark](images/018-update-dark.png)
-
-#### Fix: Reload did nothing
-
-- **Problem:** clicking **Reload** left the old version on screen. The plugin's update function
-  asks the waiting version to take over and then waits for a signal that never comes when the app
-  was opened before its offline copy was ready (first visit, or an installed app opened right
-  away), or when the update was found by the hourly check.
-- **Solution:** `applyUpdate()` in `src/utils/pwa.ts` does the update itself. It saves the open
-  files first (autosave, spec 004), asks the waiting version to take over, and reloads the page
-  once, as soon as the new version controls the page or becomes active. If no version is waiting
-  (it is already active), it reloads right away.
-
 ### Files
 
-- New: `pwa-plugin.ts`, `src/utils/pwa.ts`, `src/components/update-notice.tsx`,
+- New: `pwa-plugin.ts`, `src/utils/pwa.ts`,
   `public/icons/*.png`, tests in `src/utils/tests/pwa.spec.ts` with the stub
   `src/utils/tests/stubs/pwa-register.ts`.
 - Changed: `vite.config.ts`, `vitest.config.ts` (stub alias), `tsconfig.node.json`,
@@ -203,14 +196,11 @@ open without internet.
    project: both work.
 3. Install: the ⚙ menu shows **Install app** (Chrome on a computer or Android); installing opens
    the app in its own window and the row goes away.
-4. Update: publish a new build and reload the app once; the notice appears. **Later**
-   hides it; **Reload** saves the open files and loads the new version.
-5. Reload on a first visit: in a new browser profile, open the app once and wait until the
-   offline copy is ready, publish a new build, then use DevTools > Application > Service workers
-   > Update. The notice appears; **Reload** loads the new version.
-6. On a build served over HTTPS, repeat 2 and 3 on an Android tablet.
+4. Update: publish a new build and use the app for a while: nothing changes and no notice
+   appears. Reload the page (or open the app again): the new version loads.
+5. On a build served over HTTPS, repeat 2 and 3 on an Android tablet.
 
 ### Upstream
 
-Possible: the plugin config and the notice are independent of the fork's UI; the install row would
+Possible: the plugin config and the update-on-open logic are independent of the fork's UI; the install row would
 go in XRPWeb's settings dialog instead.
