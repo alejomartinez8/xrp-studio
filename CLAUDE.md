@@ -12,7 +12,8 @@ block editor, a simple UI for kids, Spanish first; desktop and Android tablet.
 - `npm run dev` / `npm run dev:offline` → http://localhost:3000 (Chrome or Edge; Web Serial does
   not exist in Firefox/Safari)
 - `npm run build` / `npm run build:offline` → `dist/` (may need
-  `NODE_OPTIONS=--max-old-space-size=8192`)
+  `NODE_OPTIONS=--max-old-space-size=8192`). The build uses `rolldown-vite` (an alias of `vite`,
+  spec 006), which needs Node 20.19+ or 22.12+.
 - `npx vitest run` (single run; `npm test` stays in watch mode)
 - `npm run lint`
 
