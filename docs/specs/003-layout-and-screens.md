@@ -415,8 +415,11 @@ page also drew at desktop width, because the viewport tag was commented out in `
   the avatar with Sign out. The account widget is mounted once in both layouts, so its session
   logic does not start twice. In builds without sign-in the bottom stays empty.
 - The menu closes with Escape, an outside tap or after choosing an entry.
-- The top bar stays fixed at the top, and the main area uses the real screen height (`dvh`), so the
-  browser's own bar does not cut the bottom of the app on a phone.
+- On phones the **Connect** button shows only its icon (with the full text as tooltip and
+  accessible name), so the top bar keeps one height in every language.
+- The top bar stays fixed at the top and the app fills the visible screen (`dvh`, which follows the
+  phone's browser bar): the top bar and the status bar take the room they need and the main area
+  takes the rest, so the page itself never scrolls.
 
 ### Files
 
