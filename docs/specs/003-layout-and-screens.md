@@ -401,6 +401,23 @@ all differed. The screen looked busy.
 - The toolbox search box can be clicked and typed in, has a flat focus outline and no gradient in
   dark mode. Dialogs opened from the side panel keep their own colours.
 
+### Narrow screens: one menu
+
+On a phone the top bar had everything of the desktop bar squeezed in: tiny text and no room. The
+page also drew at desktop width, because the viewport tag was commented out in `index.html`
+(upstream). Now:
+
+- The page uses the device width, so text and buttons have their real size.
+- Below 768 px the bar shows the logo, **Connect** (**Run/Stop** once a robot is connected) and a
+  **menu (☰)** button at the right. Wider screens keep the bar as it was.
+- The menu lists File, View (in the block editor), Help and Settings (language, theme, "Keep me
+  signed in", and the rest of the settings items), and at the bottom the account: sign in, or
+  the avatar with Sign out. The account widget is mounted once in both layouts, so its session
+  logic does not start twice. In builds without sign-in the bottom stays empty.
+- The menu closes with Escape, an outside tap or after choosing an entry.
+- The top bar stays fixed at the top, and the main area uses the real screen height (`dvh`), so the
+  browser's own bar does not cut the bottom of the app on a phone.
+
 ### Files
 
 - `src/components/xrplayout.tsx`: the side bar starts collapsed; the folder tab renders the
@@ -420,8 +437,10 @@ all differed. The screen looked busy.
 - `src/components/blockly/toolbox-ui.css`: no lines between toolbox rows or at separators.
 - `src/utils/i18n/locales/{en,es}/*.json`: `explorer`, `terminal`; the Shell tab is "Terminal";
   the panel header is "Explorer" ("Explorador").
+- `src/components/navbar/mobile-menu.tsx` (new), `src/components/navbar.tsx`, `src/App.tsx`,
+  `index.html`: the narrow-screen menu, the fixed bar, the viewport tag. i18n: `menu`.
 - Tests: `src/utils/tests/shell-visibility.spec.ts`,
-  `src/components/tests/side-bar-icon.spec.tsx`.
+  `src/components/tests/side-bar-icon.spec.tsx`, `src/components/tests/mobile-menu.spec.tsx`.
 
 ### How to test
 
@@ -436,6 +455,9 @@ all differed. The screen looked busy.
 6. In light and dark: the side panel, editor and terminal are rounded cards with a gap between
    them; no grey lines between panels, under the tab bar, between toolbox rows or above the
    status bar; the terminal and the folder rows have the same colour as their card.
+7. On a phone (or a window narrower than 768 px): the bar shows the logo, Connect and ☰. ☰ opens
+   the menu with File, Help, Settings and, at the bottom, the account. Pick an entry: the menu
+   closes. On a wider window the bar is the same as before.
 
 #### Screenshots
 
@@ -448,6 +470,12 @@ Explorer and terminal open:
 
 ![Open, light](images/021-side-bar-open-light.png)
 ![Open, dark](images/021-side-bar-open-dark.png)
+
+Phone width:
+
+| Light | Menu, light | Dark | Menu, dark |
+| --- | --- | --- | --- |
+| ![Phone, light](images/layout-phone-closed-light.png) | ![Menu, light](images/layout-phone-menu-light.png) | ![Phone, dark](images/layout-phone-closed-dark.png) | ![Menu, dark](images/layout-phone-menu-dark.png) |
 
 ### Upstream
 

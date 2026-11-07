@@ -72,6 +72,7 @@ import { isAiBuddyMenuEnabled } from '@/utils/aiBuddyAccess';
 import ConnectionStatus from '@components/navbar/connection-status';
 import NavDropdown from '@components/navbar/nav-dropdown';
 import QuickSettings from '@components/navbar/quick-settings';
+import MobileMenu from '@components/navbar/mobile-menu';
 import { flushAutosave } from '@/utils/autosave';
 import LanguageDialog from '@components/dialogs/language-dlg';
 import ThemeDialog from '@components/dialogs/theme-dlg';
@@ -1726,12 +1727,12 @@ function NavBar({ layoutref }: NavBarProps) {
     ];
 
     return (
-        <div className="flex items-center justify-between p-1 px-5 text-shark-100 shadow-md">
+        <div className="flex items-center justify-between p-1 px-2 text-shark-100 shadow-md md:px-5">
             <div className="flex flex-row gap-4 transition-all">
                 {/** Logo */}
                 <img src={logo} alt="logo" width="100" height="50" />
                 {navItems.map((item, index) => (
-                    <div key={index} className="group relative transition-all">
+                    <div key={index} className="group relative hidden transition-all md:block">
                         <p className="ml-2 mt-4 flex cursor-pointer items-center gap-1 text-matisse-100 group-hover:bg-curious-blue-700 dark:group-hover:bg-mountain-mist-950">
                             {navIcons[index]}
                             <span>{item.label}</span>
@@ -1794,7 +1795,7 @@ function NavBar({ layoutref }: NavBarProps) {
                 />
             </div>
             {/** platform infor and connect button*/}
-            <div className="flex flex-row items-center gap-4">
+            <div className="flex flex-row items-center gap-2 md:gap-4">
                 <div className="flex flex-row items-center gap-2 text-sm text-shark-300">
                     <ConnectionStatus
                         isConnected={isConnected}
@@ -1843,7 +1844,7 @@ function NavBar({ layoutref }: NavBarProps) {
                 <div className={`flex h-full items-stretch ${isConnected ? 'hidden' : ''}`}>
                     <button
                         id="connectBtn"
-                        className="text-neutral-900 flex h-full min-w-[200px] items-center justify-center gap-2 rounded-l-3xl bg-shark-200 px-4 py-2 text-matisse-900 hover:bg-curious-blue-300 dark:bg-shark-600 dark:text-shark-100 dark:hover:bg-shark-500"
+                        className="text-neutral-900 flex h-full min-w-0 items-center justify-center gap-2 rounded-l-3xl md:min-w-[200px] bg-shark-200 px-4 py-2 text-matisse-900 hover:bg-curious-blue-300 dark:bg-shark-600 dark:text-shark-100 dark:hover:bg-shark-500"
                         onClick={onConnectBtnClicked}
                     >
                         <svg width="20" height="20" viewBox="0 0 20 20">
@@ -1881,7 +1882,7 @@ function NavBar({ layoutref }: NavBarProps) {
                 </div>
                 <button
                     id="runBtn"
-                    className={`text-white h-11 min-w-[130px] items-center justify-center gap-2 rounded-3xl px-4 py-2 font-semibold ${isRunning ? 'bg-cinnabar-600' : 'bg-chateau-green-500'} ${isConnected ? 'flex' : 'hidden'}`}
+                    className={`text-white h-11 min-w-0 items-center md:min-w-[130px] justify-center gap-2 rounded-3xl px-4 py-2 font-semibold ${isRunning ? 'bg-cinnabar-600' : 'bg-chateau-green-500'} ${isConnected ? 'flex' : 'hidden'}`}
                     onClick={onRunBtnClicked}
                     disabled={isStopping}
                 >
@@ -1897,6 +1898,7 @@ function NavBar({ layoutref }: NavBarProps) {
                         </>
                     )}
                 </button>
+                <div className="hidden md:block">
                 <NavDropdown id="helpBtn" label={t('help')} icon={<TbHelpCircle size={26} />}>
                     {(close) => (
                         <ul className="flex cursor-pointer flex-col">
@@ -1916,7 +1918,8 @@ function NavBar({ layoutref }: NavBarProps) {
                         </ul>
                     )}
                 </NavDropdown>
-                <div ref={dropdownRef} className="group relative transition-all">
+                </div>
+                <div ref={dropdownRef} className="group relative hidden transition-all md:block">
                     <button
                         id="settingsId"
                         onClick={toggleMoreDropdown}
@@ -1952,7 +1955,106 @@ function NavBar({ layoutref }: NavBarProps) {
                         </div>
                     )}
                 </div>
-                <Login compact onSuccess={onSignInSuccess} logoutCallback={onSignOut} />
+                <MobileMenu
+                    footer={<Login compact onSuccess={onSignInSuccess} logoutCallback={onSignOut} />}
+                >
+                    {(close) => (
+                        <>
+                            {navItems.map((item, index) => {
+                                const entries = [
+                                    ...(item.children ?? []),
+                                    ...(isBlockly ? [] : (item.childrenExt ?? [])),
+                                ]
+                                    .filter((child) => child.showif ?? true)
+                                    .filter((child) => !child.isView || isBlockly);
+                                if (entries.length === 0) {
+                                    return null;
+                                }
+                                return (
+                                    <section key={index} className="pb-1">
+                                        <p className="text-neutral-200 flex items-center gap-1 px-4 pb-1 pt-2 text-xs font-semibold uppercase opacity-70">
+                                            {navIcons[index]}
+                                            {item.label}
+                                        </p>
+                                        <ul className="flex cursor-pointer flex-col">
+                                            {entries.map((child, ci) => (
+                                                <li
+                                                    key={ci}
+                                                    className={`text-neutral-200 py-1.5 pl-4 pr-4 hover:bg-matisse-400 dark:hover:bg-shark-500 ${child.isFile && !isConnected && !isLogin ? 'pointer-events-none' : 'pointer-events-auto'}`}
+                                                    onClick={() => {
+                                                        close();
+                                                        child.clicked?.();
+                                                    }}
+                                                >
+                                                    <MenuItem
+                                                        isConnected={
+                                                            (isConnected || isLogin) && !isRunning
+                                                        }
+                                                        isOther={isOtherTab}
+                                                        item={child}
+                                                    />
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </section>
+                                );
+                            })}
+                            <hr className="my-1 border-matisse-400 dark:border-shark-600" />
+                            <p className="text-neutral-200 flex items-center gap-1 px-4 pb-1 pt-2 text-xs font-semibold uppercase opacity-70">
+                                <TbHelpCircle size={18} />
+                                {t('help')}
+                            </p>
+                            <ul className="flex cursor-pointer flex-col">
+                                {helpItems.map((item, ci) => (
+                                    <li
+                                        key={ci}
+                                        role="menuitem"
+                                        className="text-neutral-200 py-1.5 pl-4 pr-4 hover:bg-matisse-400 dark:hover:bg-shark-500"
+                                        onClick={() => {
+                                            close();
+                                            item.clicked?.();
+                                        }}
+                                    >
+                                        <MenuItem isConnected={true} isOther={false} item={item} />
+                                    </li>
+                                ))}
+                            </ul>
+                            <hr className="my-1 border-matisse-400 dark:border-shark-600" />
+                            <p className="text-neutral-200 flex items-center gap-1 px-4 pb-1 pt-2 text-xs font-semibold uppercase opacity-70">
+                                <TbSettings size={18} />
+                                {t('settings')}
+                            </p>
+                            <QuickSettings
+                                onChooseLanguage={() => {
+                                    close();
+                                    onChooseLanguage();
+                                }}
+                                onChooseTheme={() => {
+                                    close();
+                                    onChooseTheme();
+                                }}
+                            />
+                            <ul className="flex cursor-pointer flex-col">
+                                {moreMenu.map((item, ci) => (
+                                    <li
+                                        key={ci}
+                                        className="text-neutral-200 py-1.5 pl-4 pr-4 hover:bg-matisse-400 dark:hover:bg-shark-500"
+                                        onClick={() => {
+                                            close();
+                                            item.clicked?.();
+                                        }}
+                                    >
+                                        <MenuItem
+                                            isConnected={isConnected && !isRunning}
+                                            isOther={false}
+                                            item={item}
+                                        />
+                                    </li>
+                                ))}
+                            </ul>
+                        </>
+                    )}
+                </MobileMenu>
             </div>
             <Dialog isOpen={isDlgOpen} toggleDialog={toggleDialog} ref={dialogRef}>
                 {dialogContent}
