@@ -5,6 +5,7 @@
     "file-exists-on-python-convert": "Python file {{ filename }} is already exists. Please rename it before performing conversion.",
     "firefox-not-supported": "The browser ({{ browser }}) that you are using is not supported. Please use a different browser such as Chrome or Edge to access the full functionality of the XRPCode IDE.",
     "view": "View",
+    "menu": "Menu",
     "help": "Help",
     "folders": "Folders",
     "explorer": "Explorer",
@@ -344,9 +345,6 @@
         }
     },
     "pwa": {
-        "updateReady": "A new version of XRP Studio is ready.",
-        "reload": "Reload",
-        "later": "Later",
         "install": "Install app"
     },
     "autosave": {

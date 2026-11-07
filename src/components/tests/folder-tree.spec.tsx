@@ -4,11 +4,13 @@ import { beforeEach, afterEach, describe, it, expect, vi } from 'vitest';
 import AppMgr from '@/managers/appmgr';
 
 // Mock the ResizeObserver
-const ResizeObserverMock = vi.fn(() => ({
-    observe: vi.fn(),
-    unobserve: vi.fn(),
-    disconnect: vi.fn(),
-  }));
+const ResizeObserverMock = vi.fn(function () {
+    return {
+      observe: vi.fn(),
+      unobserve: vi.fn(),
+      disconnect: vi.fn(),
+    };
+  });
   
   // Stub the global ResizeObserver
   vi.stubGlobal('ResizeObserver', ResizeObserverMock);

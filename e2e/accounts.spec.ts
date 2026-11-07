@@ -9,6 +9,7 @@ import {
     signIn,
     syncStatus,
     expectInTree,
+    keepSignedInSwitch,
 } from './support/app';
 
 const SYNCED = /Saved in your account/;
@@ -84,7 +85,7 @@ test.describe('Keep me signed in', () => {
         await setUpGoogle(context);
         await openApp(page);
         await page.getByRole('button', { name: 'Settings' }).click();
-        await expect(page.locator('#keepSignedInBtn')).toHaveAttribute('aria-checked', 'false');
+        await expect(keepSignedInSwitch(page)).toHaveAttribute('aria-checked', 'false');
     });
 
     test('off: a reload forgets the session and removes the projects from the device', async ({

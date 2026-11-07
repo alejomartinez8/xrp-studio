@@ -67,3 +67,38 @@
 div#toolbox-search-input.blocklyToolboxCategory {
     background-color: transparent !important;
 }
+
+/** Phones: a small toolbox (about the size of the desktop one seen on a phone) leaves the room to the blocks. */
+@media (max-width: 767px) {
+    .blocklyToolboxCategory {
+        min-height: 26px;
+    }
+
+    .blocklyToolboxCategoryLabel {
+        font-size: 11px;
+        max-width: 58px;
+        line-height: 1.15;
+        white-space: normal;
+    }
+
+    .xrpToolboxIcon {
+        margin: 0 4px 0 2px;
+    }
+
+    .xrpToolboxIcon svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    #toolbox-search-input input {
+        width: 80px;
+        min-width: 0;
+        padding: 3px 8px;
+        font-size: 11px;
+    }
+
+    .blocklyToolboxCategoryIconClosed,
+    .blocklyToolboxCategoryIconOpen {
+        transform: scale(0.7);
+    }
+}

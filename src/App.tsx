@@ -4,7 +4,6 @@ import Navbar from '@components/navbar';
 import XRPLayout from '@components/xrplayout';
 import AppMgr from '@/managers/appmgr';
 import { prefetchPythonEditor } from '@components/python/prefetch-python-editor';
-import UpdateNotice from '@components/update-notice';
 import StatusBar from '@components/status-bar';
 import AskDialog from '@components/ask-dialog';
 
@@ -29,14 +28,13 @@ function App() {
 
     return (
         <>
-            <header className="bg-curious-blue-700 dark:bg-[var(--app-frame)]">
+            <header className="sticky top-0 z-50 bg-curious-blue-700 dark:bg-[var(--app-frame)]">
                 <Navbar layoutref={xrpLayoutRef} />
             </header>
-            <main className="relative h-[calc(100vh-84px)]">
+            <main className="app-main relative">
                 <XRPLayout forwardedref={xrpLayoutRef} />
             </main>
             <StatusBar />
-            <UpdateNotice />
             <AskDialog />
         </>
     );

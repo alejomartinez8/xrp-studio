@@ -12,7 +12,7 @@ block editor, a simple UI for kids, Spanish first; desktop and Android tablet.
 - `npm run dev` / `npm run dev:offline` → http://localhost:3000 (Chrome or Edge; Web Serial does
   not exist in Firefox/Safari)
 - `npm run build` / `npm run build:offline` → `dist/` (may need
-  `NODE_OPTIONS=--max-old-space-size=8192`)
+  `NODE_OPTIONS=--max-old-space-size=8192`). Vite 8 (Rolldown; spec 006) needs Node 20.19+ or 22.12+.
 - `npx vitest run` (single run; `npm test` stays in watch mode)
 - `npm run lint`
 - `npx playwright install chromium` once, then `npm run test:e2e`: browser tests of accounts and

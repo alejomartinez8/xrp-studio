@@ -106,10 +106,18 @@ export async function createPythonProject(page: Page, name: string): Promise<voi
     await expect(page.locator('#welcome-project-name')).toBeHidden();
 }
 
+/**
+ * The "Keep me signed in" switch of the open settings menu. The phone menu renders the same
+ * settings while hidden, so only the visible switch is taken.
+ */
+export function keepSignedInSwitch(page: Page) {
+    return page.getByRole('switch', { name: 'Keep me signed in' }).filter({ visible: true });
+}
+
 /** Turn "Keep me signed in" on or off in the settings menu. */
 export async function setKeepSignedIn(page: Page, on: boolean): Promise<void> {
     await page.getByRole('button', { name: 'Settings' }).click();
-    const toggle = page.locator('#keepSignedInBtn');
+    const toggle = keepSignedInSwitch(page);
     if ((await toggle.getAttribute('aria-checked')) !== String(on)) {
         await toggle.click();
     }
