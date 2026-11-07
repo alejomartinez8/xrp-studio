@@ -21,7 +21,6 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
-  min-height: 100dvh;
   overflow: hidden;
 }
 
@@ -39,16 +38,16 @@ svg[display="none"] {
 }
 
 /**
- * The app fills the screen: the top bar and the status bar take the room they need (the top bar
- * is taller when a label wraps) and the main area takes the rest, so the page itself never
- * scrolls. `dvh` follows the visible screen on phones, where `vh` ignores the browser's own bar.
+ * The app is pinned to the edges of the visible screen: the top bar and the status bar take the
+ * room they need (the top bar is taller when a label wraps) and the main area takes the rest, so
+ * the page itself never scrolls. A fixed box follows the visible area of a phone, where the
+ * browser's own bar comes and goes and `vh` and `body` centring would push the top out of reach.
  */
 #root {
+  position: fixed;
+  inset: 0;
   display: flex;
   flex-direction: column;
-  width: 100%;
-  height: 100vh;
-  height: 100dvh;
 }
 
 .app-main {
