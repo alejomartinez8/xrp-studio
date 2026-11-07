@@ -1,6 +1,6 @@
 # 005 — Accounts and sync
 
-Google sign-in and keeping the projects in the account. Two parts: the sign-in server and session, then accounts on a device and sync with Drive.
+Google sign-in and keeping the projects in the account. Three parts: the sign-in server and session, accounts on a device and sync with Drive, then testing both without a Google account.
 
 
 ## Part 1 — Google sign-in
@@ -290,3 +290,89 @@ A thin bar at the bottom of the screen, like MakeCode's. It has one indicator: a
 
 Fork-only for now: it changes XRPWeb's storage model (Drive first). The Drive request layer and
 the sync engine could be offered later behind a setting.
+
+
+## Part 3 — Testing accounts and sync without Google
+
+### Problem
+
+Signing in, the "Keep me signed in" switch, guest projects, sync and signing out with unsaved
+changes can only be tried with a real Google account, by hand. That is slow, cannot run in
+automatic checks and needs credentials nobody should share.
+
+### Solution
+
+A fake Google for browser tests. A test opens the app in a browser, and the fake answers in place
+of Google:
+
+- **Sign-in:** the Google sign-in pop-up, which picks a fake account (Ana Mock) at once, and the
+  sign-in server's answers (client ID, handshake, code exchange, token refresh, sign-out). The
+  fake keeps the session the way the real server keeps it in its cookie, so "the session is still
+  there after a reload" means the same thing in both.
+- **Drive:** the folders and files of the account, in memory: listing, creating, renaming,
+  moving, trashing, downloading and uploading. A test can also add or change files as if another
+  device had saved them, and make Google unreachable and reachable again to simulate losing the
+  internet.
+
+It exists only inside the test run and is never part of the app, so no build can contain it. The
+app itself needs no special mode: the tests run it with the sign-in server address set, which is
+what turns accounts on.
+
+What the tests check, each in the app's own words (the cloud in the status bar, the account
+menu, the question dialogs, the folder tree):
+
+- Signing in: My projects first, the account menu, the cloud turning to "Saved in your account",
+  the `XRPCode` folder created, new projects uploaded, projects the account already had brought in.
+- Guest projects: "Move to my account" uploads them; "Leave them here" does not.
+- Keep me signed in: off by default; off, a reload forgets the session and removes the projects
+  from the device (they come back at the next sign-in) and 30 minutes without use signs out; on,
+  the session and projects survive a reload and idle time; turning it on while signed in works.
+- Sync status: saving, saved, and "No connection" when Google cannot be reached; when it comes
+  back, the pending project is uploaded and files added by another device show up.
+- Signing out: with everything saved there is no question and the projects leave the device; with
+  unsaved changes the warning offers "Stay signed in" (the changes upload when the connection is
+  back) or "Sign out anyway" (they are lost).
+
+What it does **not** cover, and why a manual test with a real account is still needed:
+
+- Google's own pop-up, consent screen and account chooser, and real tokens (expiry, revocation,
+  scopes, a Google error).
+- The real sign-in server (its cookies, encryption and Google token calls; see Part 1).
+- Real Drive behaviour that the fake simplifies: quotas, rate limits, permission errors, files
+  edited in Drive's own web page, very large folders, and the exact shape of every answer.
+- Anything with a robot connected.
+
+The idle sign-out test shortens the 30 minutes to two seconds by changing that one timer; the
+rest of the page's clock is real.
+
+### Fixes found on the way
+
+- The sign-in widget created a new logger on every render, which made its effects run again and
+  again ("Maximum update depth exceeded" in the browser console) as long as an account was
+  signed in. The logger is now created once. Check: sign in and look at the console, which shows
+  no warning.
+- Turning "Keep me signed in" on while already signed in did not make the session survive a
+  reload: after reloading the sign-in button was back. Now the session is remembered from the
+  moment the switch is turned on. Check: sign in with the switch off, turn it on, reload: the
+  account is still signed in.
+
+### Files
+
+- New: `e2e/support/google-mock.ts` (the fake), `e2e/support/app.ts` (helpers to open the app,
+  sign in, create projects and read the tree), `e2e/accounts.spec.ts` (the checks above),
+  `playwright.config.ts`, `.github/workflows/e2e.yml` (runs them on every pull request).
+- Changed: `src/widgets/login.tsx` (logger created once), `src/utils/accounts.ts` (session remembered when
+  the switch is turned on), `package.json` (test runner),
+  `vitest.config.ts` (leaves the browser tests alone), `tsconfig.node.json`, `.gitignore`.
+
+### How to test
+
+1. Run the browser tests (commands in `CLAUDE.md`); all of them pass without internet or
+   credentials.
+2. Still do the manual checks of Part 2 with a real Google account before a release: the fake does
+   not replace them.
+
+### Upstream
+
+Fork-only: it tests the fork's accounts and sync. The fake could be reused to test XRPWeb's own
+Google sign-in.

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useGoogleLogin } from '@react-oauth/google';
 import Button from './button';
 import AppMgr from '@/managers/appmgr';
@@ -82,7 +82,7 @@ function GoogleLoginButton({ logoutCallback, onSuccess, compact }: LoginProps) {
     const driveService = isDriveSyncEnabled
         ? AppMgr.getInstance().remoteDriveService
         : AppMgr.getInstance().driveService;
-    const loginLogger = logger.child({ module: 'login' });
+    const loginLogger = useMemo(() => logger.child({ module: 'login' }), []);
 
     const SCOPE = 'https://www.googleapis.com/auth/drive.file';
 
