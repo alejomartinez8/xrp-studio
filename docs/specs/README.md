@@ -16,9 +16,10 @@ extends the spec of its theme with a new part; a new spec is only for a really n
 | 004 | [File management](004-file-management.md) | My projects and robot memory (answers [Open-STEM/XRPWeb#336](https://github.com/Open-STEM/XRPWeb/issues/336)); files open with their blocks; opening projects; automatic save | Single tap, empty-file fix and autosave possible behind a flag; robot behaviour to be tested |
 | 005 | [Accounts and sync](005-accounts-and-sync.md) | Google sign-in server and session; accounts on a device, "Keep me signed in" and Drive sync; testing them with a fake Google | Server as a reference; sync is fork-only for now |
 | 006 | [Maintenance](006-maintenance.md) | Lockfile, Tailwind config, minor updates | Possible |
+| 007 | [Automated testing](007-automated-testing.md) | Plan: visual regression; blocks to Python; fake robot; accessibility; languages and screen sizes | Most parts possible |
 | — | [Pending upgrades and backlog](pending-upgrades.md) | Backlog | Each one as its own change |
 
-The earlier numbers 001 to 021 were merged into these six, so each theme has one spec.
+The earlier numbers 001 to 021 were merged into the first six, so each theme has one spec.
 
 ## Principles
 
