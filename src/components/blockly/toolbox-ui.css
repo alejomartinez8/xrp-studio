@@ -76,6 +76,9 @@ div#toolbox-search-input.blocklyToolboxCategory {
 
     .blocklyToolboxCategoryLabel {
         font-size: 11px;
+        max-width: 58px;
+        line-height: 1.15;
+        white-space: normal;
     }
 
     .xrpToolboxIcon {
@@ -88,7 +91,7 @@ div#toolbox-search-input.blocklyToolboxCategory {
     }
 
     #toolbox-search-input input {
-        width: 92px;
+        width: 80px;
         min-width: 0;
         padding: 3px 8px;
         font-size: 11px;

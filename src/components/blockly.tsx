@@ -183,6 +183,26 @@ function initialScale(): number {
     return window.matchMedia?.('(max-width: 767px)').matches ? 0.75 : 1;
 }
 
+/** Size of the block list on phones: readable and independent of the canvas zoom. */
+const PHONE_FLYOUT_SCALE = 0.58;
+
+/**
+ * On phones (below 768 px) the block list keeps a fixed size instead of following the canvas
+ * zoom, which made it tiny once the canvas was zoomed out to fit a program, and narrow enough
+ * to fit next to the small toolbox.
+ */
+function fixPhoneFlyoutScale(ws: Workspace) {
+    if (!window.matchMedia?.('(max-width: 767px)').matches) {
+        return;
+    }
+    const flyout = (ws as Blockly.WorkspaceSvg).getToolbox?.()?.getFlyout?.() as
+        | { getFlyoutScale: () => number }
+        | undefined;
+    if (flyout) {
+        flyout.getFlyoutScale = () => PHONE_FLYOUT_SCALE;
+    }
+}
+
 /** Zoom to fit and center all blocks — used only when a file is first opened. */
 function centerAndFit(ws: Workspace) {
     const svgWs = asSvgWorkspace(ws);
@@ -323,6 +343,7 @@ function BlocklyEditor({ tabId, tabName }: BlocklyEditorProps) {
                 }
             }
         }
+        fixPhoneFlyoutScale(ws);
         setWorkspace(ws);
         if (editorSession?.viewport) {
             requestAnimationFrame(() => restoreViewportForTab(ws));
