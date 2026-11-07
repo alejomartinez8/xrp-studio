@@ -1980,7 +1980,7 @@ function NavBar({ layoutref }: NavBarProps) {
                                             {entries.map((child, ci) => (
                                                 <li
                                                     key={ci}
-                                                    className={`text-neutral-200 py-1.5 pl-4 pr-4 hover:bg-matisse-400 dark:hover:bg-shark-500 ${child.isFile && !isConnected && !isLogin ? 'pointer-events-none' : 'pointer-events-auto'}`}
+                                                    className={`text-neutral-200 py-3 pl-4 pr-4 text-base hover:bg-matisse-400 dark:hover:bg-shark-500 ${child.isFile && !isConnected && !isLogin ? 'pointer-events-none' : 'pointer-events-auto'}`}
                                                     onClick={() => {
                                                         close();
                                                         child.clicked?.();
@@ -2009,7 +2009,7 @@ function NavBar({ layoutref }: NavBarProps) {
                                     <li
                                         key={ci}
                                         role="menuitem"
-                                        className="text-neutral-200 py-1.5 pl-4 pr-4 hover:bg-matisse-400 dark:hover:bg-shark-500"
+                                        className="text-neutral-200 py-3 pl-4 pr-4 text-base hover:bg-matisse-400 dark:hover:bg-shark-500"
                                         onClick={() => {
                                             close();
                                             item.clicked?.();
@@ -2038,7 +2038,7 @@ function NavBar({ layoutref }: NavBarProps) {
                                 {moreMenu.map((item, ci) => (
                                     <li
                                         key={ci}
-                                        className="text-neutral-200 py-1.5 pl-4 pr-4 hover:bg-matisse-400 dark:hover:bg-shark-500"
+                                        className="text-neutral-200 py-3 pl-4 pr-4 text-base hover:bg-matisse-400 dark:hover:bg-shark-500"
                                         onClick={() => {
                                             close();
                                             item.clicked?.();

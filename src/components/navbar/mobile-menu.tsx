@@ -11,7 +11,7 @@ type MobileMenuProps = {
 
 /**
  * MobileMenu - the hamburger menu of the top bar on narrow screens (spec 003). One button at the
- * right opens a panel with every entry of the bar (File, View, Help, settings) and, at the
+ * right opens a full-screen panel with every entry of the bar (File, View, Help, settings) and, at the
  * bottom, the account. On wide screens the button and the entries are hidden and the footer is
  * laid out inline in the bar, so the account widget is mounted once in both cases (its session
  * logic must not start twice) and stays mounted while the panel is closed.
@@ -60,7 +60,7 @@ function MobileMenu({ children, footer }: MobileMenuProps) {
             </button>
             <div
                 role="menu"
-                className={`absolute right-0 top-12 z-[100] max-h-[calc(100dvh-4.5rem)] w-[min(88vw,20rem)] flex-col overflow-y-auto bg-curious-blue-700 py-2 shadow-md dark:bg-mountain-mist-950 md:static md:contents ${isOpen ? 'flex' : 'hidden'}`}
+                className={`fixed inset-x-0 bottom-0 top-14 z-[100] flex-col overflow-y-auto bg-curious-blue-700 py-2 shadow-md dark:bg-mountain-mist-950 md:static md:inset-auto md:contents ${isOpen ? 'flex' : 'hidden'}`}
             >
                 <div className="flex flex-col md:hidden">{children(close)}</div>
                 <div className="mt-2 flex items-center justify-center border-t border-matisse-400 px-4 pt-3 dark:border-shark-600 md:mt-0 md:border-0 md:p-0">

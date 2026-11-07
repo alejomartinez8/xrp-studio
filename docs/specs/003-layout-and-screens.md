@@ -410,7 +410,7 @@ page also drew at desktop width, because the viewport tag was commented out in `
 - The page uses the device width, so text and buttons have their real size.
 - Below 768 px the bar shows the logo, **Connect** (**Run/Stop** once a robot is connected) and a
   **menu (☰)** button at the right. Wider screens keep the bar as it was.
-- The menu lists File, View (in the block editor), Help and Settings (language, theme, "Keep me
+- The menu opens full screen, like the panels of a code editor's activity bar, and lists File, View (in the block editor), Help and Settings (language, theme, "Keep me
   signed in", and the rest of the settings items), and at the bottom the account: sign in, or
   the avatar with Sign out. The account widget is mounted once in both layouts, so its session
   logic does not start twice. In builds without sign-in the bottom stays empty.
