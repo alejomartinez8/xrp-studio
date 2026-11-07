@@ -107,15 +107,15 @@ export default defineConfig(({ mode, command }) => {
             targets: [
                 {
                     src: 'node_modules/flexlayout-react/style',
-                    dest: './node_modules/flexlayout-react/'
+                    dest: './'
                 },
                 {
                     src: 'node_modules/blockly/media',
-                    dest: './node_modules/blockly/'
+                    dest: './'
                 },
                 {
                     src: 'node_modules/gridstack/dist/gridstack.css',
-                    dest: './node_modules/gridstack/dist/'
+                    dest: './'
                 }        ]
         })],
         resolve: {

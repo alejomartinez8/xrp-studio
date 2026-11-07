@@ -1,6 +1,6 @@
 # 006 — Maintenance
 
-Dependency, lockfile and build upkeep. Pending upgrades and the backlog are in [pending-upgrades.md](pending-upgrades.md). Two parts: lockfile and minor updates, and faster builds.
+Dependency, lockfile and build upkeep. Pending upgrades and the backlog are in [pending-upgrades.md](pending-upgrades.md). Three parts: lockfile and minor updates, faster builds, and the build and test tools.
 
 ## Part 1 — Lockfile, Tailwind config and minor updates
 
@@ -51,8 +51,8 @@ mostly the Python editor (Monaco), with Rollup.
 ### Solution
 
 Vite is replaced by `rolldown-vite` 7.3.1 (the same Vite with Rolldown, a bundler written in Rust,
-in place of Rollup and esbuild), through a package alias in `package.json` (`vite` in the dev
-dependencies and in `overrides`, so the plugins and the test runner use it too). The build takes
+in place of Rollup and esbuild), through a package alias in `package.json`. Part 3 later moved to
+Vite 8, which includes Rolldown, and removed the alias. The build takes
 about 18 to 20 seconds, a bit under half, and the app is unchanged: same chunks (plus small
 helper ones), same size, same behaviour. Moving to Vite 8, which includes Rolldown itself, stays
 in the backlog.
@@ -92,3 +92,56 @@ of the time left.
 ### Upstream
 
 Possible: a build-only change, independent of the fork's UI.
+
+## Part 3 — Build and test tools: Vite 8, Vitest 5, ESLint 10
+
+### Problem
+
+`npm audit` reported 20 vulnerabilities, 2 of them critical: Vitest 3 and its `tinypool` (the
+test runner could be made to run code from a crafted request to its server). None of them ships
+in the app, but the tools were also behind (Vite 6, Vitest 3, ESLint 9, which npm calls no longer
+supported).
+
+### Solution
+
+- **Vite 8** (it includes Rolldown itself, so the `rolldown-vite` alias of part 2 is gone),
+  `@vitejs/plugin-react` 6, `vite-plugin-static-copy` 4.
+- **Vitest 5** and `@testing-library/jest-dom` 7 (its matchers are now loaded from
+  `@testing-library/jest-dom/vitest`; `src/jest-dom.d.ts` gives the tests their types).
+- **ESLint 10**, `typescript-eslint`, the React hooks plugin 7 and the React Refresh plugin.
+  The rules that ESLint 10 and the hooks plugin added (unused assignments, error causes, React
+  Compiler checks) flag code inherited from XRPWeb, so they are off and the lint result is the
+  same as before.
+- Two changes the new versions needed: the static copy plugin keeps the folder structure now, so
+  the destinations in `vite.config.ts` are `./` (the layout styles, Blockly media and Gridstack
+  styles are still served from `node_modules/...`); and a test mocked `ResizeObserver` with an
+  arrow function, which is not a constructor.
+- Result: no critical vulnerability is left. `npm audit` still lists 20 (2 high, 15 moderate, 3
+  low): the 2 high ones are `flowbite-react` through `deepmerge-ts`, which needs an upstream
+  update and needs attacker-controlled objects to matter, and the rest are in build and lint
+  tools (`minimatch` through ESLint and Workbox, `postcss-selector-parser` through the Tailwind
+  typography plugin). The build takes about 10 seconds locally.
+
+Known warnings, harmless: Vite reports that the config uses `__dirname` and imports without file
+extensions (not supported by a loader that will be the default in a later major version), that
+the `esbuild` options are ignored now that Oxc is used, and the same Monaco `default` import as in
+part 2.
+
+### Files
+
+- `package.json`, `package-lock.json` (regenerated with a plain `npm install` so `npm ci` works),
+  `vite.config.ts`, `eslint.config.js`, `setupTests.ts`, `src/jest-dom.d.ts` (new),
+  `src/components/tests/folder-tree.spec.tsx`.
+
+### How to test
+
+1. Build the app: it works and the layout looks as before (the styles of the tab layout load).
+2. Open a Python project: Pyright underlines `x: int = "text"`; reload keeps the text; with the
+   app opened once, go offline and reload: it opens.
+3. Open an example in the block editor: blocks, toolbox and block list work.
+4. Run the unit tests and the linter: same results as before (the linter keeps its one known
+   error).
+
+### Upstream
+
+Possible: dependency upgrades, independent of the fork's UI.

@@ -11,9 +11,8 @@ should be its own change, tested in the app.
 | React | 18 | 19 | Also `@types/react`, `react-i18next` 17, `react-hotkeys-hook` 5. |
 | Tailwind CSS | 3.4 | 4 | New config format; the theme palette approach needs a review. |
 | Blockly | 12.3 | 13 | Also `@blockly/field-colour` 13.x. Check the block search field (spec 004), adapted from `@blockly/toolbox-search`. |
-| Vite / Vitest | 6 / 3 | 8 / 5 | Also `@vitejs/plugin-react` 6. |
-| ESLint | 9 | 10 | npm reports ESLint 9 as no longer supported. |
 | recharts | 2 | 3 | 2.x is no longer maintained; used by the dashboard. |
+| `npm audit` leftovers | — | — | 20 reports, none critical (spec 006, part 3): 2 high in `flowbite-react` through `deepmerge-ts` and moderate ones in build and lint tools. They go away as those packages release fixes; check with `npm audit` after each update. |
 
 ## Feature backlog
 
@@ -28,7 +27,6 @@ should be its own change, tested in the app.
 | Dracula theme | Second app theme; needs runtime CSS variables instead of build-time Tailwind colours. |
 | Configurable Drive folder name | `Constants.XRPCODE` is fixed to `XRPCode`. With its own OAuth client the fork only sees the folders it created, so users of both apps get two `XRPCode` folders. A build setting (default `XRPCode`) would avoid renaming it for XRPWeb users; the hardcoded `'/XRPCode/'` paths in `folder-tree.tsx`, `newfiledlg.tsx` and `filesaveasdlg.tsx` would need to use the constant first (they map Drive paths to `/gusers/<user>/` on the robot, so test Run with a robot). |
 | Battery level in the status pill | `batteryVoltage()` returns 0 while the REPL is busy; needs a robot to test safely. |
-| Vite 8 | `rolldown-vite` 7.3.1 is used today (spec 006, part 2). Vite 8 includes Rolldown itself, so the alias can go; it needs `@vitejs/plugin-react` 6 and Vitest 5. |
 
 ## Known issues
 
