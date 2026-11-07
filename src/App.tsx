@@ -29,10 +29,10 @@ function App() {
 
     return (
         <>
-            <header className="bg-curious-blue-700 dark:bg-[var(--app-frame)]">
+            <header className="sticky top-0 z-50 bg-curious-blue-700 dark:bg-[var(--app-frame)]">
                 <Navbar layoutref={xrpLayoutRef} />
             </header>
-            <main className="relative h-[calc(100vh-84px)]">
+            <main className="relative h-[calc(100vh-84px)] h-[calc(100dvh-84px)]">
                 <XRPLayout forwardedref={xrpLayoutRef} />
             </main>
             <StatusBar />
