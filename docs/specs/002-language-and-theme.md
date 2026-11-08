@@ -198,57 +198,80 @@ on `upstream/main`, ready to propose.
 
 The Spanish block texts were literal translations of robotics terms that kids do not understand:
 "Esperar pulsación del botón", "Recto cm: 20 Esfuerzo: 0.5", "Tren de Tracción", "Arcade",
-"Guiñada", "Reflectancia", "Codificador izquierdo" (which actually gives centimetres). The help
-texts (tooltips) repeated the same terms.
+"Guiñada", "Reflectancia", "Codificador izquierdo" (which actually gives centimetres). XRPWeb also
+builds each block from separate labels in a fixed order (label, number, label, number), so a
+language cannot say "Avanzar 20 cm": the unit has to come before the number. The help texts
+(tooltips) repeated the same terms.
 
 ### Solution
 
-Every Spanish block text and help text rewritten in plain words that say what the block does. The
-order of the pieces in each block stays the same, so blocks, their files and the Python they
-produce do not change. English is unchanged.
+- **Sentence templates:** blocks that mix words and inputs can take a template per language, such
+  as "Avanzar %1 cm con fuerza %2", and each language places the inputs where its grammar needs
+  them. The block is first built as in XRPWeb; only its text is then rebuilt from the template.
+  Inputs and dropdowns keep their names, so saved projects and the Python they produce do not
+  change. English templates repeat the current English texts (the labels now sit a little closer).
+- **Plain Spanish:** every Spanish block text and help text rewritten in words that say what the
+  block does. Action blocks read as orders; round blocks, which give a value to put inside another
+  block, read as the name of that value, without a verb (like Scratch), so they read naturally in
+  a sentence: "si distancia al obstáculo < 10".
 
 | Before | After |
 | --- | --- |
-| Esperar pulsación del botón | Esperar a que se presione el botón |
-| Recto cm: 20 Esfuerzo: 0.5 | Avanzar cm: 20 Fuerza: 0.5 |
-| Girar grados: 90 Esfuerzo: 0.5 | Girar grados: 90 Fuerza: 0.5 |
-| Establecer esfuerzo / Establecer velocidad | Fuerza de los motores / Velocidad de los motores |
-| Arcade Recto: Girar: | Conducir Avance: Giro: |
-| Motor: Dirección: Reversa / Adelante | Motor: Sentido: Invertido / Normal |
-| Posición / Conteo del codificador / Reiniciar codificador | Vueltas / Pulsos del codificador / Poner vueltas en cero |
-| Codificador izquierdo / Reiniciar codificadores | Distancia rueda izquierda (cm) / Poner distancias en cero |
+| Recto cm: 20 Esfuerzo: 0.5 | Avanzar 20 cm con fuerza 0.5 |
+| Girar grados: 90 Esfuerzo: 0.5 | Girar 90 grados con fuerza 0.5 |
+| Arcade Recto: 0.8 Girar: 0.2 | Avanzar con fuerza 0.8 y girar con fuerza 0.2 |
+| Establecer esfuerzo Izquierdo: Derecho: | Fuerza de las ruedas: izquierda 0.5 derecha 0.5 |
+| Establecer velocidad Izquierdo: cm/s Derecho: cm/s | Velocidad de las ruedas: izquierda 60 cm/s derecha 60 cm/s |
+| Reiniciar codificadores | Reiniciar distancias |
+| Codificador izquierdo | Distancia rueda izquierda (cm) |
+| Motor: Izquierdo Esfuerzo: | Mover motor izquierdo con fuerza 0.5 |
+| Motor: Izquierdo Velocidad: 60 RPM | Mover motor izquierdo a 60 vueltas por minuto |
+| Motor: Izquierdo Dirección: Reversa | Motor izquierdo en sentido invertido |
+| Motor: Izquierdo Velocidad: / Posición / Conteo del codificador | Vueltas por minuto / Vueltas / Pulsos del codificador del motor izquierdo |
+| Motor: Izquierdo Reiniciar codificador | Reiniciar vueltas del motor izquierdo |
+| Servo: 1 Grados: 90 | Mover servo 1 a 90 grados |
+| Esperar: 1 | Esperar 1 segundos |
 | Distancia del sonar (cm) | Distancia al obstáculo (cm) |
 | Reflectancia izquierda (%) | Sensor de línea izquierdo (%) |
 | Guiñada / Balanceo / Cabeceo | Giro / Inclinación a los lados / Inclinación adelante y atrás |
 | Acc_x (mg) | Aceleración X (mg) |
 | LED encendido / LED apagado | Encender LED / Apagar LED |
-| Botón de usuario | ¿Botón presionado? |
-| Esperar: | Esperar segundos: |
-| Panel iniciar todo, ... | Depurar: enviar sensores, ... |
+| Botón de usuario | ¿Está el botón presionado? |
+| Esperar pulsación del botón | Esperar a que se presione el botón |
+| Panel iniciar todo / … / obtener valor | Depurar: enviar sensores / … / valor |
 
 Categories: Tren de Tracción → Movimiento, Motores Individuales → Motores individuales,
 Reflectancia → Sensores de línea, Placa de Control → Tarjeta de Control, Panel → Depurar (also the
 Depurar screen in the View menu, so the blocks and the screen they feed share a name).
 
 "Fuerza" replaces "Esfuerzo": a number from -1 to 1, like pressing a pedal (0.5 is half). The help
-texts explain the difference with "Velocidad", which the robot keeps on its own in cm/s, like
-cruise control.
+texts explain the difference with "Velocidad", which the robot keeps on its own, like cruise
+control. The units themselves (forces from -1 to 1, cm, revolutions per minute) are unchanged;
+simpler measures for kids are a separate change.
 
 ### Files
 
-`src/utils/i18n/locales/es/blockly.json` (block texts, help texts, categories),
-`src/utils/i18n/locales/es/es.json` (View menu: Depurar).
+- New: `src/components/blockly/block-messages.ts` (sentence templates),
+  `src/components/blockly/tests/block-messages.spec.ts`.
+- Changed: `src/components/blockly/toolbox-ui.ts` (registers the templates at startup),
+  `src/utils/i18n/locales/{en,es}/blockly.json` (templates; Spanish texts, help texts and
+  categories), `src/utils/i18n/locales/es/es.json` (View menu: Depurar).
+- The visual tests' block editor and DriveTrain images (spec 007, part 1) show the slightly tighter
+  English labels.
 
 ### How to test
 
 1. Switch the app to Español and open a blocks project.
-2. Open Movimiento: "Avanzar cm: 20 Fuerza: 0.5", "Girar grados: 90 Fuerza: 0.5", "Conducir
-   Avance: Giro:". Hover a block: the help text explains it in plain words.
-3. Open Tarjeta de Control: "Esperar a que se presione el botón", "Encender LED".
-4. Open a blocks project saved before the change: the same blocks appear, with the new texts.
+2. Open Movimiento: "Avanzar 20 cm con fuerza 0.5", "Girar 90 grados con fuerza 0.5", "Avanzar
+   con fuerza 0.8 y girar con fuerza 0.2". Hover a block: the help text explains it in plain words.
+3. Open Motores individuales: "Mover motor izquierdo con fuerza 0.5", round blocks such as
+   "Vueltas del motor izquierdo". Change the motor in a dropdown: the sentence keeps its order.
+4. Open Tarjeta de Control: "Esperar a que se presione el botón", "¿Está el botón presionado?".
+5. Open a blocks project saved before the change: the same blocks appear, with the new texts, and
+   switching to English shows the English texts.
 
 ### Upstream
 
 Possible: XRPWeb has the same Spanish file (Part 1 was sent as
-[Open-STEM/XRPWeb#337](https://github.com/Open-STEM/XRPWeb/pull/337)). Depurar for Dashboard is a
-naming choice to agree with them.
+[Open-STEM/XRPWeb#337](https://github.com/Open-STEM/XRPWeb/pull/337)), and the sentence templates
+would help all its languages. Depurar for Dashboard is a naming choice to agree with them.
