@@ -1,6 +1,6 @@
 # 002 — Language and theme
 
-Spanish first, and a friendly look in light and dark. Three parts: Spanish translation fixes, the friendly theme and block editor, and theme switch fixes.
+Spanish first, and a friendly look in light and dark. Four parts: Spanish translation fixes, the friendly theme and block editor, theme switch fixes, and plain Spanish for the blocks.
 
 
 ## Part 1 — Spanish translation fixes
@@ -190,3 +190,65 @@ Captured during the switch, with the stylesheet download delayed:
 
 Both bugs are in XRPWeb's code. The two code commits are on the `theme-switch-flash` branch, based
 on `upstream/main`, ready to propose.
+
+
+## Part 4 — Plain Spanish for the blocks
+
+### Problem
+
+The Spanish block texts were literal translations of robotics terms that kids do not understand:
+"Esperar pulsación del botón", "Recto cm: 20 Esfuerzo: 0.5", "Tren de Tracción", "Arcade",
+"Guiñada", "Reflectancia", "Codificador izquierdo" (which actually gives centimetres). The help
+texts (tooltips) repeated the same terms.
+
+### Solution
+
+Every Spanish block text and help text rewritten in plain words that say what the block does. The
+order of the pieces in each block stays the same, so blocks, their files and the Python they
+produce do not change. English is unchanged.
+
+| Before | After |
+| --- | --- |
+| Esperar pulsación del botón | Esperar a que se presione el botón |
+| Recto cm: 20 Esfuerzo: 0.5 | Avanzar cm: 20 Fuerza: 0.5 |
+| Girar grados: 90 Esfuerzo: 0.5 | Girar grados: 90 Fuerza: 0.5 |
+| Establecer esfuerzo / Establecer velocidad | Fuerza de los motores / Velocidad de los motores |
+| Arcade Recto: Girar: | Conducir Avance: Giro: |
+| Motor: Dirección: Reversa / Adelante | Motor: Sentido: Invertido / Normal |
+| Posición / Conteo del codificador / Reiniciar codificador | Vueltas / Pulsos del codificador / Poner vueltas en cero |
+| Codificador izquierdo / Reiniciar codificadores | Distancia rueda izquierda (cm) / Poner distancias en cero |
+| Distancia del sonar (cm) | Distancia al obstáculo (cm) |
+| Reflectancia izquierda (%) | Sensor de línea izquierdo (%) |
+| Guiñada / Balanceo / Cabeceo | Giro / Inclinación a los lados / Inclinación adelante y atrás |
+| Acc_x (mg) | Aceleración X (mg) |
+| LED encendido / LED apagado | Encender LED / Apagar LED |
+| Botón de usuario | ¿Botón presionado? |
+| Esperar: | Esperar segundos: |
+| Panel iniciar todo, ... | Depurar: enviar sensores, ... |
+
+Categories: Tren de Tracción → Movimiento, Motores Individuales → Motores individuales,
+Reflectancia → Sensores de línea, Placa de Control → Tarjeta de Control, Panel → Depurar (also the
+Depurar screen in the View menu, so the blocks and the screen they feed share a name).
+
+"Fuerza" replaces "Esfuerzo": a number from -1 to 1, like pressing a pedal (0.5 is half). The help
+texts explain the difference with "Velocidad", which the robot keeps on its own in cm/s, like
+cruise control.
+
+### Files
+
+`src/utils/i18n/locales/es/blockly.json` (block texts, help texts, categories),
+`src/utils/i18n/locales/es/es.json` (View menu: Depurar).
+
+### How to test
+
+1. Switch the app to Español and open a blocks project.
+2. Open Movimiento: "Avanzar cm: 20 Fuerza: 0.5", "Girar grados: 90 Fuerza: 0.5", "Conducir
+   Avance: Giro:". Hover a block: the help text explains it in plain words.
+3. Open Tarjeta de Control: "Esperar a que se presione el botón", "Encender LED".
+4. Open a blocks project saved before the change: the same blocks appear, with the new texts.
+
+### Upstream
+
+Possible: XRPWeb has the same Spanish file (Part 1 was sent as
+[Open-STEM/XRPWeb#337](https://github.com/Open-STEM/XRPWeb/pull/337)). Depurar for Dashboard is a
+naming choice to agree with them.
