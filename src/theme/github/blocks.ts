@@ -7,6 +7,7 @@ import type { BlockTheme } from '@/theme/types';
 export const githubBlockTheme: BlockTheme = {
     name: 'github',
     categories: {
+        motors: '#d43511',
         individualMotors: '#df0c24',
         driveTrain: '#d43511',
         servos: '#527a29',

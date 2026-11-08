@@ -1,6 +1,6 @@
 # 002 — Language and theme
 
-Spanish first, and a friendly look in light and dark. Three parts: Spanish translation fixes, the friendly theme and block editor, and theme switch fixes.
+Spanish first, and a friendly look in light and dark. Five parts: Spanish translation fixes, the friendly theme and block editor, theme switch fixes, plain Spanish for the blocks, and the Motors group.
 
 
 ## Part 1 — Spanish translation fixes
@@ -190,3 +190,50 @@ Captured during the switch, with the stylesheet download delayed:
 
 Both bugs are in XRPWeb's code. The two code commits are on the `theme-switch-flash` branch, based
 on `upstream/main`, ready to propose.
+
+
+## Part 5 — Motors group
+
+### Problem
+
+The toolbox started with three motor categories at the top level (DriveTrain, Individual Motors,
+Servos), next to the Sensors group that already gathered its four categories. The list was long,
+and the categories that move the robot were not presented as one family.
+
+### Solution
+
+- **Motors group:** DriveTrain, Individual Motors and Servos move into an open "Motors" group
+  ("Motores"), in that order (the one kids use most first), placed where the first of them was,
+  like Sensors. The group is open by default so the motion blocks stay one tap away. Grouping
+  happens when the toolbox is built, like the Advanced group (Part 2): blocks, saved files and the
+  Python they produce do not change.
+
+### Fixes found on the way
+
+- **Blocks panel cut off on a tablet:** on an Android tablet with the browser's address bar
+  showing, the bottom of the app was under the bar. The app box took the full screen height
+  (`100vh`, which counts the bar as hidden) instead of the visible area, so the panel with a
+  category's blocks (the flyout) was taller than what could be seen. Categories with many blocks
+  could still be scrolled, but Individual Motors fits in that taller panel, so it had no scroll and
+  its last blocks were out of reach. The app now takes exactly the visible area.
+
+### Files
+
+- Changed: `src/components/blockly/toolbox-ui.ts` (`groupMotorCategories`),
+  `src/theme/github/blocks.ts` (group colour), `src/utils/i18n/locales/{en,es}/blockly.json`
+  (group name), `src/index.css` (app box sized by the visible area).
+- Tests: `src/components/tests/toolbox-ui.spec.ts`; the visual tests' toolbox and block editor
+  images (spec 007, part 1) show the new group.
+
+### How to test
+
+1. Open a blocks file: the toolbox starts with an open "Motors" group with DriveTrain, Individual
+   Motors and Servos, then the Sensors group.
+2. Collapse and expand Motors; open each of its categories: same blocks as before.
+3. On an Android tablet, with the address bar visible, open Individual Motors: every block can be
+   reached, down to "Reset encoder", and the bottom of the app is not under the bar.
+
+### Upstream
+
+The grouping is fork-specific (kids toolbox). The tablet fix is in fork CSS, but XRPWeb's own
+`100vh` has the same problem on Android tablets and could take the same idea.

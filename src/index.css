@@ -42,10 +42,15 @@ svg[display="none"] {
  * room they need (the top bar is taller when a label wraps) and the main area takes the rest, so
  * the page itself never scrolls. A fixed box follows the visible area of a phone, where the
  * browser's own bar comes and goes and `vh` and `body` centring would push the top out of reach.
+ * The size comes only from the edges: the `100vw`/`100vh` of `App.css` would win over `inset` and,
+ * on a tablet with the address bar showing, push the bottom of the app (and of the blocks panel)
+ * under the bar.
  */
 #root {
   position: fixed;
   inset: 0;
+  width: auto;
+  height: auto;
   display: flex;
   flex-direction: column;
 }

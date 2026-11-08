@@ -32,7 +32,8 @@ import '@components/blockly/toolbox-ui.css';
 
 /**
  * Kid-friendly toolbox: an icon per category, labels in the category colour, taller rows,
- * a search field at the top and an "Advanced" group that is collapsed by default.
+ * a search field at the top, a "Motors" group (like Sensors) and an "Advanced" group that is
+ * collapsed by default.
  */
 
 /** Icon shown next to each category, keyed by the toolbox `categoryId`. */
@@ -71,6 +72,11 @@ export const ADVANCED_CATEGORY_IDS = [
 ];
 
 const ADVANCED_CATEGORY_ID = 'advanced';
+
+/** Categories gathered into the "Motors" group, in this order (spec 002). */
+export const MOTOR_CATEGORY_IDS = ['driveTrain', 'individualMotors', 'servos'];
+
+const MOTORS_CATEGORY_ID = 'motors';
 const TEXT_SHADE = 0.8;
 const DARK_THEME_LIGHTEN = 0.45;
 
@@ -204,6 +210,36 @@ export function groupAdvancedCategories<T extends Toolbox>(toolbox: T, name: str
     };
 }
 
+/**
+ * Gather the motor categories into an open "Motors" group, placed where the first of them was,
+ * like the Sensors group. Blocks and their code are unchanged; only the toolbox layout moves.
+ */
+export function groupMotorCategories<T extends Toolbox>(toolbox: T, name: string): T {
+    const isMotor = (item: ToolboxItem) =>
+        item.kind.toUpperCase() === 'CATEGORY' &&
+        MOTOR_CATEGORY_IDS.includes(item.categoryId ?? '');
+    const motors = MOTOR_CATEGORY_IDS.flatMap((id) =>
+        toolbox.contents.filter((item) => isMotor(item) && item.categoryId === id),
+    );
+    const first = toolbox.contents.findIndex(isMotor);
+    if (first === -1) {
+        return toolbox;
+    }
+    const group = {
+        kind: 'CATEGORY',
+        categoryId: MOTORS_CATEGORY_ID,
+        name,
+        expanded: 'true',
+        contents: motors,
+    };
+    return {
+        ...toolbox,
+        contents: toolbox.contents.flatMap((item, index) =>
+            index === first ? [group] : isMotor(item) ? [] : [item],
+        ),
+    };
+}
+
 /** Add the search field as the first toolbox entry. */
 export function addSearch<T extends Toolbox>(toolbox: T, name: string): T {
     return { ...toolbox, contents: [{ kind: 'search', name, contents: [] }, ...toolbox.contents] };
@@ -215,7 +251,10 @@ export function addSearch<T extends Toolbox>(toolbox: T, name: string): T {
  */
 export function kidFriendlyToolbox<T>(toolbox: T): T {
     const base = toolbox as unknown as Toolbox;
-    const grouped = groupAdvancedCategories(base, i18n.t('blockly.toolbox.advanced'));
+    const grouped = groupAdvancedCategories(
+        groupMotorCategories(base, i18n.t('blockly.toolbox.motors')),
+        i18n.t('blockly.toolbox.advanced'),
+    );
     const themed = themeToolbox(
         addSearch(grouped, i18n.t('blockly.toolbox.search')),
         activeBlockTheme,

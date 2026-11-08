@@ -125,6 +125,7 @@
         "XRP_COMMENT_TOOLTIP": "Agrega un comentario a tu código."
     },
     "toolbox": {
+        "motors": "Motores",
         "individualMotors": "Motores Individuales",
         "driveTrain": "Tren de Tracción",
         "servos": "Servos",
