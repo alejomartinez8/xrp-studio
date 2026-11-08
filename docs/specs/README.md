@@ -11,7 +11,7 @@ extends the spec of its theme with a new part; a new spec is only for a really n
 | # | Spec | Parts | Upstream |
 | --- | --- | --- | --- |
 | 001 | [Offline and installable app](001-offline-and-install.md) | Offline build; lighter first load; installable app that works offline | Possible, behind a build flag |
-| 002 | [Language and theme](002-language-and-theme.md) | Spanish translation fixes (sent, [Open-STEM/XRPWeb#337](https://github.com/Open-STEM/XRPWeb/pull/337)); friendly theme and block editor; theme switch fixes | Block editor parts and bug fixes possible; app theme is fork-specific |
+| 002 | [Language and theme](002-language-and-theme.md) | Spanish translation fixes (sent, [Open-STEM/XRPWeb#337](https://github.com/Open-STEM/XRPWeb/pull/337)); friendly theme and block editor; theme switch fixes; plain Spanish for the blocks | Block editor parts and bug fixes possible; app theme is fork-specific |
 | 003 | [Layout and screens](003-layout-and-screens.md) | Top bar; welcome screen; close button on modals; layout (side bar, Terminal toggle, rounded panels, Explorer tree) | Fork-specific (kids UI); modal close button possible |
 | 004 | [File management](004-file-management.md) | My projects and robot memory (answers [Open-STEM/XRPWeb#336](https://github.com/Open-STEM/XRPWeb/issues/336)); files open with their blocks; opening projects; automatic save | Single tap, empty-file fix and autosave possible behind a flag; robot behaviour to be tested |
 | 005 | [Accounts and sync](005-accounts-and-sync.md) | Google sign-in server and session; accounts on a device, "Keep me signed in" and Drive sync; testing them with a fake Google | Server as a reference; sync is fork-only for now |

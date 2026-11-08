@@ -122,7 +122,21 @@
         "XRP_DASHBOARD_SET_VALUE_TOOLTIP": "Creates or updates a named numeric value and sends it to the dashboard.",
         "XRP_DASHBOARD_GET_VALUE_TOOLTIP": "Returns the current numeric value received for the named dashboard variable.",
         "XRP_COMMENT": "Comment",
-        "XRP_COMMENT_TOOLTIP": "Add a comment to your code."
+        "XRP_COMMENT_TOOLTIP": "Add a comment to your code.",
+        "XRP_MOTOR_EFFORT_MESSAGE": "Motor: %1 Effort: %2",
+        "XRP_MOTOR_SPEED_MESSAGE": "Motor: %1 Speed: %2 RPM",
+        "XRP_MOTOR_DIRECTION_MESSAGE": "Motor: %1 Direction: %2",
+        "XRP_MOTOR_GET_SPEED_MESSAGE": "Motor: %1 Speed:",
+        "XRP_MOTOR_GET_POSITION_MESSAGE": "Motor: %1 Position",
+        "XRP_MOTOR_GET_COUNT_MESSAGE": "Motor: %1 Encoder count",
+        "XRP_MOTOR_RESET_POSITION_MESSAGE": "Motor: %1 Reset encoder",
+        "XRP_STRAIGHT_MESSAGE": "Straight cm: %1 Effort: %2",
+        "XRP_TURN_MESSAGE": "Turn Deg: %1 Effort: %2",
+        "XRP_SET_EFFORT_MESSAGE": "Set effort Left: %1 Right: %2",
+        "XRP_SET_SPEED_MESSAGE": "Set speed Left: %1 cm/s Right: %2 cm/s",
+        "XRP_ARCADE_MESSAGE": "Arcade Straight: %1 Turn: %2",
+        "XRP_SERVO_DEG_MESSAGE": "Servo: %1 Deg: %2",
+        "XRP_SLEEP_MESSAGE": "Sleep: %1"
     },
     "toolbox": {
         "individualMotors": "Individual Motors",
