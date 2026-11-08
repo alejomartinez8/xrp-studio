@@ -164,7 +164,7 @@
     "update-lib-instructions": "El proceso de actualización tomará unos minutos. Por favor no desconecte el cable USB durante este tiempo.",
     "update-lib-error": "El proceso de actualización de la biblioteca XRP ha fallado. Por favor intente nuevamente. El mensaje de error es: {{ error }}",
     "update-lib-complete": "El proceso de actualización de la biblioteca XRP se ha completado con éxito.",
-    "dashboard": "Panel",
+    "dashboard": "Depurar",
     "no-editor-run": "Seleccione una pestaña con código antes de presionar Ejecutar.",
     "program-not-saved-to-xrp": "Este programa no se ha guardado en el XRP. Guárdelo en el XRP antes de ejecutarlo.",
     "FilesystemStorage": "Sistema de archivos XRP: {{ capacity }} MB",
