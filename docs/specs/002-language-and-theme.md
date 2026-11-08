@@ -222,13 +222,13 @@ language cannot say "Avanzar 20 cm": the unit has to come before the number. The
 | Arcade Recto: 0.8 Girar: 0.2 | Avanzar con fuerza 0.8 y girar con fuerza 0.2 |
 | Establecer esfuerzo Izquierdo: Derecho: | Fuerza de las ruedas: izquierda 0.5 derecha 0.5 |
 | Establecer velocidad Izquierdo: cm/s Derecho: cm/s | Velocidad de las ruedas: izquierda 60 cm/s derecha 60 cm/s |
-| Reiniciar codificadores | Reiniciar distancias |
-| Codificador izquierdo | Distancia rueda izquierda (cm) |
+| Reiniciar codificadores | Reiniciar encoders |
+| Codificador izquierdo | Encoder izquierdo (cm) |
 | Motor: Izquierdo Esfuerzo: | Mover motor izquierdo con fuerza 0.5 |
 | Motor: Izquierdo Velocidad: 60 RPM | Mover motor izquierdo a 60 vueltas por minuto |
 | Motor: Izquierdo Dirección: Reversa | Motor izquierdo en sentido invertido |
 | Motor: Izquierdo Velocidad: / Posición / Conteo del codificador | Vueltas por minuto / Vueltas / Pulsos del encoder del motor izquierdo |
-| Motor: Izquierdo Reiniciar codificador | Reiniciar vueltas del motor izquierdo |
+| Motor: Izquierdo Reiniciar codificador | Reiniciar encoder del motor izquierdo |
 | Servo: 1 Grados: 90 | Mover servo 1 a 90 grados |
 | Esperar: 1 | Esperar 1 segundos |
 | Distancia del sonar (cm) | Distancia al obstáculo (cm) |
@@ -246,8 +246,10 @@ Depurar screen in the View menu, so the blocks and the screen they feed share a 
 
 "Fuerza" replaces "Esfuerzo": a number from -1 to 1, like pressing a pedal (0.5 is half). The help
 texts explain the difference with "Velocidad", which the robot keeps on its own, like cruise
-control. "Encoder" stays in English, like LED and servo: it is the word used in class and in
-XRP's Python, and the help text explains it. Blocks that give a distance say so in cm (XRPLib
+control. Where English uses a term kids will meet again in class, in XRP's Python and when they
+move to English, Spanish keeps the same word so the two languages read alike: "encoder" stays,
+like LED and servo ("Encoder izquierdo (cm)" for "Left encoder", "Reiniciar encoders" for "Reset
+encoders"), and the help text explains it. Blocks that give a distance add the unit, cm (XRPLib
 turns the wheel's turns into centimetres). The units themselves (forces from -1 to 1, cm, revolutions per minute) are unchanged;
 simpler measures for kids are a separate change.
 
