@@ -1,5 +1,6 @@
 import * as Blockly from 'blockly/core';
 import { createElement } from 'react';
+import { flushSync } from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import type { IconType } from 'react-icons';
 import {
@@ -126,7 +127,11 @@ function paintCategory(
     }
 }
 
-/** Toolbox category with an icon and coloured label. */
+/**
+ * Toolbox category with an icon and coloured label. The icon is rendered synchronously so it is
+ * already in place when Blockly measures the toolbox width; rendered later, it widened the toolbox
+ * after the workspace was laid out, and on phones the program could start under the toolbox.
+ */
 class XrpToolboxCategory extends Blockly.ToolboxCategory {
     protected override createIconDom_(): Element {
         const Icon = CATEGORY_ICONS[categoryIdOf(this) ?? ''];
@@ -135,7 +140,8 @@ class XrpToolboxCategory extends Blockly.ToolboxCategory {
         }
         const span = document.createElement('span');
         span.className = 'xrpToolboxIcon';
-        createRoot(span).render(createElement(Icon, { size: 20 }));
+        const root = createRoot(span);
+        flushSync(() => root.render(createElement(Icon, { size: 20 })));
         return span;
     }
 

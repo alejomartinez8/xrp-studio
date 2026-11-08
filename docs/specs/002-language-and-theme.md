@@ -216,10 +216,14 @@ and the categories that move the robot were not presented as one family.
   category's blocks (the flyout) was taller than what could be seen. Categories with many blocks
   could still be scrolled, but Individual Motors fits in that taller panel, so it had no scroll and
   its last blocks were out of reach. The app now takes exactly the visible area.
+- **Program partly under the toolbox on phones:** each category's icon was drawn a moment after the
+  toolbox, so Blockly sometimes measured the toolbox without icons and placed the program too far
+  left; with the Motors group the widest row is an indented category with an icon, and on a phone
+  the program could start under the toolbox. Icons are now drawn at once, before Blockly measures.
 
 ### Files
 
-- Changed: `src/components/blockly/toolbox-ui.ts` (`groupMotorCategories`),
+- Changed: `src/components/blockly/toolbox-ui.ts` (`groupMotorCategories`; icons drawn at once),
   `src/theme/github/blocks.ts` (group colour), `src/utils/i18n/locales/{en,es}/blockly.json`
   (group name), `src/index.css` (app box sized by the visible area).
 - Tests: `src/components/tests/toolbox-ui.spec.ts`; the visual tests' toolbox and block editor
