@@ -4,7 +4,7 @@ import pythonImage from '@assets/images/micropython.png';
 import { Actions, IJsonTabNode, Layout } from 'flexlayout-react';
 
 type EditorChooserProps = {
-    flref: React.RefObject<Layout>;
+    flref: React.RefObject<Layout | null>;
 };
 
 /**
