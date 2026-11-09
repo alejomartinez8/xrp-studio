@@ -330,7 +330,7 @@ function FolderTree(treeProps: TreeProps) {
                         </button>
                         {isLogin && isLocalProjectsEnabled && node.level === 1 && (
                             <button
-                                className={`hover:bg-black/10 dark:hover:bg-white/15 dark:hover:text-white flex h-5 w-5 items-center justify-center rounded text-mountain-mist-600 hover:text-mountain-mist-900 dark:text-mountain-mist-400 ${isRunning ? 'pointer-events-none opacity-50' : 'pointer-events-auto opacity-100'}`}
+                                className={`hover:bg-black/10 dark:hover:bg-white/15 dark:hover:text-white flex h-5 w-5 items-center justify-center rounded-sm text-mountain-mist-600 hover:text-mountain-mist-900 dark:text-mountain-mist-400 ${isRunning ? 'pointer-events-none opacity-50' : 'pointer-events-auto opacity-100'}`}
                                 onClick={() => void archiveNode(node.data)}
                                 title={t('archived.archive')}
                                 aria-label={t('archived.archive')}
