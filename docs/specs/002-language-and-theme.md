@@ -323,16 +323,21 @@ would help all its languages. Depurar for Dashboard is a naming choice to agree 
   the workspace scrollbar were half hidden. The app now asks to draw edge to edge and keeps clear of
   the system bars and screen cutouts by itself (the safe areas the device reports, none on screens
   without them); the strip under the bar takes the frame colour.
-- **Program partly under the toolbox on phones:** each category's icon was drawn a moment after the
-  toolbox, so Blockly sometimes measured the toolbox without icons and placed the program too far
-  left; with the Motors group the widest row is an indented category with an icon, and on a phone
-  the program could start under the toolbox. Icons are now drawn at once, before Blockly measures.
+- **Program and blocks panel partly under the toolbox on phones:** each category's icon was drawn
+  a moment after the toolbox, so Blockly sometimes measured the toolbox without icons and kept that
+  narrower width: the program could start under the toolbox, and the panel of blocks opened partly
+  under it, with the first letters of each block hidden (seen most in Spanish, where choosing the
+  language rebuilds the toolbox). Drawing the icons with React could not be made immediate when the
+  toolbox is rebuilt while the editor itself is updating, so the icons are now built directly as
+  SVG when each category is created, before Blockly measures. This also made the phone block editor
+  screenshot of the visual tests (spec 007, part 1) stable: it used to differ now and then on a busy
+  test machine.
 
 ### Files
 
 - New: `src/utils/breakpoints.ts` (Tailwind's `max-md` breakpoint for code: phones).
 - Changed: `src/components/blockly/toolbox-ui.ts` (`groupMotorCategories`, `phoneToolbox`; icons
-  drawn at once), `src/components/blockly/toolbox-ui.css` (phone icon column, panel title),
+  built as SVG at once), `src/components/blockly/toolbox-ui.css` (phone icon column, panel title),
   `src/components/blockly.tsx` (rebuilds the toolbox when the screen crosses the phone width),
   `src/theme/github/blocks.ts` (group colour), `src/utils/i18n/locales/{en,es}/blockly.json`
   (group name), `src/index.css` (app box sized by the visible area, clear of the system bars),
@@ -356,6 +361,8 @@ would help all its languages. Depurar for Dashboard is a naming choice to agree 
    navigation bar at the bottom; swiping up from the bottom edge shows the bar for a moment.
 7. On an Android phone, open the app in the browser and in a link opened from another app: the
    last toolbox icon ("•••") and the workspace scrollbar sit fully above the navigation bar.
+8. On a phone, in Spanish, open a blocks file and tap the first icon (Movimiento): the panel starts
+   right of the toolbox, with "Movimiento" and every block text whole.
 
 ### Upstream
 

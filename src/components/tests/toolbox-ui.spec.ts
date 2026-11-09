@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
+import { TbDots } from 'react-icons/tb';
 import {
     ADVANCED_CATEGORY_IDS,
     addSearch,
+    createIcon,
     groupAdvancedCategories,
     groupMotorCategories,
     phoneToolbox,
@@ -108,6 +110,14 @@ describe('Kid-friendly toolbox', () => {
             iconOnly: 'true',
             contents: [{ categoryId: 'text', contents: [{ kind: 'label', text: 'Text' }, block] }],
         });
+    });
+
+    it('builds a category icon as SVG at once, without React', () => {
+        const svg = createIcon(TbDots).querySelector('svg');
+        expect(svg?.getAttribute('viewBox')).toBe('0 0 24 24');
+        expect(svg?.getAttribute('width')).toBe('20');
+        expect(svg?.getAttribute('stroke-width')).toBe('2');
+        expect(svg?.querySelectorAll('path')).toHaveLength(3);
     });
 
     it('adds the search field first', () => {
