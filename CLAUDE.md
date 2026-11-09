@@ -54,7 +54,8 @@ a new version is applied when the page is opened or reloaded, and the installed 
 
 Files in My projects or Google Drive save themselves (`src/utils/autosave.ts`, spec 004); Save
 no longer writes them to the robot, Run does. Robot-memory files keep the manual save. Delete in
-My projects moves to the Trash (`src/components/trash.tsx`, 30 days, synced with the Drive trash).
+My projects moves to the Trash (`src/components/trash.tsx`, 30 days, synced with the Drive trash);
+Archive hides a project without deleting it (`src/components/archived.tsx`, spec 004 part 6).
 
 Every build opens straight into My projects (no login needed): `isLocalProjectsEnabled` in
 `src/utils/offline.ts` is always true. `src/services/local-drive.ts` implements the

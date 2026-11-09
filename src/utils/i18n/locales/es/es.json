@@ -394,5 +394,13 @@
         "confirmEmpty_one": "¿Eliminar {{count}} elemento para siempre? No se puede deshacer.",
         "confirmEmpty_other": "¿Eliminar {{count}} elementos para siempre? No se puede deshacer.",
         "emptyNow": "Eliminar para siempre"
+    },
+    "archived": {
+        "row": "Archivados",
+        "title": "Proyectos archivados",
+        "hint": "Proyectos que guardaste para tener tu lista ordenada. Aquí están a salvo: no se borra nada. Recupera uno cuando quieras.",
+        "empty": "No hay proyectos archivados.",
+        "archive": "Archivar (guardar sin borrar)",
+        "unarchive": "Recuperar"
     }
 }

@@ -8,8 +8,8 @@ import StatusBar from '@components/status-bar';
 import AskDialog from '@components/ask-dialog';
 
 function App() {
-    const xrpLayoutRef = useRef();
-    const appMgrRef = useRef<AppMgr>();
+    const xrpLayoutRef = useRef(undefined);
+    const appMgrRef = useRef<AppMgr>(undefined);
 
     /**
      * Initialize AppMgr instance and its dependencies

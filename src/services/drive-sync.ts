@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import DriveApi, { RemoteItem } from '@/services/drive-api';
+import DriveApi, { isArchived, RemoteItem } from '@/services/drive-api';
 import LocalDriveService, { FOLDER_MIME_TYPE, LocalDriveRecord } from '@/services/local-drive';
 import { Constants } from '@/utils/constants';
 
@@ -16,6 +16,8 @@ import { Constants } from '@/utils/constants';
  *   file that is open in an editor is left as it is until its tab is closed. When the same file changed here and there, the newer edit
  *   wins and there is a single file, without copies. Items trashed or restored on another device
  *   are trashed or restored here too, unless that changed here as well since the last sync.
+ * - Archived projects (spec 004, part 6) carry an app property in Drive and follow the same rule
+ *   as the trash, in both directions.
  */
 
 /** What the cloud in the status bar shows. `off`: no account signed in. */
@@ -228,6 +230,9 @@ async function pullChanges({ local, api, options }: Session, root: LocalDriveRec
             trashed: item.explicitlyTrashed || undefined,
             trashedTime: item.explicitlyTrashed ? item.trashedTime : undefined,
             syncedTrashed: item.explicitlyTrashed || undefined,
+            archived: isArchived(item) || undefined,
+            archivedTime: isArchived(item) ? item.modifiedTime : undefined,
+            syncedArchived: isArchived(item) || undefined,
         };
         await local.putRecord(record);
         localIdOf.set(item.id, id);
@@ -258,8 +263,12 @@ async function pullChanges({ local, api, options }: Session, root: LocalDriveRec
             } else {
                 await fromRemote(item, parent, record.id);
             }
-            if (record && !options.isOpen?.(record.id) && (await pullTrash(local, record, item))) {
-                changed = true;
+            if (record && !options.isOpen?.(record.id)) {
+                for (const flag of [TRASH_FLAG, ARCHIVE_FLAG]) {
+                    if (await pullFlag(local, record, item, flag)) {
+                        changed = true;
+                    }
+                }
             }
             if (item.mimeType === FOLDER_MIME_TYPE) {
                 queue.push(item.id);
@@ -298,38 +307,66 @@ async function pullChanges({ local, api, options }: Session, root: LocalDriveRec
     return changed;
 }
 
+/** A hidden state that follows Drive: the trash, or being archived. */
+type Flag = {
+    key: 'trashed' | 'archived';
+    time: 'trashedTime' | 'archivedTime';
+    synced: 'syncedTrashed' | 'syncedArchived';
+    /** Whether the item is in that state in Drive, and since when. */
+    inDrive: (item: RemoteItem) => boolean;
+    since: (item: RemoteItem) => string | undefined;
+};
+
+const TRASH_FLAG: Flag = {
+    key: 'trashed',
+    time: 'trashedTime',
+    synced: 'syncedTrashed',
+    inDrive: (item) => Boolean(item.explicitlyTrashed),
+    since: (item) => item.trashedTime,
+};
+
+const ARCHIVE_FLAG: Flag = {
+    key: 'archived',
+    time: 'archivedTime',
+    synced: 'syncedArchived',
+    inDrive: isArchived,
+    since: (item) => item.modifiedTime,
+};
+
 /**
- * Settle whether an item is in the trash, after the rest of the pull: a trash change made here
- * since the last sync (seen in `before`, the record as it was) wins and is uploaded; otherwise
- * Drive's state is taken. Returns whether that moved the item in or out of the trash here.
+ * Settle whether an item is in the trash (or archived), after the rest of the pull: a change made
+ * here since the last sync (seen in `before`, the record as it was) wins and is uploaded;
+ * otherwise Drive's state is taken. Returns whether that moved the item in or out of that state
+ * here.
  */
-async function pullTrash(
+async function pullFlag(
     local: LocalDriveService,
     before: LocalDriveRecord,
     item: RemoteItem,
+    flag: Flag,
 ): Promise<boolean> {
     const record = await local.getRecord(before.id);
     if (!record || record.deleted || before.deleted) {
         return false;
     }
-    const inDrive = Boolean(item.explicitlyTrashed);
-    const changedHere = Boolean(before.trashed) !== Boolean(before.syncedTrashed);
-    const trashed = changedHere ? Boolean(before.trashed) : inDrive;
+    const inDrive = flag.inDrive(item);
+    const changedHere = Boolean(before[flag.key]) !== Boolean(before[flag.synced]);
+    const on = changedHere ? Boolean(before[flag.key]) : inDrive;
     const next: LocalDriveRecord = {
         ...record,
-        trashed: trashed || undefined,
-        trashedTime: trashed ? (before.trashedTime ?? item.trashedTime) : undefined,
-        syncedTrashed: inDrive,
-        dirty: record.dirty || trashed !== inDrive || undefined,
+        [flag.key]: on || undefined,
+        [flag.time]: on ? (before[flag.time] ?? flag.since(item)) : undefined,
+        [flag.synced]: inDrive,
+        dirty: record.dirty || on !== inDrive || undefined,
     };
     if (
-        Boolean(next.trashed) !== Boolean(record.trashed) ||
-        next.syncedTrashed !== record.syncedTrashed ||
+        Boolean(next[flag.key]) !== Boolean(record[flag.key]) ||
+        next[flag.synced] !== record[flag.synced] ||
         next.dirty !== record.dirty
     ) {
         await local.putRecord(next);
     }
-    return Boolean(before.trashed) !== trashed;
+    return Boolean(before[flag.key]) !== on;
 }
 
 /** Upload local changes: new and changed records (parents first), then deletions. */
@@ -363,7 +400,13 @@ async function pushChanges({ local, api }: Session): Promise<void> {
         const isFolder = record.mimeType === FOLDER_MIME_TYPE;
         let item: RemoteItem;
         if (!record.driveId) {
-            item = await api.create(record.name, record.mimeType, parent.driveId, record.content);
+            item = await api.create(
+                record.name,
+                record.mimeType,
+                parent.driveId,
+                record.content,
+                record.archived,
+            );
         } else {
             const moved = record.syncedParent && record.syncedParent !== parent.id;
             item = await api.update(record.driveId, {
@@ -376,6 +419,10 @@ async function pushChanges({ local, api }: Session): Promise<void> {
                     Boolean(record.trashed) !== Boolean(record.syncedTrashed)
                         ? Boolean(record.trashed)
                         : undefined,
+                archived:
+                    Boolean(record.archived) !== Boolean(record.syncedArchived)
+                        ? Boolean(record.archived)
+                        : undefined,
             });
         }
         const now = await local.getRecord(record.id);
@@ -386,6 +433,7 @@ async function pushChanges({ local, api }: Session): Promise<void> {
         const unchanged =
             !now.deleted &&
             Boolean(now.trashed) === Boolean(record.trashed) &&
+            Boolean(now.archived) === Boolean(record.archived) &&
             now.name === record.name &&
             now.content === record.content &&
             now.parents?.[0] === record.parents![0];
@@ -395,6 +443,7 @@ async function pushChanges({ local, api }: Session): Promise<void> {
             syncedTime: item.modifiedTime,
             syncedParent: parent.id,
             syncedTrashed: Boolean(record.trashed),
+            syncedArchived: Boolean(record.archived),
             dirty: !unchanged,
         };
         await local.putRecord(synced);

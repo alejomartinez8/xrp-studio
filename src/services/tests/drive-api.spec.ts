@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import DriveApi, { DriveApiError } from '@/services/drive-api';
+import DriveApi, { ARCHIVED_PROPERTY, DriveApiError, isArchived } from '@/services/drive-api';
 import { FOLDER_MIME_TYPE } from '@/services/local-drive';
 
 const item = { id: 'f1', name: 'a.py', mimeType: 'text/x-python', modifiedTime: 't1' };
@@ -85,5 +85,33 @@ describe('DriveApi', () => {
         expect(fetch.mock.calls[2][1].method).toBe('DELETE');
         const missing = new DriveApi(vi.fn().mockResolvedValue(json({}, 404)));
         await expect(missing.remove('gone')).resolves.toBeUndefined();
+    });
+
+    it('marks archived projects with an app property and clears it', async () => {
+        const fetch = vi.fn().mockImplementation(() => Promise.resolve(json({})));
+        const api = new DriveApi(fetch);
+        await api.create('box', FOLDER_MIME_TYPE, 'root', undefined, true);
+        expect(JSON.parse(fetch.mock.calls[0][1].body)).toMatchObject({
+            appProperties: { [ARCHIVED_PROPERTY]: 'true' },
+        });
+
+        await api.update('f1', { name: 'box', mimeType: FOLDER_MIME_TYPE, archived: false });
+        expect(JSON.parse(fetch.mock.calls[1][1].body)).toEqual({
+            name: 'box',
+            appProperties: { [ARCHIVED_PROPERTY]: null },
+        });
+        expect(new URL(fetch.mock.calls[1][0]).searchParams.get('fields')).toContain(
+            'appProperties',
+        );
+        expect(isArchived({ id: 'a', name: 'a', mimeType: '', modifiedTime: '' })).toBe(false);
+        expect(
+            isArchived({
+                id: 'a',
+                name: 'a',
+                mimeType: '',
+                modifiedTime: '',
+                appProperties: { [ARCHIVED_PROPERTY]: 'true' },
+            }),
+        ).toBe(true);
     });
 });
