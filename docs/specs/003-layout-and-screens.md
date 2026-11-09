@@ -348,7 +348,8 @@ project open.
 
 - The tab is now an icon (two files), like the activity bar of a code editor. Its tooltip and
   accessible name are "Explorer" ("Explorador" in Spanish).
-- The panel starts closed. A click on the icon opens it, another click closes it.
+- The panel starts closed. A click on the icon opens it, another click closes it. (Part 6 later
+  opens it at start on wider screens; on phones it still starts closed.)
 - The open panel is marked with the accent line on the icon's outer edge.
 - The panel's header reads "Explorer" ("Explorador") instead of "My projects", and its new file
   and new folder buttons use clearer icons (a page and a folder, each with a plus), new file
@@ -522,3 +523,86 @@ the problem only shows on a real phone.
 
 XRPWeb's `100vh` app height has the same problem on Android phones and tablets and could take the
 same idea.
+
+## Part 6 — Choosing the editor
+
+### Problem
+
+To see the Python of a blocks program, children had to open View > View Python File, a modal
+window over the editor. View > Convert to Python asked for confirmation in another modal, then
+replaced the blocks file with a Python file and moved the blocks to the trash. Neither is easy to
+find, and the conversion cannot be undone from the editor. MakeCode solves this with a selector in
+the middle of its top bar.
+
+### Solution
+
+- **Blocks file:** the top bar shows a "Blocks | Python" selector in the middle. Python shows the
+  Python that comes from the blocks, in place of the canvas: read-only, coloured, with line
+  numbers. A strip on top says "This Python comes from your blocks. To change it, change the
+  blocks." Blocks brings the canvas back where it was. Each open tab remembers its choice.
+- **Make an editable Python copy:** the button in that strip creates a Python file with the same
+  name next to the blocks file (`robot.py`, or `robot 2.py`, `robot 3.py`, … when the name is
+  taken) and opens it. The blocks file stays as it is. The copy is saved where the blocks file
+  lives: My projects, or the robot's memory (a connected robot is needed then).
+- **Python file:** there are no blocks, so the top bar only says "Python", as in MakeCode for
+  Python projects.
+- The two View menu entries and their modals are hidden.
+- **Zoom in the Python editor:** round "+" and "−" buttons in the bottom right corner of a Python
+  file make the code bigger or smaller, like the zoom buttons of the blocks. They replace the
+  View menu's "Increase Font" and "Decrease Font", so the View menu is gone.
+- **Explorer open on wider screens:** on a computer or tablet the Explorer starts open, so the
+  project files are in sight next to the editor. On phones (below 768 px) it starts closed, as
+  before, to leave the screen to the editor.
+- The selector sits between the menus and the connect button, so it never covers them; when the
+  top bar is narrow it moves a little off the middle.
+- On phones the selector shows only its icons, so it fits between the logo and the connect button.
+- The Python view uses a small built-in highlighter instead of the full Python editor, so it opens
+  at once, also offline, without downloading the Python editor.
+
+Later (backlog): an editable Python mirror of the blocks and a toolbox of code snippets with
+explanations, as MakeCode's Python editor has.
+
+| | Light | Dark |
+| --- | --- | --- |
+| Blocks | ![Blocks, light](images/editor-switch-blocks-light.png) | ![Blocks, dark](images/editor-switch-blocks-dark.png) |
+| Python | ![Python, light](images/editor-switch-python-light.png) | ![Python, dark](images/editor-switch-python-dark.png) |
+| Python file with zoom | ![Python file, light](images/editor-switch-pyfile-light.png) | ![Python file, dark](images/editor-switch-pyfile-dark.png) |
+
+### Files
+
+- New: `src/components/editor-switch.tsx` (the selector), `src/components/blockly/python-view.tsx`
+  (the read-only Python), `src/components/blockly/python-copy.ts` (the editable copy),
+  `src/utils/editor-view.ts` (each tab's choice, copy name, flag for the old menu entries),
+  `src/utils/python-highlight.ts`, `src/components/python/zoom-controls.tsx` (zoom buttons).
+- Changed: `src/components/navbar.tsx` (selector, old entries behind the flags `showPythonDialogs`
+  and `showFontMenu`, empty menus hidden), `src/components/blockly.tsx` (shows the Python view),
+  `src/components/MonacoEditor.tsx` (adds the zoom buttons), `src/components/xrplayout.tsx`
+  (Explorer open at start on wider screens), en/es texts (`zoomIn`, `zoomOut`).
+- Unchanged and still there: `src/components/dialogs/view-pythondlg.tsx` and the conversion code
+  in `navbar.tsx`.
+- Unit tests: `src/utils/tests/editor-view.spec.ts`, `src/utils/tests/python-highlight.spec.ts`,
+  `src/components/tests/editor-switch.spec.tsx`, `src/components/tests/zoom-controls.spec.tsx`.
+
+### How to test
+
+1. Open the app on a computer: the Explorer is open. On a phone-sized window it starts closed.
+   Open a blocks project: "Blocks | Python" is in the top bar, with Blocks selected, and does not
+   touch the connect button. The View menu is not there.
+2. Choose Python: the program shows as Python with colours and line numbers, and it cannot be
+   typed in. Choose Blocks: the canvas is back at the same place and zoom.
+3. Choose Python and press "Make an editable Python copy": `<name>.py` opens in a new tab and
+   appears next to the blocks file in My projects; the blocks file is still there. Press it again
+   from the blocks tab: the new copy is `<name> 2.py`.
+4. In the Python tab, the top bar only says "Python" and there is no View menu. The "+" and "−"
+   buttons in the bottom right corner make the code bigger and smaller.
+5. Open two blocks files and choose Python in one: switching tabs shows each one's choice.
+6. Make the window phone-sized: the selector shows only its icons and does not cover the logo or
+   the connect button.
+7. Switch the language to Spanish: "Bloques | Python" and the strip are in Spanish.
+8. With a robot in Robot memory, a copy of a robot blocks file is written to the robot; without a
+   connected robot the app says the XRP is not connected.
+
+### Upstream
+
+Fork-only (kids UI). XRPWeb keeps its View menu entries; the selector could be offered to XRPWeb
+later.

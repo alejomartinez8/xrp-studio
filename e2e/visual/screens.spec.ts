@@ -168,6 +168,15 @@ for (const theme of THEMES) {
             await expect(flyout(page)).toHaveScreenshot(`toolbox-search-${theme}.png`);
         });
 
+        test('Python view of a blocks file', async ({ page, context }) => {
+            await openWelcome(page, context, theme);
+            await openBlocksExample(page);
+            await page.getByRole('radio', { name: 'Python' }).click();
+            await expect(page.getByTestId('python-view')).toBeVisible();
+            await settle(page);
+            await expect(page).toHaveScreenshot(`blocks-python-${theme}.png`);
+        });
+
         test('Python editor', async ({ page, context }) => {
             await openWelcome(page, context, theme);
             await page.getByRole('button', { name: /New Python project/ }).click();

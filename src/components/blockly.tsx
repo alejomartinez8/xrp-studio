@@ -17,6 +17,8 @@ import { kidFriendlyToolbox, registerToolboxUi } from '@components/blockly/toolb
 import { isMaxMd, MAX_MD_QUERY } from '@/utils/breakpoints';
 import { parseBlocksJson } from '@components/blockly/blocks-content';
 import { scheduleAutosave } from '@/utils/autosave';
+import PythonView from '@components/blockly/python-view';
+import { forgetEditorView, getEditorView, onEditorViewChange } from '@/utils/editor-view';
 
 registerFieldColour(); //Plugin needs to be registered. Used for the Color LED on the non beta board. 
 registerToolboxUi();
@@ -271,6 +273,7 @@ function BlocklyEditor({ tabId, tabName }: BlocklyEditorProps) {
     // signed out of Google Drive. The file cannot be saved, so editing is
     // blocked until they sign back in.
     const [editBlocked, setEditBlocked] = useState<boolean>(false);
+    const pythonCode = usePythonView(tabId, workspace);
     const containerRef = useRef<HTMLDivElement>(null);
 
     const evaluateEditBlocked = useCallback(() => {
@@ -653,9 +656,10 @@ function BlocklyEditor({ tabId, tabName }: BlocklyEditorProps) {
                 }}
             />
         )}
+        {pythonCode !== null && <PythonView tabId={tabId} code={pythonCode} />}
         {workspaceReady && (
         <BlocklyWorkspace
-            className="h-full"
+            className={pythonCode === null ? 'h-full' : 'invisible h-full'}
             toolboxConfiguration={toolboxConfiguration}
             workspaceConfiguration={{
                 move:{
@@ -687,6 +691,32 @@ function BlocklyEditor({ tabId, tabName }: BlocklyEditorProps) {
         />
         )}
         </div>
+    );
+}
+
+/**
+ * The Python of the blocks in tab `tabId` while "Python" is chosen in the top bar (spec 003,
+ * part 6), or null while the blocks show. The code is generated each time Python is chosen: the
+ * blocks cannot change while their Python shows. The tab's choice is forgotten when it closes.
+ */
+function usePythonView(tabId: string, workspace: Workspace | null): string | null {
+    const [isPython, setIsPython] = useState(() => getEditorView(tabId) === 'python');
+
+    useEffect(() => {
+        const stop = onEditorViewChange((changedTab, view) => {
+            if (changedTab === tabId) {
+                setIsPython(view === 'python');
+            }
+        });
+        return () => {
+            stop();
+            forgetEditorView(tabId);
+        };
+    }, [tabId]);
+
+    return useMemo(
+        () => (isPython ? (workspace ? pythonGenerator.workspaceToCode(workspace) : '') : null),
+        [isPython, workspace],
     );
 }
 

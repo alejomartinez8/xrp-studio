@@ -29,6 +29,8 @@ import chatbot from '@assets/images/chatbot.svg';
 import gamepad from '@assets/images/gamepad.svg';
 import bugs from '@assets/images/bugs.svg';
 import { TiArrowSortedDown } from 'react-icons/ti';
+import EditorSwitch from '@components/editor-switch';
+import { showFontMenu, showPythonDialogs } from '@/utils/editor-view';
 import { IoPlaySharp } from 'react-icons/io5';
 import { IoStop } from 'react-icons/io5';
 import { IoArrowUpCircle } from 'react-icons/io5';
@@ -189,6 +191,19 @@ function NavBar({ layoutref }: NavBarProps) {
         | null
     >(null);
     const [activeTab, setActiveTab] = useLocalStorage(StorageKeys.ACTIVETAB, '');
+    /**
+     * Whether a top-bar menu has no entry to show for the active tab, like View for a blocks file
+     * now that its Python entries moved to the editor switch (spec 003, part 6).
+     */
+    const menuIsEmpty = (item: MenuDataItem) =>
+        !!item.children &&
+        item.children
+            .filter((child) => child.showif ?? true)
+            .filter((child) => !child.isView || isBlockly).length === 0 &&
+        (isBlockly || !item.childrenExt?.some((child) => child.showif ?? true));
+    const activeTabId = (activeTab ?? '').replace(/^"|"$/g, '');
+    const editorTabId =
+        !isOtherTab && EditorMgr.getInstance().hasEditorSession(activeTabId) ? activeTabId : '';
     const authService = AppMgr.getInstance().authService;
     const driveService = AppMgr.getInstance().driveService;
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -1592,12 +1607,14 @@ function NavBar({ layoutref }: NavBarProps) {
                     iconImage: python,
                     clicked: ViewPythonFile,
                     isView: true,
+                    showif: showPythonDialogs,
                 },
                 {
                     label: t('convertToPython'),
                     iconImage: convert,
                     clicked: ConvertToPython,
                     isView: true,
+                    showif: showPythonDialogs,
                 },
             ],
             childrenExt: [
@@ -1606,12 +1623,14 @@ function NavBar({ layoutref }: NavBarProps) {
                     iconImage: fontplus,
                     clicked: FontPlusPlus,
                     isView: true,
+                    showif: showFontMenu,
                 },
                 {
                     label: t('decreaseFont'),
                     iconImage: fontminus,
                     clicked: FontMinus,
                     isView: true,
+                    showif: showFontMenu,
                 },
             ],
         },
@@ -1727,11 +1746,11 @@ function NavBar({ layoutref }: NavBarProps) {
     ];
 
     return (
-        <div className="flex items-center justify-between p-1 px-2 text-shark-100 shadow-md md:px-5">
-            <div className="flex flex-row gap-4 transition-all">
+        <div className="relative flex items-center justify-between p-1 px-2 text-shark-100 shadow-md md:px-5">
+            <div className="flex flex-row gap-4 transition-all md:flex-1 md:basis-0">
                 {/** Logo */}
                 <img src={logo} alt="logo" width="100" height="50" />
-                {navItems.map((item, index) => (
+                {navItems.map((item, index) => menuIsEmpty(item) ? null : (
                     <div key={index} className="group relative hidden transition-all md:block">
                         <p className="ml-2 mt-4 flex cursor-pointer items-center gap-1 text-matisse-100 group-hover:bg-curious-blue-700 dark:group-hover:bg-mountain-mist-950">
                             {navIcons[index]}
@@ -1766,7 +1785,7 @@ function NavBar({ layoutref }: NavBarProps) {
                                         id="blockId"
                                         className={`${isBlockly ? 'hidden' : 'visible'} cursor-pointer flex-col`}
                                     >
-                                        {item.childrenExt?.map((child, ci) => (
+                                        {item.childrenExt?.filter((child) => child.showif ?? true).map((child, ci) => (
                                             <li
                                                 key={ci}
                                                 className="text-neutral-200 py-1 pl-4 pr-10 hover:bg-matisse-400 dark:hover:bg-shark-500"
@@ -1794,8 +1813,13 @@ function NavBar({ layoutref }: NavBarProps) {
                     height={30}
                 />
             </div>
+            {editorTabId && (
+                <div className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 md:static md:mx-4 md:transform-none">
+                    <EditorSwitch tabId={editorTabId} isBlocks={isBlockly} />
+                </div>
+            )}
             {/** platform infor and connect button*/}
-            <div className="flex flex-row items-center gap-2 md:gap-4">
+            <div className="flex flex-row items-center justify-end gap-2 md:flex-1 md:basis-0 md:gap-4">
                 <div className="flex flex-row items-center gap-2 text-sm text-shark-300">
                     <ConnectionStatus
                         isConnected={isConnected}

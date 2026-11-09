@@ -38,6 +38,7 @@ import WelcomeScreen from '@components/welcome/welcome-screen';
 import { isShellVisible, syncShellVisibility, toggleTerminal } from '@/utils/shell-visibility';
 import { SideBarIcon } from '@components/side-bar-icon';
 import { VscFiles, VscTerminal } from 'react-icons/vsc';
+import { isMaxMd } from '@/utils/breakpoints';
 
 /**
  *  Layout-React's layout JSON to specify the XRPWeb's single page application's layout
@@ -57,7 +58,7 @@ const layout_json: IJsonModel = {
             enableDrop: false,
             enableAutoHide: true,
             size: 300,
-            selected: -1,
+            selected: isMaxMd() ? -1 : 0,
             children: [
                 {
                     type: 'tab',
