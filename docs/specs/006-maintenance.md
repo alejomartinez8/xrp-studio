@@ -20,7 +20,7 @@ Dependency, lockfile and build upkeep. Pending upgrades and the backlog are in [
 3. **Minor/patch updates** with `npm update`, within the existing semver ranges. Pinned to their
    current versions because newer releases break the build or the editor:
    - `flexlayout-react` 0.8.4 (0.8.19 makes the `Model` constructor protected).
-   - `react-xtermjs` 1.0.9 (newer versions use React 19 ref types).
+   - `react-xtermjs` 1.0.9 (newer versions use React 19 ref types; moved to 1.0.12 in part 4).
    - `monaco-languageclient` 9.4.1 and `vscode-ws-jsonrpc` 3.4.0 (9.11 pulls
      `@codingame/monaco-vscode-api` 20 while the editor packages are on 11, installing a second,
      incompatible copy).
@@ -148,7 +148,54 @@ part 2.
 
 Possible: dependency upgrades, independent of the fork's UI.
 
-## Part 4 — Dashboard charts: recharts 3
+## Part 4 — React 19
+
+### Problem
+
+The app ran on React 18. Several libraries (`react-xtermjs` after 1.0.9, `react-i18next` 17,
+`react-hotkeys-hook` 5) already expect React 19, so they were held back, and React 18 only gets
+security fixes.
+
+### Solution
+
+- **React 19** and `react-dom` 19, with their types (`@types/react`, `@types/react-dom` 19).
+- `react-i18next` 17, which needs `i18next` 26; `react-hotkeys-hook` 5 (the block editor's
+  Ctrl/Cmd+S shortcut keeps the same key list); `react-xtermjs` 1.0.12 (the terminal).
+- The other React libraries already accept React 19: `flowbite-react`, `flexlayout-react`,
+  `react-arborist` (Explorer), `recharts` (dashboard), `usehooks-ts`, `use-file-picker`,
+  `react-customizable-progressbar`, `react-icons`, `@react-oauth/google` and Testing Library.
+- Two libraries have not declared React 19 support yet, and both only use hooks that React 19
+  keeps, so `package.json` `overrides` lets them use the app's React:
+  - `react-blockly` 9 (the block editor). Its `propTypes` are ignored by React 19, nothing else
+    changes.
+  - `use-resize-observer` 9 (Explorer and the busy dialog). Version 10 accepts React 19 but
+    changes its API, so the fork stays on 9.
+- Type changes React 19 needs: `useRef` takes an initial value (`useRef<AppMgr>(undefined)`),
+  and a ref that starts empty is typed `RefObject<Layout | null>` (the tab layout ref passed to
+  the editor tabs).
+
+### Files
+
+- `package.json`, `package-lock.json`.
+- `src/App.tsx`, `src/components/folder-tree.tsx`, `src/components/xrplayout.tsx`,
+  `src/components/editor-chooser.tsx`, `src/utils/editorUtils.ts` (ref types).
+
+### How to test
+
+1. Open the app: the welcome screen shows; switch the language to Spanish and back.
+2. Start a project from an example: the block editor, its toolbox and the Python view work;
+   Ctrl+S (Cmd+S) saves.
+3. Create a Python project and type in it.
+4. Open and close the Explorer, create, rename and delete a file, open the Trash.
+5. Open the terminal, the dashboard (Settings → Dashboard) and a dialog (Backup/Restore).
+6. Sign in with Google and sign out.
+
+### Upstream
+
+Possible: dependency upgrades, independent of the fork's UI. The ref type fixes are in upstream
+files and are needed by any React 19 upgrade.
+
+## Part 5 — Dashboard charts: recharts 3
 
 ### Problem
 
@@ -161,7 +208,7 @@ The dashboard's sensor graphs use recharts 2, which is no longer maintained.
   component works as it is: same colours, one line per channel, the last 50 readings, the time in
   the tooltip, and live updates as readings arrive.
 - recharts 3 keeps its chart state in Redux Toolkit, which it brings as its own dependencies, and
-  asks the app to install `react-is` matching its React version: `react-is` 18 is now a direct
+  asks the app to install `react-is` matching its React version: `react-is` 19 is now a direct
   dependency (before, recharts used an older copy brought in by the test tools).
 - A unit test feeds the accelerometer widget fake robot readings through the same event the robot
   connection uses, so the charts are checked without a robot: the data view shows the values,

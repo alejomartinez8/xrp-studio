@@ -7,6 +7,7 @@ import { FaFileAlt } from 'react-icons/fa';
 import BlocklyIcon from '@/components/icons/blockly-icon';
 import MicropythonIcon from '@/components/icons/micropython-icon';
 import {
+    VscArchive,
     VscChevronDown,
     VscChevronRight,
     VscEdit,
@@ -31,6 +32,8 @@ import { isLocalProjectsEnabled } from '@/utils/offline';
 import { isSignInInNavbar } from '@/utils/session';
 import StorageSwitch from '@components/storage-switch';
 import Trash from '@components/trash';
+import Archived from '@components/archived';
+import { localDrive } from '@/utils/hidden-items';
 import { openFilesOnSingleClick } from '@/utils/folder-tree-options';
 import { UserProfile } from '@/services/google-auth';
 import CreateNodeDlg from './dialogs/create-node-dlg';
@@ -56,7 +59,7 @@ function FolderTree(treeProps: TreeProps) {
     const [treeData, setTreeData] = useState<FolderItem[] | undefined>(undefined);
     const [, setSelectedItems] = useState<FolderItem[] | undefined>(undefined);
     const [isRunning, setIsRunning] = useState<boolean>(false);
-    const appMgrRef = useRef<AppMgr>();
+    const appMgrRef = useRef<AppMgr>(undefined);
     const treeRef = useRef(null);
     const { ref, width, height } = useResizeObserver();
     const folderLogger = logger.child({ module: 'folder-tree' });
@@ -325,6 +328,16 @@ function FolderTree(treeProps: TreeProps) {
                         >
                             <VscTrash size={14} />
                         </button>
+                        {isLogin && isLocalProjectsEnabled && node.level === 1 && (
+                            <button
+                                className={`hover:bg-black/10 dark:hover:bg-white/15 dark:hover:text-white flex h-5 w-5 items-center justify-center rounded text-mountain-mist-600 hover:text-mountain-mist-900 dark:text-mountain-mist-400 ${isRunning ? 'pointer-events-none opacity-50' : 'pointer-events-auto opacity-100'}`}
+                                onClick={() => void archiveNode(node.data)}
+                                title={t('archived.archive')}
+                                aria-label={t('archived.archive')}
+                            >
+                                <VscArchive size={14} />
+                            </button>
+                        )}
                     </div>
                 )}
             </div>
@@ -353,6 +366,25 @@ function FolderTree(treeProps: TreeProps) {
             }
         }
         return null;
+    };
+
+    /**
+     * archiveNode - archive a project in My projects (spec 004, part 6): it leaves the tree without
+     * being deleted, and its editor tab closes.
+     */
+    const archiveNode = async (item: FolderItem) => {
+        if (!item.fileId) return;
+        await localDrive()?.archiveFile(item.fileId);
+        const username = getUsernameFromEmail(AppMgr.getInstance().authService.userProfile.email);
+        if (username) {
+            fireGoogleUserTree(username);
+        }
+        const editorMgr = EditorMgr.getInstance();
+        const searchParams: EdSearchParams = { name: item.name, path: getFilePath(item) };
+        if (editorMgr.getEditorSessionByName(searchParams)) {
+            editorMgr.RemoveEditorTabByName(searchParams);
+            editorMgr.RemoveEditorByName(searchParams);
+        }
     };
 
     /**
@@ -864,6 +896,7 @@ function FolderTree(treeProps: TreeProps) {
                     {Node}
                 </Tree>
             </div>
+            {treeProps.isHeader && isLocalProjectsEnabled && isLogin && <Archived />}
             {treeProps.isHeader && isLocalProjectsEnabled && isLogin && <Trash />}
             <Dialog isOpen={false} toggleDialog={toggleDialog} ref={dialogRef}>
                 {dialogContent}
