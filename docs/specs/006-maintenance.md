@@ -262,11 +262,32 @@ The dashboard's sensor graphs use recharts 2, which is no longer maintained.
   connection uses, so the charts are checked without a robot: the data view shows the values,
   the graph draws one line per channel and redraws with every new reading, and the settings menu
   switches from data to graph.
+- A visual test of the dashboard (spec 007, part 1) does the same in the browser: it opens the
+  dashboard, adds two accelerometer widgets and a gyroscope widget, enlarges and switches two of
+  them to Graph, and sends 40 fake readings through that event, so the charts can be compared
+  without a robot. The same test run before the upgrade gives the before and after below.
+- The charts look the same: colours, axes, lines and values. The only difference is the size of
+  the drawing area: recharts 3 no longer lets the chart push its box beyond the space it has, so
+  the plot is about 16 pixels shorter and stays centred in the widget.
+
+Before (recharts 2), light and dark:
+
+![Dashboard with recharts 2, light](images/006-dashboard-before-light.png)
+![Dashboard with recharts 2, dark](images/006-dashboard-before-dark.png)
+
+After (recharts 3), light and dark:
+
+![Dashboard with recharts 3, light](images/006-dashboard-after-light.png)
+![Dashboard with recharts 3, dark](images/006-dashboard-after-dark.png)
 
 ### Files
 
 - `package.json`, `package-lock.json`.
 - Unit tests: `src/components/tests/sensor-widget-chart.spec.tsx` (new).
+- Visual test: `e2e/visual/screens.spec.ts` (dashboard charts), `e2e/support/dashboard.ts` (new:
+  opens the dashboard, adds and resizes widgets, sends fake readings),
+  `e2e/visual/__screenshots__/dashboard-{light,dark}.png`.
+- Images: `docs/specs/images/006-dashboard-{before,after}-{light,dark}.png`.
 
 ### How to test
 
