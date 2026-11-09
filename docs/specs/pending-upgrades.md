@@ -7,7 +7,7 @@ should be its own change, tested in the app.
 | --- | --- | --- | --- |
 | Python editor (`@codingame/monaco-vscode-*`, `monaco-languageclient`, `vscode-ws-jsonrpc`) | 11 / 14, 9.4.1, 3.4.0 | 2x, 10+, 4 | npm reports the 14.x `*-common` packages as no longer supported. The whole editor stack must move together; updating one piece installs a second, incompatible copy. |
 | `flexlayout-react` | 0.8.4 | 0.11 | 0.8.19 already makes the `Model` constructor protected (affects `editormgr` tests). |
-| `react-blockly`, `use-resize-observer` | 9, 9 | — | Run on React 19 through `overrides` in `package.json` (spec 006, part 4). Remove the override when `react-blockly` declares React 19; `use-resize-observer` 10 accepts React 19 but changes its API. |
+| `react-blockly` | 9 | — | Runs on React 19 through `overrides` in `package.json` (spec 006, part 4). Remove the override when `react-blockly` declares React 19. |
 | Tailwind CSS | 3.4 | 4 | New config format; the theme palette approach needs a review. |
 | recharts | 2 | 3 | 2.x is no longer maintained; used by the dashboard. |
 | `npm audit` leftovers | — | — | 20 reports, none critical (spec 006, part 3): 2 high in `flowbite-react` through `deepmerge-ts` and moderate ones in build and lint tools. They go away as those packages release fixes; check with `npm audit` after each update. |
@@ -28,4 +28,4 @@ Bugs found while testing go here until they are fixed, each one as its own chang
 
 | Issue | Notes |
 | --- | --- |
-| "Reset encoders" block fails to generate Python | Its generator (`xrp_blocks_python.js`, inherited from XRPWeb) reads a `degrees` input the block does not have, so Blockly stops with an error and a program with that block gets no Python. Found by the generator test of spec 006, part 5; same with Blockly 12 and 13. |
+| "Reset encoders" block fails to generate Python | Its generator (`xrp_blocks_python.js`, inherited from XRPWeb) reads a `degrees` input the block does not have, so Blockly stops with an error and a program with that block gets no Python. Found by the generator test of spec 006, part 6; same with Blockly 12 and 13. |
