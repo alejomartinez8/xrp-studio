@@ -1,7 +1,4 @@
 import * as Blockly from 'blockly/core';
-import { createElement } from 'react';
-import { flushSync } from 'react-dom';
-import { createRoot } from 'react-dom/client';
 import type { IconType } from 'react-icons';
 import {
     TbArrowsShuffle,
@@ -134,16 +131,55 @@ function paintCategory(
     }
 }
 
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
+/** A React element as react-icons builds it: a tag (or component) with props and children. */
+type IconElement = { type: unknown; props: Record<string, unknown> };
+
+/** Build an SVG node from an element tree, turning camelCase attribute names into SVG ones. */
+function svgNode(tag: string, props: Record<string, unknown>): SVGElement {
+    const node = document.createElementNS(SVG_NS, tag);
+    for (const [key, value] of Object.entries(props)) {
+        if (key !== 'children' && value !== undefined && value !== null) {
+            const name =
+                key === 'viewBox' ? key : key.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
+            node.setAttribute(name, String(value));
+        }
+    }
+    for (const child of [props.children].flat(Infinity) as IconElement[]) {
+        if (child && typeof child.type === 'string') {
+            node.append(svgNode(child.type, child.props));
+        }
+    }
+    return node;
+}
+
 /**
- * Render a category icon. It is rendered synchronously so it is already in place when Blockly
- * measures the toolbox width; rendered later, it widened the toolbox after the workspace was laid
- * out, and on phones the program could start under the toolbox.
+ * Render a category icon as plain SVG, without React. The icon must be in place when Blockly
+ * measures the toolbox width; drawn later, the workspace was laid out beside a narrower toolbox
+ * and the program and the panel of blocks started under it. A React root with `flushSync` could
+ * not guarantee that: the toolbox is often rebuilt from inside a React effect (opening a file, a
+ * language change), where `flushSync` does not render at once. react-icons describes each icon as
+ * an element tree (an `svg` with its `attr` and paths), which is copied here into SVG nodes.
  */
-function createIcon(Icon: IconType): HTMLSpanElement {
+export function createIcon(Icon: IconType): HTMLSpanElement {
     const span = document.createElement('span');
     span.className = 'xrpToolboxIcon';
-    const root = createRoot(span);
-    flushSync(() => root.render(createElement(Icon, { size: 20 })));
+    const { attr, children } = (Icon({}) as unknown as IconElement).props as {
+        attr?: Record<string, unknown>;
+        children?: unknown;
+    };
+    span.append(
+        svgNode('svg', {
+            stroke: 'currentColor',
+            fill: 'currentColor',
+            strokeWidth: '0',
+            ...attr,
+            width: 20,
+            height: 20,
+            children,
+        }),
+    );
     return span;
 }
 
