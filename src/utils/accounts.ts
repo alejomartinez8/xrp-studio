@@ -1,4 +1,3 @@
-import i18n from 'i18next';
 import AppMgr from '@/managers/appmgr';
 import EditorMgr from '@/managers/editormgr';
 import { UserProfile } from '@/services/google-auth';
@@ -187,12 +186,11 @@ export async function openActiveSpace(): Promise<UserProfile | null> {
     return active?.profile ?? null;
 }
 
-/** "cuadrado.py" → "cuadrado (this device).py": this device's copy when a file changed in both. */
-export function conflictName(name: string): string {
-    const dot = name.lastIndexOf('.');
-    const base = dot > 0 ? name.slice(0, dot) : name;
-    const ext = dot > 0 ? name.slice(dot) : '';
-    return `${base} (${i18n.t('account.thisDevice')})${ext}`;
+/** Whether a file of the open space is open in an editor tab. */
+function isOpenInEditor(recordId: string): boolean {
+    return [...EditorMgr.getInstance().getAllEditorSessions().values()].some(
+        (session) => session.gpath === recordId,
+    );
 }
 
 /** Offer to move the guest space's projects into the account that just signed in. */
@@ -280,7 +278,7 @@ export async function enterAccount(profile: UserProfile): Promise<void> {
     }
     const username = getUsernameFromEmail(profile.email) ?? '';
     startSync(local(), AppMgr.getInstance().remoteDriveService, {
-        conflictName,
+        isOpen: isOpenInEditor,
         onRemoteChange: () => void fireGoogleUserTree(username),
     });
     void syncNow({ pull: true });

@@ -10,9 +10,10 @@ import { Constants } from '@/utils/constants';
  *
  * - Push: every change made in the app is uploaded a moment later. Folders go first; deleted files
  *   go to the Drive trash.
- * - Pull (on sign-in and when the network comes back): files added or changed in Drive by another
- *   device are downloaded. When the same file changed here and there, both are kept: the Drive
- *   version keeps the file and this device's version becomes a copy.
+ * - Pull (on sign-in, when the network comes back, when the app is shown again and every minute
+ *   while it is visible): files added or changed in Drive by another device are downloaded. A
+ *   file that is open in an editor is left as it is until its tab is closed. When the same file changed here and there, the newer edit
+ *   wins and there is a single file, without copies.
  */
 
 /** What the cloud in the status bar shows. `off`: no account signed in. */
@@ -21,14 +22,20 @@ export type SyncStatus = 'off' | 'syncing' | 'synced' | 'offline';
 /** Wait after the last change before uploading. */
 export const SYNC_DELAY_MS = 2000;
 
+/** How often the open app looks for changes made on other devices while it is visible. */
+export const PULL_INTERVAL_MS = 60000;
+
+/** Minimum time between two pulls started by the app being shown again. */
+export const PULL_MIN_GAP_MS = 10000;
+
 /** Wait before trying again after a failure, when the network does not come back first. */
 export const SYNC_RETRY_MS = 30000;
 
 type SyncOptions = {
-    /** Name for this device's copy when a file changed here and in Drive. */
-    conflictName: (name: string) => string;
     /** Called after a pull changed what the tree shows. */
     onRemoteChange: () => void;
+    /** Whether a file is open in an editor, so a pull must not replace it under the user. */
+    isOpen?: (recordId: string) => boolean;
 };
 
 type Session = { local: LocalDriveService; api: DriveApi; options: SyncOptions };
@@ -40,6 +47,8 @@ let requested = false;
 let pullRequested = false;
 let changeTimer: ReturnType<typeof setTimeout> | null = null;
 let retryTimer: ReturnType<typeof setTimeout> | null = null;
+let pullTimer: ReturnType<typeof setInterval> | null = null;
+let lastPull = 0;
 const listeners = new Set<() => void>();
 
 function setStatus(next: SyncStatus): void {
@@ -58,9 +67,22 @@ function clearTimers(): void {
         clearTimeout(retryTimer);
         retryTimer = null;
     }
+    if (pullTimer) {
+        clearInterval(pullTimer);
+        pullTimer = null;
+    }
 }
 
 const onOnline = () => void syncNow({ pull: true });
+
+/** Pull when the app is visible, if the last pull was not just now. */
+function pullIfVisible(gap = 0): void {
+    if (document.visibilityState === 'visible' && Date.now() - lastPull >= gap) {
+        void syncNow({ pull: true });
+    }
+}
+
+const onShown = () => pullIfVisible(PULL_MIN_GAP_MS);
 
 /**
  * Start syncing `local` (an account's space) with that account's Drive. Uploads changes as they
@@ -77,6 +99,9 @@ export function startSync(local: LocalDriveService, api: DriveApi, options: Sync
         changeTimer = setTimeout(() => void syncNow(), SYNC_DELAY_MS);
     };
     window.addEventListener('online', onOnline);
+    window.addEventListener('focus', onShown);
+    document.addEventListener('visibilitychange', onShown);
+    pullTimer = setInterval(() => pullIfVisible(), PULL_INTERVAL_MS);
     setStatus('syncing');
 }
 
@@ -90,6 +115,8 @@ export function stopSync(): void {
     pullRequested = false;
     clearTimers();
     window.removeEventListener('online', onOnline);
+    window.removeEventListener('focus', onShown);
+    document.removeEventListener('visibilitychange', onShown);
     setStatus('off');
 }
 
@@ -126,6 +153,9 @@ async function runOnce(current: Session, pull: boolean): Promise<void> {
     setStatus('syncing');
     try {
         const root = await linkRoot(current);
+        if (pull) {
+            lastPull = Date.now();
+        }
         if (pull && (await pullChanges(current, root))) {
             current.options.onRemoteChange();
         }
@@ -208,21 +238,18 @@ async function pullChanges({ local, api, options }: Session, root: LocalDriveRec
                 await fromRemote(item, parent);
             } else if (item.modifiedTime === record.syncedTime) {
                 localIdOf.set(item.id, record.id);
+            } else if (options.isOpen?.(record.id)) {
+                localIdOf.set(item.id, record.id);
             } else if (record.deleted || !record.dirty) {
                 await fromRemote(item, parent, record.id);
             } else if (item.mimeType === FOLDER_MIME_TYPE) {
                 await local.putRecord({ ...record, syncedTime: item.modifiedTime });
                 localIdOf.set(item.id, record.id);
+            } else if (Date.parse(record.modifiedTime) > Date.parse(item.modifiedTime)) {
+                await local.putRecord({ ...record, syncedTime: item.modifiedTime });
+                localIdOf.set(item.id, record.id);
             } else {
-                await local.putRecord({
-                    ...record,
-                    name: options.conflictName(record.name),
-                    driveId: undefined,
-                    syncedTime: undefined,
-                    syncedParent: undefined,
-                    dirty: true,
-                });
-                await fromRemote(item, parent);
+                await fromRemote(item, parent, record.id);
             }
             if (item.mimeType === FOLDER_MIME_TYPE) {
                 queue.push(item.id);
@@ -240,6 +267,9 @@ async function pullChanges({ local, api, options }: Session, root: LocalDriveRec
         );
     for (const record of current) {
         if (!record.driveId || !record.parents?.length || seen.has(record.driveId)) {
+            continue;
+        }
+        if (options.isOpen?.(record.id)) {
             continue;
         }
         if (!record.deleted && (record.dirty || hasLocalWork(record.id))) {

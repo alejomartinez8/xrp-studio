@@ -366,8 +366,7 @@
         "unsyncedTitle": "Changes not saved to your account",
         "unsyncedMessage": "Some changes could not be saved to your account (no internet?). If you sign out now, they are lost. Connect to the internet and wait for the cloud to show a check.",
         "unsyncedStay": "Stay signed in",
-        "unsyncedLeave": "Sign out anyway",
-        "thisDevice": "this device"
+        "unsyncedLeave": "Sign out anyway"
     },
     "sync": {
         "synced": "Saved in your account",

@@ -164,9 +164,4 @@ describe('accounts', () => {
         expect(deleted).toEqual([accounts.accountDatabase('ana')]);
         expect(logOut).toHaveBeenCalled();
     });
-
-    it('names this device’s copy of a file that changed in both places', () => {
-        expect(accounts.conflictName('square.py')).toMatch(/^square \(.+\)\.py$/);
-        expect(accounts.conflictName('README')).toMatch(/^README \(.+\)$/);
-    });
 });

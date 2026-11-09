@@ -23,7 +23,6 @@ describe('StatusBar', () => {
         } as unknown as DriveApi;
         act(() =>
             startSync(new LocalDriveService(new MemoryDriveStore()), api, {
-                conflictName: (name) => name,
                 onRemoteChange: () => {},
             }),
         );
