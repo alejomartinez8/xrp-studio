@@ -105,7 +105,7 @@ which children often use alongside other platforms, always offers something to c
 
 - `src/components/welcome/welcome-screen.tsx` (new): shown in the editor area whenever it has no
   tab (flexlayout `onTabSetPlaceHolder` in `xrplayout.tsx`). Two big buttons: **New blocks
-  project** and **New Python project**, plus a hint to open a project from the Folders panel.
+  project** and **New Python project**, plus a hint to open a project from the Explorer.
 - Like MakeCode, the child then names the project. No name is suggested, so the child thinks of
   one that is easy to find later; **Create** (or Enter) is enabled once a valid name is typed. Names that already exist or are not valid file names are explained and cannot be
   created; accents are dropped while typing (`línea` becomes `linea`), since robot file names
@@ -149,7 +149,7 @@ which children often use alongside other platforms, always offers something to c
 #### Problem
 
 The welcome screen ("New project") only offered new projects. To continue yesterday's project, a child
-had to find it in the Folders panel, among many files and folders.
+had to find it in the Explorer, among many files and folders.
 
 #### Solution
 
@@ -162,7 +162,7 @@ had to find it in the Folders panel, among many files and folders.
   and formats the time with `Intl.RelativeTimeFormat` in the app's language.
 - The list loads when the welcome screen shows and again when the user signs in or out. Signed
   out, there is no list. With recent projects, the hint below says that all projects are in the
-  Folders panel.
+  Explorer.
 - `src/managers/appmgr.ts`: `removeHandler(event, handler)` removes one handler, so the welcome
   screen unsubscribes when it unmounts without removing other components' handlers (`eventOff`
   removes them all).

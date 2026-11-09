@@ -312,7 +312,7 @@
         "newBlocksHint": "Une bloques para programar tu robot",
         "newPython": "Nuevo proyecto de Python",
         "newPythonHint": "Escribe código Python para tu robot",
-        "openHint": "O abre uno de tus proyectos desde el panel Carpetas.",
+        "openHint": "O abre uno de tus proyectos desde el Explorador.",
         "signInFirst": "Inicia sesión con Google (arriba a la derecha) para guardar tus proyectos.",
         "nameTitle": "Ponle nombre a tu proyecto",
         "nameHint": "Elige un nombre que vayas a recordar.",
@@ -323,7 +323,7 @@
         "namePlaceholder": "Escribe un nombre",
         "recentTitle": "Tus proyectos recientes",
         "justNow": "Recién",
-        "moreHint": "Todos tus proyectos están en el panel Carpetas.",
+        "moreHint": "Todos tus proyectos están en el Explorador.",
         "examplesTitle": "Empieza con un ejemplo",
         "examples": {
             "driveAndTurn": {
