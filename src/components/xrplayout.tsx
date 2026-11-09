@@ -9,6 +9,7 @@ import {
     Actions,
     ITabRenderValues,
     ITabSetRenderValues,
+    ILayoutApi,
 } from 'flexlayout-react';
 import React, { useEffect, useRef, useState } from 'react';
 import * as Blockly from 'blockly/core';
@@ -49,7 +50,6 @@ const layout_json: IJsonModel = {
         tabSetEnableDrag: false,
         tabSetEnableDrop: false,
         tabEnableRename: false,
-        splitterSize: 6,
     },
     borders: [
         {
@@ -119,7 +119,7 @@ const layout_json: IJsonModel = {
 const model = Model.fromJson(layout_json);
 syncShellVisibility(model);
 EditorMgr.getInstance().setLayoutModel(model);
-let layoutRef: React.RefObject<Layout | null> = {
+let layoutRef: React.RefObject<ILayoutApi | null> = {
     current: null,
 };
 
