@@ -11,7 +11,7 @@ import {
 import LocalDriveService, { FOLDER_MIME_TYPE, MemoryDriveStore } from '@/services/local-drive';
 import { Constants } from '@/utils/constants';
 
-type RemoteFile = RemoteItem & { content?: string; trashed?: boolean };
+type RemoteFile = RemoteItem & { content?: string; trashed?: boolean; archived?: boolean };
 
 const TRASH_TIME = new Date().toISOString();
 
@@ -33,7 +33,15 @@ class FakeDrive {
         }
     }
 
-    private view({ id, name, mimeType, parents, modifiedTime, trashed }: RemoteFile): RemoteItem {
+    private view({
+        id,
+        name,
+        mimeType,
+        parents,
+        modifiedTime,
+        trashed,
+        archived,
+    }: RemoteFile): RemoteItem {
         return {
             id,
             name,
@@ -42,6 +50,7 @@ class FakeDrive {
             modifiedTime,
             explicitlyTrashed: Boolean(trashed),
             trashedTime: trashed ? TRASH_TIME : undefined,
+            appProperties: archived ? { xrpArchived: 'true' } : undefined,
         };
     }
 
@@ -82,13 +91,20 @@ class FakeDrive {
                 .filter((f) => f.parents?.includes(id))
                 .map((f) => this.view(f));
         },
-        create: async (name: string, mimeType: string, parent?: string, content?: string) => {
+        create: async (
+            name: string,
+            mimeType: string,
+            parent?: string,
+            content?: string,
+            archived?: boolean,
+        ) => {
             this.check();
             const file = this.add(
                 name,
                 parent,
                 mimeType === FOLDER_MIME_TYPE ? undefined : content,
             );
+            file.archived = archived;
             return this.view(file);
         },
         update: async (
@@ -99,6 +115,7 @@ class FakeDrive {
                 addParent?: string;
                 removeParent?: string;
                 trashed?: boolean;
+                archived?: boolean;
             },
         ) => {
             this.check();
@@ -110,6 +127,7 @@ class FakeDrive {
                 parents,
                 ...(change.content !== undefined ? { content: change.content } : {}),
                 ...(change.trashed !== undefined ? { trashed: change.trashed } : {}),
+                ...(change.archived !== undefined ? { archived: change.archived } : {}),
             });
             return this.view(file);
         },
@@ -228,6 +246,65 @@ describe('drive sync', () => {
         await local.restoreFile(file!.id, rootId);
         await syncNow();
         expect(remote.find('draft.py')!.content).toBe('x');
+    });
+
+    it('archives projects in Drive and brings them back', async () => {
+        const file = await write('old.py', 'x');
+        await syncNow();
+        const id = remote.find('old.py')!.id;
+
+        await local.archiveFile(file!.id);
+        await syncNow();
+        expect(remote.files.get(id)).toMatchObject({ archived: true });
+        expect(remote.files.get(id)!.trashed).toBeFalsy();
+        expect(await hasUnsyncedChanges(local)).toBe(false);
+
+        await local.unarchiveFile(file!.id, rootId);
+        await syncNow();
+        expect(remote.files.get(id)!.archived).toBe(false);
+    });
+
+    it('uploads a project archived before its first upload, already archived', async () => {
+        const file = await write('draft.py', 'x');
+        await local.archiveFile(file!.id);
+        await syncNow();
+        expect(remote.find('draft.py')).toMatchObject({ archived: true, content: 'x' });
+    });
+
+    it('follows projects archived or brought back on another device', async () => {
+        const file = await write('both.py', 'x');
+        await syncNow();
+        const id = remote.find('both.py')!.id;
+
+        remote.files.get(id)!.archived = true;
+        await syncNow({ pull: true });
+        expect(await local.getFileListByFolderId(rootId)).toHaveLength(0);
+        expect((await local.archivedItems()).map((f) => f.id)).toEqual([file!.id]);
+        expect(remoteChanges).toBe(1);
+
+        remote.files.get(id)!.archived = false;
+        await syncNow({ pull: true });
+        expect((await local.getFileListByFolderId(rootId)).map((f) => f.id)).toEqual([file!.id]);
+
+        remote.add('new.py', remote.find(Constants.XRPCODE)!.id, 'y').archived = true;
+        await syncNow({ pull: true });
+        expect((await local.archivedItems()).map((f) => f.name)).toEqual(['new.py']);
+    });
+
+    it('keeps an archive change made here when the file also changed in Drive', async () => {
+        const file = await write('both.py', 'base');
+        await syncNow();
+        const id = remote.find('both.py')!.id;
+
+        remote.offline = true;
+        await local.archiveFile(file!.id);
+        await syncNow();
+        remote.offline = false;
+        remote.edit(id, { content: 'theirs', modifiedTime: '2999-01-01T00:00:00.000Z' });
+        await syncNow({ pull: true });
+
+        expect(remote.files.get(id)).toMatchObject({ content: 'theirs', archived: true });
+        expect((await local.archivedItems()).map((f) => f.id)).toEqual([file!.id]);
     });
 
     it('downloads files added or changed in Drive', async () => {
