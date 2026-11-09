@@ -61,6 +61,25 @@ svg[display="none"] {
   flex-direction: column;
 }
 
+/**
+ * Phones: Chrome's address bar takes 56 px that `100vh` (the "large" viewport) still counts. The
+ * `min-height: 100vh` above made the page that much taller than the screen, and the fixed app box
+ * then took that height too, so the bottom of the app (the Trash row and the status bar) was
+ * under the screen's bottom edge. The page is now exactly the visible height, and the app box is
+ * the dynamic viewport's height (`100dvh`, the area that is really visible) where supported.
+ */
+body {
+  min-height: 0;
+  height: 100%;
+}
+
+@supports (height: 100dvh) {
+  #root {
+    bottom: auto;
+    height: 100dvh;
+  }
+}
+
 .app-main {
   flex: 1 1 0;
   min-height: 0;

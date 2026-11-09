@@ -17,6 +17,7 @@
 <div id="fixed"></div><div id="dvh"></div><div id="vv"></div><div id="safe"></div>
 <pre id="out"></pre>
 <script>
+  if (location.search.includes('vh')) document.body.style.minHeight = '100vh';
   const probe = (css) => { const d = document.createElement('div'); d.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:' + css; document.body.appendChild(d); const h = d.getBoundingClientRect().height; d.remove(); return Math.round(h); };
   function show() {
     const vv = window.visualViewport;
