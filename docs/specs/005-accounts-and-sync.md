@@ -185,8 +185,7 @@ it. Two parts:
 
 - **(a) This change:** every build opens into My projects, accounts on a device, sync on
   sign-in and on every change, status bar.
-- **(b) Later:** bring in changes from other devices while signed in, and name the device in
-  conflict copies (see the backlog).
+- **(b) Changes from other devices while signed in:** see Part (b) below.
 
 #### Part (a): accounts on a device
 
@@ -219,6 +218,19 @@ it. Two parts:
 - **Same file changed here and in the account:** both are kept. The account's version keeps the
   name; this device's version becomes a copy, for example `square (this device).py`.
 - Without internet nothing is lost: changes stay on the device and are uploaded later.
+
+#### Part (b): changes from other devices while signed in
+
+- While signed in, the app also looks for changes in the account every minute while it is
+  visible, and right away when the user comes back to the app (the tab or window is shown or
+  focused again). It stops looking while hidden. Work done on another device shows up in the file
+  tree without signing in again; the cloud spins for a moment while it checks.
+- A file that is open in an editor tab is not replaced under the user: changes made elsewhere to
+  that file are brought in once its tab is closed. (If the same open file is edited here, the
+  next upload still writes this device's version, as before.)
+- The copy kept when a file changed here and in the account is named after the device, for
+  example `square (Chrome on Android).py` or `square (Edge on Windows).py`, so it is easy to
+  recognise. When the browser or system cannot be told, it says "this device".
 
 #### Part (a): status bar
 
@@ -265,6 +277,10 @@ A thin bar at the bottom of the screen, like MakeCode's. It has one indicator: a
 - Tests: `src/services/tests/drive-sync.spec.ts`, `src/services/tests/drive-api.spec.ts`,
   `src/services/tests/local-drive.spec.ts`, `src/utils/tests/accounts.spec.ts`,
   `src/components/tests/ask-dialog.spec.tsx`, `src/components/tests/status-bar.spec.tsx`.
+- Part (b): `src/services/drive-sync.ts` (regular pull, skip open files),
+  `src/utils/accounts.ts` (`deviceLabel`, `conflictName`, open files), `account.deviceOn` in
+  `src/utils/i18n/locales/{en,es}/{en,es}.json`; tests in `drive-sync.spec.ts` and
+  `accounts.spec.ts`.
 
 ### How to test
 
@@ -278,13 +294,17 @@ A thin bar at the bottom of the screen, like MakeCode's. It has one indicator: a
 4. Go offline and edit: crossed cloud. Back online: spinner, then check.
 5. Change a file in Drive (another device, or upload a new version), sign out and in again: the new
    version is in the app. Change the same file here while offline and in Drive, then go online:
-   both versions are there, this device's one named "… (this device)".
-6. Sign out: the account's projects leave the device and the guest projects show. Sign in again:
+   both versions are there, this device's one named after the browser and system, for example
+   "… (Chrome on Android)".
+6. Stay signed in on two devices. Create or edit a file on one: within a minute it shows in the
+   other's file tree (or at once when switching back to the app). Open the file on the second
+   device and change it on the first: the open tab keeps its content until it is closed.
+7. Sign out: the account's projects leave the device and the guest projects show. Sign in again:
    they come back at the next sign-in.
-7. With "Keep me signed in" off (the default), sign in and reload the page: the session is gone
+8. With "Keep me signed in" off (the default), sign in and reload the page: the session is gone
    and so are its projects and tabs. Sign in again and leave it unused for 30 minutes: it signs
    out. Turn the switch on and reload: the session and projects stay.
-8. Offline build: no sign-in, the bar shows the laptop, everything else as in spec 004.
+9. Offline build: no sign-in, the bar shows the laptop, everything else as in spec 004.
 
 ### Upstream
 

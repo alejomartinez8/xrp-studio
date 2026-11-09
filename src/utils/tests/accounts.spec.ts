@@ -169,4 +169,17 @@ describe('accounts', () => {
         expect(accounts.conflictName('square.py')).toMatch(/^square \(.+\)\.py$/);
         expect(accounts.conflictName('README')).toMatch(/^README \(.+\)$/);
     });
+
+    it('describes the device by its browser and system', () => {
+        const chromeAndroid =
+            'Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 Chrome/126.0 Mobile Safari/537.36';
+        const edgeWindows =
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/126.0 Safari/537.36 Edg/126.0';
+        const safariMac =
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_5) AppleWebKit/605.1.15 Version/17.5 Safari/605.1.15';
+        expect(accounts.deviceLabel(chromeAndroid)).toBe('Chrome on Android');
+        expect(accounts.deviceLabel(edgeWindows)).toBe('Edge on Windows');
+        expect(accounts.deviceLabel(safariMac)).toBe('Safari on macOS');
+        expect(accounts.deviceLabel('unknown')).toBe('');
+    });
 });
