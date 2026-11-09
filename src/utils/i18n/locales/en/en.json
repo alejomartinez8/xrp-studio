@@ -394,5 +394,13 @@
         "confirmEmpty_one": "Delete {{count}} item for good? This cannot be undone.",
         "confirmEmpty_other": "Delete {{count}} items for good? This cannot be undone.",
         "emptyNow": "Delete for good"
+    },
+    "archived": {
+        "row": "Archived",
+        "title": "Archived projects",
+        "hint": "Projects you put away to keep your list tidy. They are safe here: nothing is deleted. Bring one back whenever you want.",
+        "empty": "No archived projects.",
+        "archive": "Archive (put away without deleting)",
+        "unarchive": "Bring back"
     }
 }

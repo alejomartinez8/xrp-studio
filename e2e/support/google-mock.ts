@@ -30,6 +30,8 @@ export type MockFile = {
     modifiedTime: string;
     trashed: boolean;
     trashedTime?: string;
+    /** App properties, as Drive keeps them (the app marks archived projects with one). */
+    appProperties?: Record<string, string>;
     content: string;
 };
 
@@ -187,7 +189,8 @@ export class MockGoogle {
     }
 
     private view(file: MockFile) {
-        const { id, name, mimeType, parents, modifiedTime, trashed, trashedTime } = file;
+        const { id, name, mimeType, parents, modifiedTime, trashed, trashedTime, appProperties } =
+            file;
         return {
             kind: 'drive#file',
             id,
@@ -197,6 +200,7 @@ export class MockGoogle {
             modifiedTime,
             explicitlyTrashed: trashed,
             trashedTime,
+            appProperties,
         };
     }
 
@@ -304,6 +308,7 @@ export class MockGoogle {
                 meta.parents ?? ['root'],
                 file,
             );
+            if (meta.appProperties) created.appProperties = { ...meta.appProperties };
             return this.json(route, this.view(created));
         }
         if (method === 'PATCH' && id) {
@@ -312,8 +317,18 @@ export class MockGoogle {
                 return this.json(route, { error: { message: 'Not found' } }, 404);
             }
             const { metadata, file: content } = this.body(request, upload);
-            const meta = JSON.parse(metadata) as Partial<MockFile>;
+            const meta = JSON.parse(metadata) as Omit<Partial<MockFile>, 'appProperties'> & {
+                appProperties?: Record<string, string | null>;
+            };
             if (meta.name !== undefined) file.name = meta.name;
+            if (meta.appProperties) {
+                const merged: Record<string, string> = { ...file.appProperties };
+                for (const [key, value] of Object.entries(meta.appProperties)) {
+                    if (value === null) delete merged[key];
+                    else merged[key] = value;
+                }
+                file.appProperties = merged;
+            }
             if (meta.trashed !== undefined) {
                 file.trashed = meta.trashed;
                 file.trashedTime = meta.trashed ? new Date().toISOString() : undefined;
