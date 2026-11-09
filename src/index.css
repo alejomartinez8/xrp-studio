@@ -44,11 +44,12 @@ svg[display="none"] {
  * browser's own bar comes and goes and `vh` and `body` centring would push the top out of reach.
  * The size comes only from the edges: the `100vw`/`100vh` of `App.css` would win over `inset` and,
  * on a tablet with the address bar showing, push the bottom of the app (and of the blocks panel)
- * under the bar. The page asks to draw edge to edge (`viewport-fit=cover`) and keeps clear of the
+ * under the bar. `body > #root` is more specific than the `#root` of `App.css`, which is loaded
+ * later and would otherwise win. The page asks to draw edge to edge (`viewport-fit=cover`) and keeps clear of the
  * system bars and screen cutouts itself, so on Android, where the browser or the full screen app
  * can draw under the navigation bar, the bottom of the app is never under it.
  */
-#root {
+body > #root {
   position: fixed;
   inset: 0;
   width: auto;
@@ -74,7 +75,7 @@ body {
 }
 
 @supports (height: 100dvh) {
-  #root {
+  body > #root {
     bottom: auto;
     height: 100dvh;
   }
