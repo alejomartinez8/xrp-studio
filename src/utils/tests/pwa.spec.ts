@@ -136,7 +136,7 @@ describe('pwa', () => {
     it('applies a stored version when the app opens', async () => {
         const waiting = waitingWorker();
         const container = fakeServiceWorker(waiting);
-        const registration = { waiting, update: vi.fn() };
+        const registration = { waiting, update: vi.fn(), addEventListener: vi.fn() };
         const pwa = await loadPwa();
         pwa.startPwa((options) => options.onRegisteredSW('/sw.js', registration as never));
         await vi.waitFor(() =>
@@ -149,7 +149,7 @@ describe('pwa', () => {
 
     it('leaves the page alone when no stored version is waiting', async () => {
         fakeServiceWorker(null);
-        const registration = { waiting: null, update: vi.fn() };
+        const registration = { waiting: null, update: vi.fn(), addEventListener: vi.fn() };
         const pwa = await loadPwa();
         pwa.startPwa((options) => options.onRegisteredSW('/sw.js', registration as never));
         await Promise.resolve();
@@ -160,7 +160,7 @@ describe('pwa', () => {
         const waiting = waitingWorker();
         fakeServiceWorker(waiting);
         sessionStorage.setItem('PwaApplied', String(Date.now()));
-        const registration = { waiting, update: vi.fn() };
+        const registration = { waiting, update: vi.fn(), addEventListener: vi.fn() };
         const pwa = await loadPwa();
         pwa.startPwa((options) => options.onRegisteredSW('/sw.js', registration as never));
         await Promise.resolve();
@@ -187,5 +187,52 @@ describe('pwa', () => {
         expect(deleteCache).toHaveBeenCalledTimes(2);
         expect(reload).toHaveBeenCalledTimes(1);
         vi.useRealTimers();
+    });
+
+    describe('new version found while the app is open', () => {
+        /** A registration that can announce an installing worker, and the page's controller. */
+        function openRegistration() {
+            const registration = Object.assign(new EventTarget(), {
+                waiting: null,
+                installing: null as ReturnType<typeof waitingWorker> | null,
+                update: vi.fn(),
+            });
+            const container = fakeServiceWorker(null);
+            Object.defineProperty(container, 'controller', { value: {}, configurable: true });
+            return registration;
+        }
+
+        /** Make the page look like the installed app or a browser tab. */
+        function setInstalled(installed: boolean) {
+            vi.stubGlobal(
+                'matchMedia',
+                vi.fn(() => ({ matches: installed })),
+            );
+        }
+
+        /** Start the app and let a new version finish storing. */
+        async function findNewVersion(registration: ReturnType<typeof openRegistration>) {
+            const pwa = await loadPwa();
+            pwa.startPwa((options) => options.onRegisteredSW('/sw.js', registration as never));
+            const worker = waitingWorker();
+            registration.installing = worker;
+            registration.dispatchEvent(new Event('updatefound'));
+            worker.moveTo('installed');
+            return pwa;
+        }
+
+        it('asks the installed app to update and never reloads by itself', async () => {
+            setInstalled(true);
+            const pwa = await findNewVersion(openRegistration());
+            expect((await snapshot(pwa)).updateReady).toBe(true);
+            expect(reload).not.toHaveBeenCalled();
+        });
+
+        it('shows nothing in a browser tab', async () => {
+            setInstalled(false);
+            const pwa = await findNewVersion(openRegistration());
+            expect((await snapshot(pwa)).updateReady).toBe(false);
+            expect(reload).not.toHaveBeenCalled();
+        });
     });
 });
