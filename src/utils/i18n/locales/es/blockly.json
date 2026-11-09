@@ -139,6 +139,7 @@
         "XRP_SLEEP_MESSAGE": "Esperar %1 segundos"
     },
     "toolbox": {
+        "motors": "Motores",
         "individualMotors": "Motores individuales",
         "driveTrain": "Movimiento",
         "servos": "Servos",

@@ -1,6 +1,6 @@
 # 002 — Language and theme
 
-Spanish first, and a friendly look in light and dark. Four parts: Spanish translation fixes, the friendly theme and block editor, theme switch fixes, and plain Spanish for the blocks.
+Spanish first, and a friendly look in light and dark. Five parts: Spanish translation fixes, the friendly theme and block editor, theme switch fixes, plain Spanish for the blocks, and the toolbox on tablets and phones.
 
 
 ## Part 1 — Spanish translation fixes
@@ -279,3 +279,85 @@ simpler measures for kids are a separate change.
 Possible: XRPWeb has the same Spanish file (Part 1 was sent as
 [Open-STEM/XRPWeb#337](https://github.com/Open-STEM/XRPWeb/pull/337)), and the sentence templates
 would help all its languages. Depurar for Dashboard is a naming choice to agree with them.
+
+## Part 5 — Toolbox on tablets and phones
+
+### Problem
+
+- The toolbox started with three motor categories at the top level (DriveTrain, Individual
+  Motors, Servos), next to the Sensors group that already gathered its four categories. The list
+  was long, and the categories that move the robot were not presented as one family.
+- On a phone the toolbox showed every category name in tiny wrapped text, and still took a good
+  part of the narrow screen.
+- Installed on an Android tablet, the app kept the system's navigation bar at the bottom, so the
+  block editor had less room than it could.
+
+### Solution
+
+- **Motors group:** DriveTrain, Individual Motors and Servos move into an open "Motors" group
+  ("Motores"), in that order (the one kids use most first), placed where the first of them was,
+  like Sensors. The group is open by default so the motion blocks stay one tap away. Grouping
+  happens when the toolbox is built, like the Advanced group (Part 2): blocks, saved files and the
+  Python they produce do not change.
+- **Phone toolbox:** on screens narrower than 768 px the toolbox is a column of icons, like other
+  block editors on phones. The open groups give way to their categories (DriveTrain, Individual
+  Motors, Servos, Distance, Reflectance, Gyro, Accelerometer), each with its own icon and colour;
+  Advanced stays a collapsed group, shown as "•••". Names are hidden, so each panel of blocks starts
+  with its category name. The search field is left out (it does not fit). Turning a phone, or
+  resizing a window, across 768 px rebuilds the toolbox in the other layout. Tablets and computers
+  keep the toolbox with names.
+- **Installed app in full screen:** the installed app opens in full screen, without the system bars
+  of Android tablets and phones; a swipe from the edge shows them for a moment. Computers, which do
+  not offer full screen for installed apps, keep a normal app window.
+
+### Fixes found on the way
+
+- **Blocks panel cut off on a tablet:** on an Android tablet with the browser's address bar
+  showing, the bottom of the app was under the bar. The app box took the full screen height
+  (`100vh`, which counts the bar as hidden) instead of the visible area, so the panel with a
+  category's blocks (the flyout) was taller than what could be seen. Categories with many blocks
+  could still be scrolled, but Individual Motors fits in that taller panel, so it had no scroll and
+  its last blocks were out of reach. The app now takes exactly the visible area.
+- **Bottom of the app under Android's navigation bar:** on some Android phones (seen in a browser
+  opened from another app) the page is drawn under the navigation bar, so the last toolbox row and
+  the workspace scrollbar were half hidden. The app now asks to draw edge to edge and keeps clear of
+  the system bars and screen cutouts by itself (the safe areas the device reports, none on screens
+  without them); the strip under the bar takes the frame colour.
+- **Program partly under the toolbox on phones:** each category's icon was drawn a moment after the
+  toolbox, so Blockly sometimes measured the toolbox without icons and placed the program too far
+  left; with the Motors group the widest row is an indented category with an icon, and on a phone
+  the program could start under the toolbox. Icons are now drawn at once, before Blockly measures.
+
+### Files
+
+- New: `src/utils/breakpoints.ts` (Tailwind's `max-md` breakpoint for code: phones).
+- Changed: `src/components/blockly/toolbox-ui.ts` (`groupMotorCategories`, `phoneToolbox`; icons
+  drawn at once), `src/components/blockly/toolbox-ui.css` (phone icon column, panel title),
+  `src/components/blockly.tsx` (rebuilds the toolbox when the screen crosses the phone width),
+  `src/theme/github/blocks.ts` (group colour), `src/utils/i18n/locales/{en,es}/blockly.json`
+  (group name), `src/index.css` (app box sized by the visible area, clear of the system bars),
+  `index.html` (`viewport-fit=cover`), `pwa-plugin.ts` (full screen).
+- Tests: `src/components/tests/toolbox-ui.spec.ts`; the visual tests' toolbox and block editor
+  images (spec 007, part 1) show the new group and the phone icon column.
+
+### How to test
+
+1. Open a blocks file: the toolbox starts with an open "Motors" group with DriveTrain, Individual
+   Motors and Servos, then the Sensors group.
+2. Collapse and expand Motors; open each of its categories: same blocks as before.
+3. On an Android tablet, with the address bar visible, open Individual Motors: every block can be
+   reached, down to "Reset encoder", and the bottom of the app is not under the bar. With a short
+   screen, slide the toolbox up with a finger: it scrolls down to Advanced.
+4. On a phone (or a window narrower than 768 px), open a blocks file: the toolbox is a column of
+   icons, with no names and no search field. Tap the ruler icon: the panel starts with "Distance"
+   and shows its block. Tap "•••": the advanced categories appear below it as icons.
+5. Turn the phone sideways (wider than 768 px): the toolbox comes back with names and groups.
+6. Install the app on an Android tablet and open it: it fills the whole screen, without the
+   navigation bar at the bottom; swiping up from the bottom edge shows the bar for a moment.
+7. On an Android phone, open the app in the browser and in a link opened from another app: the
+   last toolbox icon ("•••") and the workspace scrollbar sit fully above the navigation bar.
+
+### Upstream
+
+The grouping, the phone toolbox and the full screen app are fork-specific (kids UI). The tablet fix is in fork CSS, but XRPWeb's own
+`100vh` has the same problem on Android tablets and could take the same idea.

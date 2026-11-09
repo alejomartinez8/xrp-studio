@@ -1,5 +1,6 @@
 import * as Blockly from 'blockly/core';
 import { createElement } from 'react';
+import { flushSync } from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import type { IconType } from 'react-icons';
 import {
@@ -9,6 +10,7 @@ import {
     TbCompass,
     TbCpu,
     TbDeviceGamepad2,
+    TbDots,
     TbGauge,
     TbLetterCase,
     TbList,
@@ -25,6 +27,7 @@ import {
     TbWorld,
 } from 'react-icons/tb';
 import i18n from '@/utils/i18n';
+import { isMaxMd } from '@/utils/breakpoints';
 import { colourBlocksByCategory, themeToolbox } from '@components/blockly/block-theme';
 import { activeBlockTheme } from '@/theme';
 import { registerToolboxSearch } from '@components/blockly/toolbox-search-category';
@@ -33,7 +36,8 @@ import '@components/blockly/toolbox-ui.css';
 
 /**
  * Kid-friendly toolbox: an icon per category, labels in the category colour, taller rows,
- * a search field at the top and an "Advanced" group that is collapsed by default.
+ * a search field at the top, a "Motors" group (like Sensors) and an "Advanced" group that is
+ * collapsed by default. Phones get a column of icons instead ({@link phoneToolbox}).
  */
 
 /** Icon shown next to each category, keyed by the toolbox `categoryId`. */
@@ -58,6 +62,7 @@ const CATEGORY_ICONS: Record<string, IconType> = {
     lists: TbList,
     variables: TbVariable,
     functions: TbMathFunction,
+    advanced: TbDots,
 };
 
 /** Categories moved into the collapsed "Advanced" group, in this order. */
@@ -72,6 +77,14 @@ export const ADVANCED_CATEGORY_IDS = [
 ];
 
 const ADVANCED_CATEGORY_ID = 'advanced';
+
+/** Categories gathered into the "Motors" group, in this order (spec 002). */
+export const MOTOR_CATEGORY_IDS = ['driveTrain', 'individualMotors', 'servos'];
+
+const MOTORS_CATEGORY_ID = 'motors';
+
+/** Open groups whose categories stand on their own in the phone toolbox. */
+const PHONE_FLATTENED_GROUP_IDS = [MOTORS_CATEGORY_ID, 'sensors'];
 const TEXT_SHADE = 0.8;
 const DARK_THEME_LIGHTEN = 0.45;
 
@@ -121,17 +134,24 @@ function paintCategory(
     }
 }
 
+/**
+ * Render a category icon. It is rendered synchronously so it is already in place when Blockly
+ * measures the toolbox width; rendered later, it widened the toolbox after the workspace was laid
+ * out, and on phones the program could start under the toolbox.
+ */
+function createIcon(Icon: IconType): HTMLSpanElement {
+    const span = document.createElement('span');
+    span.className = 'xrpToolboxIcon';
+    const root = createRoot(span);
+    flushSync(() => root.render(createElement(Icon, { size: 20 })));
+    return span;
+}
+
 /** Toolbox category with an icon and coloured label. */
 class XrpToolboxCategory extends Blockly.ToolboxCategory {
     protected override createIconDom_(): Element {
         const Icon = CATEGORY_ICONS[categoryIdOf(this) ?? ''];
-        if (!Icon) {
-            return super.createIconDom_();
-        }
-        const span = document.createElement('span');
-        span.className = 'xrpToolboxIcon';
-        createRoot(span).render(createElement(Icon, { size: 20 }));
-        return span;
+        return Icon ? createIcon(Icon) : super.createIconDom_();
     }
 
     override init(): void {
@@ -145,8 +165,17 @@ class XrpToolboxCategory extends Blockly.ToolboxCategory {
     }
 }
 
-/** Collapsible category (e.g. Sensors, Advanced) with a coloured label. */
+/**
+ * Collapsible category (e.g. Sensors, Advanced) with a coloured label. In the phone toolbox, where
+ * labels are hidden, it shows its icon in place of the open/closed arrow.
+ */
 class XrpCollapsibleToolboxCategory extends Blockly.CollapsibleToolboxCategory {
+    override createIconDom_(): HTMLSpanElement {
+        const def = this.toolboxItemDef_ as { iconOnly?: string };
+        const Icon = CATEGORY_ICONS[categoryIdOf(this) ?? ''];
+        return def.iconOnly === 'true' && Icon ? createIcon(Icon) : super.createIconDom_();
+    }
+
     override init(): void {
         super.init();
         paintCategory(this.labelDom_, this.iconDom_, this.colour_, false);
@@ -206,22 +235,94 @@ export function groupAdvancedCategories<T extends Toolbox>(toolbox: T, name: str
     };
 }
 
+/**
+ * Gather the motor categories into an open "Motors" group, placed where the first of them was,
+ * like the Sensors group. Blocks and their code are unchanged; only the toolbox layout moves.
+ */
+export function groupMotorCategories<T extends Toolbox>(toolbox: T, name: string): T {
+    const isMotor = (item: ToolboxItem) =>
+        item.kind.toUpperCase() === 'CATEGORY' &&
+        MOTOR_CATEGORY_IDS.includes(item.categoryId ?? '');
+    const motors = MOTOR_CATEGORY_IDS.flatMap((id) =>
+        toolbox.contents.filter((item) => isMotor(item) && item.categoryId === id),
+    );
+    const first = toolbox.contents.findIndex(isMotor);
+    if (first === -1) {
+        return toolbox;
+    }
+    const group = {
+        kind: 'CATEGORY',
+        categoryId: MOTORS_CATEGORY_ID,
+        name,
+        expanded: 'true',
+        contents: motors,
+    };
+    return {
+        ...toolbox,
+        contents: toolbox.contents.flatMap((item, index) =>
+            index === first ? [group] : isMotor(item) ? [] : [item],
+        ),
+    };
+}
+
 /** Add the search field as the first toolbox entry. */
 export function addSearch<T extends Toolbox>(toolbox: T, name: string): T {
     return { ...toolbox, contents: [{ kind: 'search', name, contents: [] }, ...toolbox.contents] };
 }
 
 /**
- * Build the kid-friendly toolbox (search, advanced group, theme colours) from the XRP one, and
- * colour each block type with the colour of its category.
+ * Turn a themed toolbox into the phone one: a column of icons, like other block editors on
+ * phones. Labels are hidden by CSS, so the search field goes, the open groups (Motors, Sensors)
+ * give way to their categories, which keep their colours, and Advanced stays a collapsed group
+ * shown by its icon. Each panel of blocks starts with the category name, so kids still see where
+ * they are.
  */
-export function kidFriendlyToolbox<T>(toolbox: T): T {
+export function phoneToolbox<T extends Toolbox>(toolbox: T): T {
+    type Item = ToolboxItem & { contents?: Item[]; name?: string };
+    const isCategory = (item: Item) => item.kind.toUpperCase() === 'CATEGORY';
+    const titled = (item: Item): Item => {
+        if (!isCategory(item) || !Array.isArray(item.contents)) {
+            return item;
+        }
+        const contents = item.contents.map(titled);
+        const hasBlocks = contents.some((child) => !isCategory(child));
+        return {
+            ...item,
+            contents: hasBlocks
+                ? [{ kind: 'label', text: item.name, 'web-class': 'xrpFlyoutTitle' }, ...contents]
+                : contents,
+        };
+    };
+    const contents = (toolbox.contents as Item[]).flatMap((item): Item[] => {
+        if (item.kind === 'search') {
+            return [];
+        }
+        if (isCategory(item) && PHONE_FLATTENED_GROUP_IDS.includes(item.categoryId ?? '')) {
+            return (item.contents ?? []).map(titled);
+        }
+        if (isCategory(item) && item.categoryId === ADVANCED_CATEGORY_ID) {
+            return [{ ...titled(item), iconOnly: 'true' }];
+        }
+        return [titled(item)];
+    });
+    return { ...toolbox, contents };
+}
+
+/**
+ * Build the kid-friendly toolbox (search, motors and advanced groups, theme colours) from the XRP
+ * one, or the phone toolbox below Tailwind's `md` breakpoint, and colour each block type with the colour of its category.
+ */
+export function kidFriendlyToolbox<T>(toolbox: T, phone = isMaxMd()): T {
     const base = toolbox as unknown as Toolbox;
-    const grouped = groupAdvancedCategories(base, i18n.t('blockly.toolbox.advanced'));
+    const grouped = groupAdvancedCategories(
+        groupMotorCategories(base, i18n.t('blockly.toolbox.motors')),
+        i18n.t('blockly.toolbox.advanced'),
+    );
     const themed = themeToolbox(
         addSearch(grouped, i18n.t('blockly.toolbox.search')),
         activeBlockTheme,
     );
-    colourBlocksByCategory(themed);
-    return themed as unknown as T;
+    const result = phone ? phoneToolbox(themed) : themed;
+    colourBlocksByCategory(result);
+    return result as unknown as T;
 }
