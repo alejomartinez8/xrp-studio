@@ -409,6 +409,9 @@ trash, but they could only be restored from Drive, which children do not use.
 - **Delete moves to the trash, with no confirmation.** In My projects, Delete in the folder tree
   moves the file or folder to the trash at once. Files in Robot memory keep the old delete (with
   confirmation, no trash).
+- **Rename and Delete on touch screens.** The tree showed these buttons only while the mouse was
+  over a row, so phones and tablets had no way to delete. They now also show on the selected row:
+  tap a file or folder, then tap the trash-can icon.
 - **Trash row.** A "Trash" row at the bottom of the Explorer shows how many items are in the
   trash. It opens a dialog that lists them, newest first, with the days left for each one:
   - **Restore** puts the item back in its folder. If that folder is in the trash or gone, the item
@@ -444,7 +447,8 @@ trash, but they could only be restored from Drive, which children do not use.
   permanent delete in Drive. Tests in `src/services/tests/drive-sync.spec.ts` and
   `src/services/tests/drive-api.spec.ts`.
 - `src/components/folder-tree.tsx` (upstream, small hooks): Delete moves to the trash in My
-  projects, and the Trash row.
+  projects, the Trash row, and Rename and Delete on the selected row. Test in
+  `src/components/tests/folder-tree.spec.tsx`.
 - `src/utils/i18n/locales/{en,es}/{en,es}.json` (`trash`).
 - Browser test: `e2e/accounts.spec.ts` (trash, restore and delete forever with a signed-in
   account), with trash support in `e2e/support/google-mock.ts`.
@@ -462,7 +466,9 @@ trash, but they could only be restored from Drive, which children do not use.
    the app; it leaves the Drive trash. Delete forever; it is gone from Drive.
 6. Same account on a second device (or in Drive): trash a file there. Here it moves to the trash
    at the next sync (within a minute, or when coming back to the app).
-7. Switch to Robot memory with a robot connected: Delete still asks for confirmation and there is
+7. On a phone or tablet: tap a file; the rename and trash-can icons show on its row. Tap the
+   trash-can: the file goes to the trash.
+8. Switch to Robot memory with a robot connected: Delete still asks for confirmation and there is
    no Trash row. **Pending: needs a robot.**
 
 ### Upstream

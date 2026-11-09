@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import FolderTree from '@/components/folder-tree';
 import { beforeEach, afterEach, describe, it, expect, vi } from 'vitest';
 import AppMgr from '@/managers/appmgr';
@@ -80,5 +80,17 @@ describe('Folder Component', () => {
     it('renders tree nodes correctly', () => {
         render(<FolderTree treeData={treeData} theme="light" />);
         expect(screen.getByText('Folder 1')).toBeInTheDocument();
+    });
+
+    it('shows Rename and Delete on the selected item, for touch screens without hover', () => {
+        render(<FolderTree treeData={treeData} theme="light" />);
+        const actions = () =>
+            screen
+                .getAllByTestId('tree-item-actions')
+                .find((item) => item.parentElement?.textContent?.includes('File 1'))!;
+        expect(actions()).toHaveClass('invisible');
+        fireEvent.click(screen.getByText('File 1'));
+        expect(actions()).toHaveClass('visible');
+        expect(actions()).not.toHaveClass('invisible');
     });
 });

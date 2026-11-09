@@ -303,7 +303,10 @@ function FolderTree(treeProps: TreeProps) {
                     </span>
                 </div>
                 {!treeProps.onSelected && (
-                    <div className="invisible flex flex-row items-center gap-0.5 px-1 group-hover:visible">
+                    <div
+                        data-testid="tree-item-actions"
+                        className={`${node.isSelected ? 'visible' : 'invisible group-hover:visible'} flex flex-row items-center gap-0.5 px-1`}
+                    >
                         <button
                             className={`hover:bg-black/10 dark:hover:bg-white/15 dark:hover:text-white flex h-5 w-5 items-center justify-center rounded text-mountain-mist-600 hover:text-mountain-mist-900 dark:text-mountain-mist-400 ${isRunning ? 'pointer-events-none opacity-50' : 'pointer-events-auto opacity-100'}`}
                             onClick={() => node.edit()}
