@@ -317,7 +317,8 @@ would help all its languages. Depurar for Dashboard is a naming choice to agree 
   (`100vh`, which counts the bar as hidden) instead of the visible area, so the panel with a
   category's blocks (the flyout) was taller than what could be seen. Categories with many blocks
   could still be scrolled, but Individual Motors fits in that taller panel, so it had no scroll and
-  its last blocks were out of reach. The app now takes exactly the visible area.
+  its last blocks were out of reach. The app now takes exactly the visible area (it took
+  effect on phones only with spec 003, part 5).
 - **Bottom of the app under Android's navigation bar:** on some Android phones (seen in a browser
   opened from another app) the page is drawn under the navigation bar, so the last toolbox row and
   the workspace scrollbar were half hidden. The app now asks to draw edge to edge and keeps clear of
