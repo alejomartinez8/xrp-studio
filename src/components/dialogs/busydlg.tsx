@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { RefObject, useRef } from 'react';
 import { useResizeObserver } from 'usehooks-ts';
 import XRPBusyImage from '@assets/images/logo_x_rotate_in_place.gif';
 
@@ -12,7 +12,7 @@ type BusyDlgProps = {
  * @returns 
  */
 function BusyDialog({title}: BusyDlgProps) {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement>(null) as RefObject<HTMLDivElement>;
   const { width = 0 } = useResizeObserver({ ref });
 
   // Scale image based on container width

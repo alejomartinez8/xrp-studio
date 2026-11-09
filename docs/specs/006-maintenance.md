@@ -202,8 +202,8 @@ files and are needed by any React 19 upgrade.
 Some packages were installed but not needed: `remark`, `remark-html`, `remark-rehype`,
 `rehype-raw`, `rehype-sanitize` and `rehype-stringify` are imported nowhere (Markdown is rendered
 with `markdown-it`); `moment` (plus `@types/moment`) formatted one date; and `use-resize-observer`
-measured two elements, which `usehooks-ts`, already a dependency, also does; it also needed an `overrides` entry to run on
-React 19 (part 4).
+measured two elements, which `usehooks-ts`, already a dependency, also does (and it needed an
+`overrides` entry to run on React 19, part 4).
 
 ### Solution
 
@@ -217,13 +217,15 @@ React 19 (part 4).
   `usehooks-ts` instead of `use-resize-observer`. Same sizes (content box); the only difference is
   that sizes are no longer rounded to whole pixels, which the tree and the dialog do not need.
   Its `overrides` entry in `package.json` is removed; only `react-blockly` keeps one.
-- Result: 80 fewer packages in `node_modules` (1105 → 1025) and a smaller app: the build's
-  JavaScript goes from 19,505,477 to 19,440,675 bytes (−65 KB; −20 KB gzipped, 5,234,642 →
-  5,214,286). No visible change.
+- `usehooks-ts` 3 types its `ref` option for React 18, so the two refs are typed as
+  `RefObject<HTMLDivElement>` for it (with React 19 `useRef(null)` also allows `null`).
+- Result: 80 fewer packages in `node_modules` (1103 → 1023) and a smaller app: the build's
+  JavaScript goes from 19,600,296 to 19,535,490 bytes (−65 KB; −21 KB gzipped, 5,263,313 →
+  5,242,722). No visible change.
 
 ### Files
 
-- `package.json`, `package-lock.json`.
+- `package.json`, `package-lock.json`, `docs/specs/pending-upgrades.md`.
 - `src/utils/blocks-date.ts` (new), `src/components/blockly.tsx`.
 - `src/components/folder-tree.tsx`, `src/components/dialogs/busydlg.tsx`.
 - Unit tests: `src/utils/tests/blocks-date.spec.ts` (the strings moment gave for a set of dates).

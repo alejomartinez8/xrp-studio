@@ -1,6 +1,6 @@
 import { FolderItem } from '@/utils/types';
 import { Tree, NodeApi, NodeRendererProps } from 'react-arborist';
-import { useEffect, useRef, useState } from 'react';
+import { RefObject, useEffect, useRef, useState } from 'react';
 import AppMgr, { EventType, LoginStatus } from '@/managers/appmgr';
 import { useResizeObserver } from 'usehooks-ts';
 import { FaFileAlt } from 'react-icons/fa';
@@ -61,7 +61,7 @@ function FolderTree(treeProps: TreeProps) {
     const [isRunning, setIsRunning] = useState<boolean>(false);
     const appMgrRef = useRef<AppMgr>(undefined);
     const treeRef = useRef(null);
-    const ref = useRef<HTMLDivElement>(null);
+    const ref = useRef<HTMLDivElement>(null) as RefObject<HTMLDivElement>;
     const { width, height } = useResizeObserver({ ref });
     const folderLogger = logger.child({ module: 'folder-tree' });
     const [dialogContent, setDialogContent] = useState<React.ReactNode>(null);
