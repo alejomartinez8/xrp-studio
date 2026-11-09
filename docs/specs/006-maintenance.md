@@ -1,6 +1,6 @@
 # 006 — Maintenance
 
-Dependency, lockfile and build upkeep. Pending upgrades and the backlog are in [pending-upgrades.md](pending-upgrades.md). Five parts: lockfile and minor updates, faster builds, the build and test tools, React 19, and the Python editor.
+Dependency, lockfile and build upkeep. Pending upgrades and the backlog are in [pending-upgrades.md](pending-upgrades.md). Six parts: lockfile and minor updates, faster builds, the build and test tools, React 19, unused dependencies, and the Python editor.
 
 ## Part 1 — Lockfile, Tailwind config and minor updates
 
@@ -195,7 +195,55 @@ security fixes.
 Possible: dependency upgrades, independent of the fork's UI. The ref type fixes are in upstream
 files and are needed by any React 19 upgrade.
 
-## Part 5 — Python editor: monaco-vscode-api 37, monaco-languageclient 11
+## Part 5 — Unused and replaceable dependencies
+
+### Problem
+
+Some packages were installed but not needed: `remark`, `remark-html`, `remark-rehype`,
+`rehype-raw`, `rehype-sanitize` and `rehype-stringify` are imported nowhere (Markdown is rendered
+with `markdown-it`); `moment` (plus `@types/moment`) formatted one date; and `use-resize-observer`
+measured two elements, which `usehooks-ts`, already a dependency, also does (and it needed an
+`overrides` entry to run on React 19, part 4).
+
+### Solution
+
+- The six `remark`/`rehype` packages are removed.
+- `moment` is replaced by `formatBlocksDate` (`src/utils/blocks-date.ts`), which writes the date
+  line above `##XRPBLOCKS` in a blocks file with the native `Date`. It keeps upstream's string
+  exactly, quirks included: the pattern `YYYY-MM-DD HH:MM:SS` means year, month, day, hour, month
+  again and hundredths of a second, so 9 November 2026 at 14:07:23.456 is written as
+  `2026-11-09 14:11:45`. Nothing reads that line back, so it is left as it was.
+- The folder tree and the busy dialog measure their containers with `useResizeObserver` from
+  `usehooks-ts` instead of `use-resize-observer`. Same sizes (content box); the only difference is
+  that sizes are no longer rounded to whole pixels, which the tree and the dialog do not need.
+  Its `overrides` entry in `package.json` is removed; only `react-blockly` keeps one.
+- `usehooks-ts` 3 types its `ref` option for React 18, so the two refs are typed as
+  `RefObject<HTMLDivElement>` for it (with React 19 `useRef(null)` also allows `null`).
+- Result: 80 fewer packages in `node_modules` (1103 → 1023) and a smaller app: the build's
+  JavaScript goes from 19,600,296 to 19,535,490 bytes (−65 KB; −21 KB gzipped, 5,263,313 →
+  5,242,722). No visible change.
+
+### Files
+
+- `package.json`, `package-lock.json`, `docs/specs/pending-upgrades.md`.
+- `src/utils/blocks-date.ts` (new), `src/components/blockly.tsx`.
+- `src/components/folder-tree.tsx`, `src/components/dialogs/busydlg.tsx`.
+- Unit tests: `src/utils/tests/blocks-date.spec.ts` (the strings moment gave for a set of dates).
+
+### How to test
+
+1. Open My projects: the folder tree fills the side panel and follows its size when the panel or
+   the window is resized; long lists scroll.
+2. Open a blocks project, change it and look at the saved file (for example with Run, on the
+   robot): the line above `##XRPBLOCKS` has the same date format as before.
+3. Connect a robot and do something that shows the busy dialog (for example installing the
+   library): the animated logo is shown, larger on wide screens.
+
+### Upstream
+
+Possible: these packages come from XRPWeb and the change does not depend on the fork's UI.
+
+## Part 6 — Python editor: monaco-vscode-api 37, monaco-languageclient 11
 
 ### Problem
 
@@ -221,6 +269,10 @@ The whole stack moves together to the latest compatible set:
 - `@codingame/esbuild-import-meta-url-plugin` is removed. Vite 8 handles worker URLs on its own, and
   the plugin broke the development server with the new packages (it read a relative worker path in
   `@vscode/diff` as a package name). `monaco-languageclient` dropped it for the same reason.
+- The build no longer uses esbuild, which the removed plugin used to bring in: a clean install does
+  not have it, and the build failed while bundling the `@vscode/diff` worker. The code is minified
+  with Oxc, Vite 8's own minifier, and the esbuild settings Vite 8 already ignored are gone from
+  `vite.config.ts` (`esbuild` and `optimizeDeps.esbuildOptions`).
 - Small code changes: the services are initialized from `@codingame/monaco-vscode-api/services`,
   the language client and protocol are imported by package entry (`/browser`), and the editor's own
   worker is registered under its new name (`editorWorkerService`). With the old name the editor
@@ -232,16 +284,16 @@ The whole stack moves together to the latest compatible set:
   before in both themes (the approved screenshots did not change).
 - The Python editor still loads on demand and is still stored for offline use.
 
-Measured on the same machine with the same build settings, before and after (production build
-served locally, new Python project, average of three runs):
+Measured on the same machine with the same method, before (the fork's main branch) and after
+(production build served locally, new Python project, average of five runs):
 
 | | Before | After |
 | --- | --- | --- |
-| Python editor download (main Monaco file) | 12.9 MB | 8.9 MB |
-| All built files (`assets`) | 21.3 MB | 18.3 MB |
-| Stored for offline use (service worker) | 34.1 MB | 31.1 MB |
-| Opening the app to the Python editor ready, first visit | 1.9 s | 1.6 s |
-| Pyright's first error underline after typing | 3.7 s | 3.7 s |
+| Python editor download (main Monaco file) | 12.9 MB | 8.8 MB |
+| All built files (`assets`) | 21.4 MB | 17.9 MB |
+| Stored for offline use (service worker) | 34.1 MB | 30.7 MB |
+| Opening the app to the Python editor ready, first visit | 2.1 s | 1.8 s |
+| Pyright's first error underline after typing | 3.7 s | 3.6 s |
 
 ### Files
 

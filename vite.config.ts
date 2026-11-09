@@ -86,12 +86,6 @@ export default defineConfig(({ mode, command }) => {
     const isDev = mode === 'development' || command === 'serve';
     return {
         base: './',
-        esbuild: {
-            sourcemap: true,
-            supported: {
-                'top-level-await': true,
-            },
-        },
         define: {
             rootDirectory: JSON.stringify(__dirname),
             global: 'globalThis',
@@ -143,9 +137,6 @@ export default defineConfig(({ mode, command }) => {
         },
         optimizeDeps: {
             include: ['vscode-textmate', 'vscode-oniguruma'],
-            esbuildOptions: {
-                tsconfig: './tsconfig.json',
-            },
         },
         server: {
             port: 3000,
@@ -154,7 +145,7 @@ export default defineConfig(({ mode, command }) => {
             }
         },
         build: {
-            minify: 'esbuild',
+            minify: 'oxc',
             reportCompressedSize: false,
             rollupOptions: {
                 input: {
