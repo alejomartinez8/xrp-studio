@@ -1,6 +1,6 @@
 # 006 — Maintenance
 
-Dependency, lockfile and build upkeep. Pending upgrades and the backlog are in [pending-upgrades.md](pending-upgrades.md). Three parts: lockfile and minor updates, faster builds, and the build and test tools.
+Dependency, lockfile and build upkeep. Pending upgrades and the backlog are in [pending-upgrades.md](pending-upgrades.md). Four parts: lockfile and minor updates, faster builds, the build and test tools, and the Python editor.
 
 ## Part 1 — Lockfile, Tailwind config and minor updates
 
@@ -147,3 +147,73 @@ part 2.
 ### Upstream
 
 Possible: dependency upgrades, independent of the fork's UI.
+
+## Part 4 — Python editor: monaco-vscode-api 37, monaco-languageclient 11
+
+### Problem
+
+The Python editor (Monaco with VS Code services and Pyright as the language server) was built on
+`@codingame/monaco-vscode-*` 11 (with some 14.x `*-common` packages pulled in), `monaco-languageclient`
+9.4.1 and `vscode-ws-jsonrpc` 3.4.0. npm reported the 14.x packages as no longer supported, and
+the pieces could not be updated one by one: each one depends on an exact version of the others, so
+updating a single package installed a second, incompatible copy of the VS Code services.
+
+### Solution
+
+The whole stack moves together to the latest compatible set:
+
+- `@codingame/monaco-vscode-*` 37.6.1 (one copy of every package), including the `monaco-editor`
+  and `vscode` aliases. `vscode` now points to `@codingame/monaco-vscode-extension-api` (the VS Code
+  extension API); the services and extension registration come from `@codingame/monaco-vscode-api`,
+  now a direct dependency.
+- `monaco-languageclient` 11.0.3, `vscode-ws-jsonrpc` 4.0.3, and `vscode-languageclient` 10.1.2 with
+  `vscode-languageserver-protocol` 3.18.4 as direct dependencies (the app imports them, and listing
+  them keeps a single copy of the protocol). The target in the pending list was "2x / 10+": the 10.x
+  releases still use `vscode-ws-jsonrpc` 3.5, so 11 is the first that brings all three up together.
+  Pyright itself (`@typefox/pyright-browser`) is unchanged and still runs in a web worker, offline.
+- `@codingame/esbuild-import-meta-url-plugin` is removed. Vite 8 handles worker URLs on its own, and
+  the plugin broke the development server with the new packages (it read a relative worker path in
+  `@vscode/diff` as a package name). `monaco-languageclient` dropped it for the same reason.
+- Small code changes: the services are initialized from `@codingame/monaco-vscode-api/services`,
+  the language client and protocol are imported by package entry (`/browser`), and the editor's own
+  worker is registered under its new name (`editorWorkerService`). With the old name the editor
+  worker was not found and its work ran on the page instead.
+- Theme: the editor now changes theme through the VS Code setting `workbench.colorTheme` with the
+  theme ids `Light Modern` and `Dark Modern`. With the new packages `monaco.editor.setTheme` no
+  longer switched the theme while the editor was open, and the old light value (`vs`) was not a
+  theme name, so it fell back to VS Code's newer default light theme. The editor looks exactly as
+  before in both themes (the approved screenshots did not change).
+- The Python editor still loads on demand and is still stored for offline use.
+
+Measured on the same machine with the same build settings, before and after (production build
+served locally, new Python project, average of three runs):
+
+| | Before | After |
+| --- | --- | --- |
+| Python editor download (main Monaco file) | 12.9 MB | 8.9 MB |
+| All built files (`assets`) | 21.3 MB | 18.3 MB |
+| Stored for offline use (service worker) | 34.1 MB | 31.1 MB |
+| Opening the app to the Python editor ready, first visit | 1.9 s | 1.6 s |
+| Pyright's first error underline after typing | 3.7 s | 3.7 s |
+
+### Files
+
+- `package.json`, `package-lock.json`, `vite.config.ts`, `src/components/MonacoEditor.tsx`,
+  `src/components/lsp-client.ts`.
+
+### How to test
+
+1. Open the app and create a Python project: the editor opens, keywords and strings are coloured.
+2. Type `import math` and, on a new line, `x: int = "a"`: Pyright underlines `"a"`. Type `math.`:
+   the list of `math` functions appears.
+3. With a Python file open, switch the system between light and dark: the editor follows both
+   ways, and the zoom level is kept.
+4. Use the round + and − buttons: the code gets bigger and smaller.
+5. Wait a moment after typing: the status bar shows Saved; reload and the text is still there.
+6. Open the app once, go offline and reload: the Python editor still opens with colours,
+   suggestions and underlines.
+7. In the block editor, open the Python view of a program: the code shows read-only.
+
+### Upstream
+
+Possible: dependency upgrade independent of the fork's UI. XRPWeb has the same stack.
