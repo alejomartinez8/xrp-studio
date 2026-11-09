@@ -349,6 +349,7 @@
         "update": "New version · Update",
         "updateHint": "Your work is saved first and the app restarts."
     },
+    "loadingBlocks": "Loading blocks…",
     "autosave": {
         "saving": "Saving…",
         "saved": "Saved",

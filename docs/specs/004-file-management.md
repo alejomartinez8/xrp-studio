@@ -236,12 +236,19 @@ rename and delete buttons, or in the rename field, never open the file.
   `blockly.tsx` uses it in its two places that load blocks (`loadBlocksIntoWorkspace` and the
   `EVENT_EDITOR_LOAD` handler). Broken JSON still reports an error.
 
+- **The tab shows first.** `blockly.tsx` builds the workspace and toolbox only after the new tab
+  has been painted, and shows "Loading blocks…" ("Cargando bloques…") in the meantime. The
+  click now answers with a tab right away instead of freezing the page until Blockly is ready.
+  The blocks themselves appear about as before (a frame later).
+
 Measured on a dev build, 4× slower CPU (Chrome DevTools throttling), toolbox with 93 blocks:
 
 | | Before | After |
 | --- | --- | --- |
 | Search indexing when a blocks editor opens | 40–135 ms, every editor | 0 ms |
 | Search indexing when typing the first search | 0 ms (already done) | 35–135 ms, once per language |
+| Click on a project until its tab shows (production build, 4× slower CPU) | 320–380 ms | 110–130 ms |
+| Click until the blocks are visible | 540–670 ms | 700–740 ms (a frame later) |
 
 ### Files
 
@@ -254,8 +261,8 @@ Measured on a dev build, 4× slower CPU (Chrome DevTools throttling), toolbox wi
 - Faster opening: new `src/components/blockly/block-search.ts`, `toolbox-search-category.ts`,
   `blocks-content.ts`, and tests in `src/components/blockly/tests/`; changed
   `src/components/blockly/toolbox-ui.ts` (registers the search field), `src/components/blockly.tsx`
-  (two calls to `parseBlocksJson`), `src/utils/i18n/locales/{en,es}/blockly.json` (`searchHint`,
-  `searchNone`), `package.json` and `package-lock.json` (plugin removed).
+  (two calls to `parseBlocksJson`; loading state before the workspace is built), `src/utils/i18n/locales/{en,es}/blockly.json` (`searchHint`,
+  `searchNone`, `loadingBlocks`), `package.json` and `package-lock.json` (plugin removed).
 
 ### How to test
 

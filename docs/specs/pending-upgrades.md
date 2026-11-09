@@ -28,8 +28,4 @@ should be its own change, tested in the app.
 
 ## Known issues
 
-Bugs found while testing, not yet fixed. Each one should be its own change.
-
-| Issue | Where | Notes |
-| --- | --- | --- |
-| Opening a file from the folder tree is slow | `src/components/folder-tree.tsx` (`EVENT_OPEN_FILE`), `src/components/blockly.tsx` | Measured on a production build with a 4× slower CPU: the click blocks the page ~290 ms before the tab shows. About 130 ms is Blockly creating the workspace and toolbox, ~110 ms the block search indexing every block (fork code, same index for every file), ~50 ms the new tab. The search indexing was removed from opening (spec 004). Next: show the tab with a loading state before building the workspace. |
+None right now. Bugs found while testing go here until they are fixed, each one as its own change.
