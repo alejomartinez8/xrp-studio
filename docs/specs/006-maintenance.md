@@ -177,8 +177,9 @@ the backlog) needs colours that can change while the app runs.
   `rounded-sm`, `rounded-sm` to `rounded-xs`, `shadow-sm` to `shadow-xs`, `shadow` to `shadow-sm`,
   `outline-none` to `outline-hidden`, `flex-grow` to `grow`, arbitrary values to their new
   names). `src/index.css` keeps the Tailwind 3 defaults that changed: borders default to gray-200,
-  placeholders are gray-400, buttons show the hand cursor and a ring without a colour is blue at
-  half opacity. The Blocks | Python selector reset its centring with `transform-none`, which no
+  placeholders are gray-400, buttons show the hand cursor, dialogs stay centred (Tailwind 4 sets
+  every margin to 0, which moved the Change Log and other dialogs to the top left corner) and a
+  ring without a colour is blue at half opacity. The Blocks | Python selector reset its centring with `transform-none`, which no
   longer resets a translation in Tailwind 4, so it uses `translate-none`.
 - **Flowbite React** 0.12 supports Tailwind 4: its config (`.flowbite-react/config.json`) says
   version 4, its CSS (`flowbite-react/plugin/tailwindcss`) is imported by `src/index.css`, and its
@@ -198,7 +199,9 @@ the backlog) needs colours that can change while the app runs.
   `postcss.config.js` and `tailwind-plugins.d.ts`.
 - Class renames from the upgrade tool in the components (`src/components/`, `src/widgets/`,
   `src/App.tsx`, `src/utils/constants.ts`); `src/components/navbar.tsx` (`translate-none`).
-- Visual tests (spec 007, part 1) pass with the approved images unchanged.
+- Visual tests (spec 007, part 1) pass with the approved images unchanged. Screens they do not
+  cover (Change Log, File menu, New file dialog, Trash, Connect menu) were compared pixel by pixel
+  between the Tailwind 3 and Tailwind 4 builds, light and dark: no difference.
 
 ### How to test
 
