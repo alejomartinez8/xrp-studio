@@ -318,6 +318,11 @@ would help all its languages. Depurar for Dashboard is a naming choice to agree 
   category's blocks (the flyout) was taller than what could be seen. Categories with many blocks
   could still be scrolled, but Individual Motors fits in that taller panel, so it had no scroll and
   its last blocks were out of reach. The app now takes exactly the visible area.
+- **Bottom of the app under Android's navigation bar:** on some Android phones (seen in a browser
+  opened from another app) the page is drawn under the navigation bar, so the last toolbox row and
+  the workspace scrollbar were half hidden. The app now asks to draw edge to edge and keeps clear of
+  the system bars and screen cutouts by itself (the safe areas the device reports, none on screens
+  without them); the strip under the bar takes the frame colour.
 - **Program partly under the toolbox on phones:** each category's icon was drawn a moment after the
   toolbox, so Blockly sometimes measured the toolbox without icons and placed the program too far
   left; with the Motors group the widest row is an indented category with an icon, and on a phone
@@ -329,7 +334,8 @@ would help all its languages. Depurar for Dashboard is a naming choice to agree 
   drawn at once), `src/components/blockly/toolbox-ui.css` (phone icon column, panel title),
   `src/components/blockly.tsx` (rebuilds the toolbox when the screen crosses the phone width),
   `src/theme/github/blocks.ts` (group colour), `src/utils/i18n/locales/{en,es}/blockly.json`
-  (group name), `src/index.css` (app box sized by the visible area), `pwa-plugin.ts` (full screen).
+  (group name), `src/index.css` (app box sized by the visible area, clear of the system bars),
+  `index.html` (`viewport-fit=cover`), `pwa-plugin.ts` (full screen).
 - Tests: `src/components/tests/toolbox-ui.spec.ts`; the visual tests' toolbox and block editor
   images (spec 007, part 1) show the new group and the phone icon column.
 
@@ -347,6 +353,8 @@ would help all its languages. Depurar for Dashboard is a naming choice to agree 
 5. Turn the phone sideways (wider than 768 px): the toolbox comes back with names and groups.
 6. Install the app on an Android tablet and open it: it fills the whole screen, without the
    navigation bar at the bottom; swiping up from the bottom edge shows the bar for a moment.
+7. On an Android phone, open the app in the browser and in a link opened from another app: the
+   last toolbox icon ("•••") and the workspace scrollbar sit fully above the navigation bar.
 
 ### Upstream
 
