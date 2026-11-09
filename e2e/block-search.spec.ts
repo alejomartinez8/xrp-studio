@@ -2,7 +2,7 @@ import { test, expect, type Page } from '@playwright/test';
 import { openApp, setUpGoogle } from './support/app';
 
 /**
- * The block search field of the toolbox with real typing (spec 006, part 4). Blockly 13 moves the
+ * The block search field of the toolbox with real typing (spec 006, part 5). Blockly 13 moves the
  * focus with its own keyboard navigation, so the field must keep every letter, also after a second
  * tap, and Escape must clear it.
  */
