@@ -10,7 +10,7 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { StorageKeys } from '@/utils/localstorage';
 import EditorMgr, { EditorSession } from '@/managers/editormgr';
 import i18n from '@/utils/i18n';
-import moment from 'moment';
+import { formatBlocksDate } from '@/utils/blocks-date';
 import { blockThemeOptions } from '@components/blockly/block-theme';
 import { activeBlockTheme } from '@/theme';
 import { kidFriendlyToolbox, registerToolboxUi } from '@components/blockly/toolbox-ui';
@@ -241,8 +241,7 @@ function blocklyToPython(ws: Workspace) {
         .workspaceToCode(ws)
         .replace('from numbers import Number\n', 'Number = int\n');
     const blocklyCode = JSON.stringify(Blockly.serialization.workspaces.save(ws));
-    const date = moment();
-    const formatedDate = date.format('YYYY-MM-DD HH:MM:SS');
+    const formatedDate = formatBlocksDate();
     const code = pythonCode + '\n\n\n## ' + formatedDate + '\n##XRPBLOCKS ' + blocklyCode;
     return code;
 }

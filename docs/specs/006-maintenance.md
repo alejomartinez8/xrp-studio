@@ -147,3 +147,47 @@ part 2.
 ### Upstream
 
 Possible: dependency upgrades, independent of the fork's UI.
+
+## Part 4 — Unused and replaceable dependencies
+
+### Problem
+
+Some packages were installed but not needed: `remark`, `remark-html`, `remark-rehype`,
+`rehype-raw`, `rehype-sanitize` and `rehype-stringify` are imported nowhere (Markdown is rendered
+with `markdown-it`); `moment` (plus `@types/moment`) formatted one date; and `use-resize-observer`
+measured two elements, which `usehooks-ts`, already a dependency, also does.
+
+### Solution
+
+- The six `remark`/`rehype` packages are removed.
+- `moment` is replaced by `formatBlocksDate` (`src/utils/blocks-date.ts`), which writes the date
+  line above `##XRPBLOCKS` in a blocks file with the native `Date`. It keeps upstream's string
+  exactly, quirks included: the pattern `YYYY-MM-DD HH:MM:SS` means year, month, day, hour, month
+  again and hundredths of a second, so 9 November 2026 at 14:07:23.456 is written as
+  `2026-11-09 14:11:45`. Nothing reads that line back, so it is left as it was.
+- The folder tree and the busy dialog measure their containers with `useResizeObserver` from
+  `usehooks-ts` instead of `use-resize-observer`. Same sizes (content box); the only difference is
+  that sizes are no longer rounded to whole pixels, which the tree and the dialog do not need.
+- Result: 80 fewer packages in `node_modules` (1105 → 1025) and a smaller app: the build's
+  JavaScript goes from 19,505,477 to 19,440,675 bytes (−65 KB; −20 KB gzipped, 5,234,642 →
+  5,214,286). No visible change.
+
+### Files
+
+- `package.json`, `package-lock.json`.
+- `src/utils/blocks-date.ts` (new), `src/components/blockly.tsx`.
+- `src/components/folder-tree.tsx`, `src/components/dialogs/busydlg.tsx`.
+- Unit tests: `src/utils/tests/blocks-date.spec.ts` (the strings moment gave for a set of dates).
+
+### How to test
+
+1. Open My projects: the folder tree fills the side panel and follows its size when the panel or
+   the window is resized; long lists scroll.
+2. Open a blocks project, change it and look at the saved file (for example with Run, on the
+   robot): the line above `##XRPBLOCKS` has the same date format as before.
+3. Connect a robot and do something that shows the busy dialog (for example installing the
+   library): the animated logo is shown, larger on wide screens.
+
+### Upstream
+
+Possible: these packages come from XRPWeb and the change does not depend on the fork's UI.
