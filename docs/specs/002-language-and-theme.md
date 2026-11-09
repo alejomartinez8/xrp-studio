@@ -330,6 +330,7 @@ would help all its languages. Depurar for Dashboard is a naming choice to agree 
 
 ### Files
 
+- New: `src/utils/breakpoints.ts` (Tailwind's `max-md` breakpoint for code: phones).
 - Changed: `src/components/blockly/toolbox-ui.ts` (`groupMotorCategories`, `phoneToolbox`; icons
   drawn at once), `src/components/blockly/toolbox-ui.css` (phone icon column, panel title),
   `src/components/blockly.tsx` (rebuilds the toolbox when the screen crosses the phone width),

@@ -13,7 +13,8 @@ import i18n from '@/utils/i18n';
 import moment from 'moment';
 import { blockThemeOptions } from '@components/blockly/block-theme';
 import { activeBlockTheme } from '@/theme';
-import { kidFriendlyToolbox, PHONE_QUERY, registerToolboxUi } from '@components/blockly/toolbox-ui';
+import { kidFriendlyToolbox, registerToolboxUi } from '@components/blockly/toolbox-ui';
+import { isMaxMd, MAX_MD_QUERY } from '@/utils/breakpoints';
 import { parseBlocksJson } from '@components/blockly/blocks-content';
 import { scheduleAutosave } from '@/utils/autosave';
 
@@ -180,7 +181,7 @@ function restoreViewport(ws: Workspace, viewport: BlocklyViewport) {
 
 /** The zoom a workspace starts at: smaller on phones (below 768 px) so more blocks fit. */
 function initialScale(): number {
-    return window.matchMedia?.('(max-width: 767px)').matches ? 0.75 : 1;
+    return isMaxMd() ? 0.75 : 1;
 }
 
 /** Size of the block list on phones: readable and independent of the canvas zoom. */
@@ -192,7 +193,7 @@ const PHONE_FLYOUT_SCALE = 0.58;
  * to fit next to the small toolbox.
  */
 function fixPhoneFlyoutScale(ws: Workspace) {
-    if (!window.matchMedia?.('(max-width: 767px)').matches) {
+    if (!isMaxMd()) {
         return;
     }
     const flyout = (ws as Blockly.WorkspaceSvg).getToolbox?.()?.getFlyout?.() as
@@ -506,7 +507,7 @@ function BlocklyEditor({ tabId, tabName }: BlocklyEditorProps) {
     }, [saveEditor, tabId, restoreViewportForTab, persistViewport, evaluateEditBlocked]);
 
     useEffect(() => {
-        const phone = window.matchMedia?.(PHONE_QUERY);
+        const phone = window.matchMedia?.(MAX_MD_QUERY);
         const rebuildToolbox = () => setToolboxRevision((prev) => prev + 1);
         phone?.addEventListener('change', rebuildToolbox);
         return () => phone?.removeEventListener('change', rebuildToolbox);

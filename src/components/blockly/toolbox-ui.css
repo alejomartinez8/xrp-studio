@@ -68,7 +68,7 @@ div#toolbox-search-input.blocklyToolboxCategory {
     background-color: transparent !important;
 }
 
-/** Phones: a column of icons (spec 002, part 5); the category name heads its panel of blocks. */
+/** Phones (Tailwind's `max-md`): a column of icons (spec 002, part 5); the category name heads its panel of blocks. */
 @media (max-width: 767px) {
     .blocklyToolboxCategory {
         min-height: 44px;

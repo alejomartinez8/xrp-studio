@@ -27,6 +27,7 @@ import {
     TbWorld,
 } from 'react-icons/tb';
 import i18n from '@/utils/i18n';
+import { isMaxMd } from '@/utils/breakpoints';
 import { colourBlocksByCategory, themeToolbox } from '@components/blockly/block-theme';
 import { activeBlockTheme } from '@/theme';
 import { registerToolboxSearch } from '@components/blockly/toolbox-search-category';
@@ -63,14 +64,6 @@ const CATEGORY_ICONS: Record<string, IconType> = {
     functions: TbMathFunction,
     advanced: TbDots,
 };
-
-/** Screens narrower than this get the phone toolbox (same breakpoint as the phone layout). */
-export const PHONE_QUERY = '(max-width: 767px)';
-
-/** Whether the screen is narrow enough for the phone toolbox. */
-export function isPhoneLayout(): boolean {
-    return window.matchMedia?.(PHONE_QUERY).matches ?? false;
-}
 
 /** Categories moved into the collapsed "Advanced" group, in this order. */
 export const ADVANCED_CATEGORY_IDS = [
@@ -317,9 +310,9 @@ export function phoneToolbox<T extends Toolbox>(toolbox: T): T {
 
 /**
  * Build the kid-friendly toolbox (search, motors and advanced groups, theme colours) from the XRP
- * one, or the phone toolbox on phones, and colour each block type with the colour of its category.
+ * one, or the phone toolbox below Tailwind's `md` breakpoint, and colour each block type with the colour of its category.
  */
-export function kidFriendlyToolbox<T>(toolbox: T, phone = isPhoneLayout()): T {
+export function kidFriendlyToolbox<T>(toolbox: T, phone = isMaxMd()): T {
     const base = toolbox as unknown as Toolbox;
     const grouped = groupAdvancedCategories(
         groupMotorCategories(base, i18n.t('blockly.toolbox.motors')),
