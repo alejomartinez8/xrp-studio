@@ -255,6 +255,7 @@ function BlocklyEditor({ tabId, tabName }: BlocklyEditorProps) {
     const [toolboxRevision, setToolboxRevision] = useState(0);
     const [language, setLanguage] = useState(i18n.language);
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [workspaceReady, setWorkspaceReady] = useState(false);
     const [name, setName] = useState<string>(tabName);
     const nameRef = useRef(name);
     const isLoadingRef = useRef(isLoading);
@@ -606,8 +607,39 @@ function BlocklyEditor({ tabId, tabName }: BlocklyEditorProps) {
         return () => observer.disconnect();
     }, [workspace, restoreViewportForTab]);
 
+    /**
+     * Builds the workspace and toolbox only after the new tab has been painted, so a file opens
+     * with its tab and a loading message at once instead of after the heavy Blockly set-up (spec
+     * 004). The timer covers pages whose animation frames are paused (hidden browser tab).
+     */
+    useEffect(() => {
+        let done = false;
+        const show = () => {
+            if (!done) {
+                done = true;
+                setWorkspaceReady(true);
+            }
+        };
+        const frame = requestAnimationFrame(() => setTimeout(show, 0));
+        const fallback = setTimeout(show, 200);
+        return () => {
+            done = true;
+            cancelAnimationFrame(frame);
+            clearTimeout(fallback);
+        };
+    }, []);
+
     return (
         <div ref={containerRef} className="relative h-full">
+        {!workspaceReady && (
+            <div
+                data-testid="blocks-loading"
+                role="status"
+                className="flex h-full items-center justify-center text-sm text-mountain-mist-600 dark:text-mountain-mist-400"
+            >
+                {i18n.t('loadingBlocks')}
+            </div>
+        )}
         {editBlocked && (
             <div
                 className="absolute inset-0 z-10 cursor-not-allowed"
@@ -621,6 +653,7 @@ function BlocklyEditor({ tabId, tabName }: BlocklyEditorProps) {
                 }}
             />
         )}
+        {workspaceReady && (
         <BlocklyWorkspace
             className="h-full"
             toolboxConfiguration={toolboxConfiguration}
@@ -652,6 +685,7 @@ function BlocklyEditor({ tabId, tabName }: BlocklyEditorProps) {
             initialJson={BlocklyConfigs.InitialJson}
             onInject={handleOnInject}
         />
+        )}
         </div>
     );
 }
