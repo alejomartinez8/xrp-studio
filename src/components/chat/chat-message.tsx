@@ -30,11 +30,11 @@ md.renderer.rules.code_block = md.renderer.rules.fence = function (tokens, idx) 
   const code = token.content.trim();
   const langName = token.info ? token.info.split(' ')[0] : '';
   
-  return `<div class="code-block-wrapper relative group border border-mountain-mist-200 rounded-lg shadow-sm overflow-hidden my-4">
+  return `<div class="code-block-wrapper relative group border border-mountain-mist-200 rounded-lg shadow-xs overflow-hidden my-4">
     <div class="code-block-header flex justify-between items-center px-4 py-2 bg-mountain-mist-100 border-b border-mountain-mist-200">
       <span class="text-xs font-medium text-mountain-mist-600">${langName || 'code'}</span>
       <button 
-        class="copy-btn opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-1 rounded text-mountain-mist-500 hover:text-curious-blue-600 hover:bg-mountain-mist-200" 
+        class="copy-btn opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-1 rounded-sm text-mountain-mist-500 hover:text-curious-blue-600 hover:bg-mountain-mist-200" 
         data-code="${code.replace(/"/g, '&quot;').replace(/'/g, '&#39;')}"
         title="Copy code"
       >
@@ -149,19 +149,19 @@ const ChatMessageComponent: React.FC<ChatMessageProps> = ({ message }) => {
               prose-h2:text-curious-blue-700 prose-h2:text-base prose-h2:mt-4 prose-h2:mb-2
               prose-h3:text-curious-blue-800 prose-h3:text-sm prose-h3:mt-3 prose-h3:mb-1
               prose-p:text-mountain-mist-800 prose-p:leading-relaxed prose-p:my-2 prose-p:text-sm
-              prose-a:text-curious-blue-600 prose-a:no-underline hover:prose-a:text-curious-blue-700 hover:prose-a:underline
+              prose-a:text-curious-blue-600 prose-a:no-underline prose-a:hover:text-curious-blue-700 prose-a:hover:underline
               prose-strong:text-mountain-mist-900 prose-strong:font-semibold
               prose-em:text-mountain-mist-700
-              prose-code:text-curious-blue-700 prose-code:bg-mountain-mist-50 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-xs prose-code:font-medium prose-code:border prose-code:border-mountain-mist-200
-              prose-blockquote:border-l-curious-blue-300 prose-blockquote:bg-curious-blue-50 prose-blockquote:text-curious-blue-900 prose-blockquote:rounded-r prose-blockquote:shadow-sm prose-blockquote:my-3 prose-blockquote:py-2 prose-blockquote:px-3
+              prose-code:text-curious-blue-700 prose-code:bg-mountain-mist-50 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-sm prose-code:text-xs prose-code:font-medium prose-code:border prose-code:border-mountain-mist-200
+              prose-blockquote:border-l-curious-blue-300 prose-blockquote:bg-curious-blue-50 prose-blockquote:text-curious-blue-900 prose-blockquote:rounded-r prose-blockquote:shadow-xs prose-blockquote:my-3 prose-blockquote:py-2 prose-blockquote:px-3
               prose-ul:my-3 prose-ol:my-3 prose-ul:pl-4 prose-ol:pl-4
               prose-li:text-mountain-mist-800 prose-li:my-0.5 prose-li:text-sm
-              prose-table:border prose-table:border-mountain-mist-300 prose-table:rounded-lg prose-table:overflow-hidden prose-table:my-3 prose-table:shadow-sm
+              prose-table:border prose-table:border-mountain-mist-300 prose-table:rounded-lg prose-table:overflow-hidden prose-table:my-3 prose-table:shadow-xs
               prose-th:bg-curious-blue-100 prose-th:text-curious-blue-900 prose-th:font-semibold prose-th:border-b prose-th:border-curious-blue-300 prose-th:px-3 prose-th:py-2 prose-th:text-xs
               prose-td:bg-white prose-td:text-mountain-mist-800 prose-td:border-b prose-td:border-mountain-mist-200 prose-td:px-3 prose-td:py-2 prose-td:text-xs
               prose-hr:border-mountain-mist-300 prose-hr:my-4
               [&_.code-block-wrapper]:my-4
-              [&_.code-block-content]:bg-mountain-mist-50 [&_.code-block-content]:text-mountain-mist-900 [&_.code-block-content]:border [&_.code-block-content]:border-mountain-mist-200 [&_.code-block-content]:rounded-b-lg [&_.code-block-content]:shadow-sm [&_.code-block-content]:p-4 [&_.code-block-content]:font-mono [&_.code-block-content]:text-sm [&_.code-block-content]:leading-relaxed [&_.code-block-content]:overflow-auto"
+              [&_.code-block-content]:bg-mountain-mist-50 [&_.code-block-content]:text-mountain-mist-900 [&_.code-block-content]:border [&_.code-block-content]:border-mountain-mist-200 [&_.code-block-content]:rounded-b-lg [&_.code-block-content]:shadow-xs [&_.code-block-content]:p-4 [&_.code-block-content]:font-mono [&_.code-block-content]:text-sm [&_.code-block-content]:leading-relaxed [&_.code-block-content]:overflow-auto"
             dangerouslySetInnerHTML={{ __html: md.render(message.content) }}
           />
         </div>

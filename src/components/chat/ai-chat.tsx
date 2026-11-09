@@ -332,7 +332,7 @@ export default function AIChat() {
                     <button
                         onClick={status === ChatStatus.STREAMING ? stopGeneration : sendMessage}
                         disabled={status === ChatStatus.STREAMING ? false : !inputValue.trim()}
-                        className="p-3 bg-curious-blue-600 hover:bg-curious-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl transition-colors flex-shrink-0"
+                        className="p-3 bg-curious-blue-600 hover:bg-curious-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl transition-colors shrink-0"
                         title={status === ChatStatus.STREAMING ? t('aiChat.stopGeneration') : t('aiChat.sendMessage')}
                     >
                         {status === ChatStatus.STREAMING ? (

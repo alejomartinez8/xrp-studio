@@ -170,7 +170,7 @@ function CreateNodeDlg({ type, parentPath, onConfirm, onCancel }: CreateNodeDlgP
                                 name="filetypeSelecion"
                                 onClick={togglePopover}
                                 disabled={parentPath === ''}
-                                className={`relative h-10 w-full cursor-default rounded-md border p-2 text-left shadow-md focus:outline-none focus:ring-2 focus:ring-curious-blue-400 dark:border-shark-600 dark:bg-shark-500 ${
+                                className={`relative h-10 w-full cursor-default rounded-md border p-2 text-left shadow-md focus:outline-hidden focus:ring-2 focus:ring-curious-blue-400 dark:border-shark-600 dark:bg-shark-500 ${
                                     parentPath === ''
                                         ? 'cursor-not-allowed border-shark-300 bg-shark-100 opacity-50'
                                         : 'bg-white border-shark-300 dark:border-shark-600 dark:bg-shark-500'
@@ -205,7 +205,7 @@ function CreateNodeDlg({ type, parentPath, onConfirm, onCancel }: CreateNodeDlgP
                             </button>
                             {isPopoverOpen && (
                                 <ul
-                                    className="ring-black absolute z-[200] mt-1 max-h-56 w-full overflow-auto rounded-md border border-gray-300 bg-mountain-mist-50 py-1 text-base shadow-xl ring-1 ring-opacity-5 focus:outline-none dark:border-shark-600 dark:bg-shark-700 sm:text-sm"
+                                    className="ring-black absolute z-200 mt-1 max-h-56 w-full overflow-auto rounded-md border border-gray-300 bg-mountain-mist-50 py-1 text-base shadow-xl ring-1 ring-opacity-5 focus:outline-hidden dark:border-shark-600 dark:bg-shark-700 sm:text-sm"
                                     role="listbox"
                                     aria-labelledby="listbox-label"
                                 >
@@ -254,7 +254,7 @@ function CreateNodeDlg({ type, parentPath, onConfirm, onCancel }: CreateNodeDlgP
                 <div className="flex flex-col items-center gap-1">
                     <input
                         ref={filenameInputRef}
-                        className={`w-full rounded border ${isFileExists ? 'border-cinnabar-800' : 'border-shark-300 dark:border-shark-600'} text-md p-2 text-mountain-mist-700 dark:bg-shark-500 dark:text-mountain-mist-200 dark:placeholder-mountain-mist-200`}
+                        className={`w-full rounded-sm border ${isFileExists ? 'border-cinnabar-800' : 'border-shark-300 dark:border-shark-600'} text-md p-2 text-mountain-mist-700 dark:bg-shark-500 dark:text-mountain-mist-200 dark:placeholder-mountain-mist-200`}
                         id="filenameId"
                         type="text"
                         placeholder={type === 'leaf' ? t('enterFilename') : t('enterFoldername')}

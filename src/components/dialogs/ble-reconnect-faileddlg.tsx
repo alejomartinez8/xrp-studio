@@ -46,7 +46,7 @@ function BleReconnectFailedDlg({
         reason === BleConnectFailure.WRONG_USB_XRP ? t('bluetoothConnection') : t('tryAgain');
 
     return (
-        <div className="flex h-auto w-[34rem] max-w-[92vw] flex-col gap-2 rounded-md border border-mountain-mist-700 p-6 shadow-md transition-all dark:border-shark-500 dark:bg-shark-950">
+        <div className="flex h-auto w-136 max-w-[92vw] flex-col gap-2 rounded-md border border-mountain-mist-700 p-6 shadow-md transition-all dark:border-shark-500 dark:bg-shark-950">
             <div className="flex flex-col items-center">
                 <h1 className="text-lg font-bold text-mountain-mist-700 dark:text-mountain-mist-300">
                     {t('alert')}

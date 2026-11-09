@@ -147,3 +147,69 @@ part 2.
 ### Upstream
 
 Possible: dependency upgrades, independent of the fork's UI.
+
+## Part 4 — Tailwind CSS 4
+
+### Problem
+
+Tailwind CSS 3.4 was a major version behind. Tailwind 4 has a new configuration format (in CSS),
+renames several utilities and changes some defaults, so the app's palette approach needed a
+review. The old approach also fixed the colours at build time, while a second theme (Dracula, in
+the backlog) needs colours that can change while the app runs.
+
+### Solution
+
+- **Tailwind 4.3** through its Vite plugin (`@tailwindcss/vite`); the PostCSS config and
+  `autoprefixer` are gone (Tailwind 4 adds browser prefixes itself).
+- **Palette as CSS theme variables.** The GitHub palette and the 6px corners moved from
+  `src/theme/github/tailwind.ts` (and `withGitHubTheme()`) to `src/theme/github/tailwind.css`, an
+  `@theme` block imported by `src/index.css`. Every colour keeps its value: `shark`,
+  `mountain-mist`, `curious-blue`, `matisse`, `chateau-green` and `cinnabar` with GitHub's values
+  and `ecstasy` with XRPWeb's. XRPWeb's own values for the other palettes, which the GitHub theme
+  always replaced, were removed from `tailwind.config.ts`. As in Tailwind 3, Tailwind's default
+  palette is left out (`--color-*: initial`), so classes such as `bg-white` still give no style;
+  Flowbite adds its own palettes (gray, red, blue, ...) as before.
+- **Ready for a runtime theme.** Tailwind 4 writes each theme value as a variable on `:root`
+  (`--color-shark-50`, ...) and the classes read the variable. A second theme (Dracula) can set
+  the same variables under a selector, for example `[data-theme="dracula"]`, and the whole app
+  changes colour without a rebuild.
+- **Same look.** Tailwind's upgrade tool renamed the utilities whose meaning moved (`rounded` to
+  `rounded-sm`, `rounded-sm` to `rounded-xs`, `shadow-sm` to `shadow-xs`, `shadow` to `shadow-sm`,
+  `outline-none` to `outline-hidden`, `flex-grow` to `grow`, arbitrary values to their new
+  names). `src/index.css` keeps the Tailwind 3 defaults that changed: borders default to gray-200,
+  placeholders are gray-400, buttons show the hand cursor and a ring without a colour is blue at
+  half opacity. The Blocks | Python selector reset its centring with `transform-none`, which no
+  longer resets a translation in Tailwind 4, so it uses `translate-none`.
+- **Flowbite React** 0.12 supports Tailwind 4: its config (`.flowbite-react/config.json`) says
+  version 4, its CSS (`flowbite-react/plugin/tailwindcss`) is imported by `src/index.css`, and its
+  class list (`.flowbite-react/class-list.json`) was regenerated with the Tailwind 4 names.
+- `tailwind.config.ts` keeps only the typography (Help and AI chat) styles, loaded with
+  `@config`. The dark mode stays class based (`@custom-variant dark`).
+- `tailwindcss-debug-screens` does not support Tailwind 4; `src/debug-screens.css` shows the same
+  breakpoint label in debug mode.
+- One visible difference by design: Tailwind 4 applies `hover:` styles only on devices that can
+  hover, so on a tablet a tapped button no longer stays highlighted.
+
+### Files
+
+- `package.json`, `package-lock.json`, `vite.config.ts`, `tailwind.config.ts`, `tsconfig.node.json`,
+  `src/index.css`, `src/theme/github/tailwind.css` (new, replaces `tailwind.ts`),
+  `src/debug-screens.css` (new), `.flowbite-react/` (config, init, class list); removed
+  `postcss.config.js` and `tailwind-plugins.d.ts`.
+- Class renames from the upgrade tool in the components (`src/components/`, `src/widgets/`,
+  `src/App.tsx`, `src/utils/constants.ts`); `src/components/navbar.tsx` (`translate-none`).
+- Visual tests (spec 007, part 1) pass with the approved images unchanged.
+
+### How to test
+
+1. Open the app in light and dark: header, side bar, folder tree, tabs, status bar and menus look
+   as before (same colours, same 6px corners).
+2. Open a blocks file: the Blocks | Python selector is centred in the top bar on a phone and sits
+   between the menus and the Connect button on a tablet or desktop.
+3. Open File > New file, the Help menu and the Trash: dialogs and lists look as before.
+4. Open Help > Changelog (typography styles): headings, code and tables keep their colours.
+
+### Upstream
+
+Possible: dependency upgrade. XRPWeb still uses Tailwind 3 and its own palette in
+`tailwind.config.ts`; sending this upstream would move that palette to an `@theme` block too.

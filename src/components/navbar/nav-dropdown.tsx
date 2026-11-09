@@ -55,7 +55,7 @@ function NavDropdown({ id, label, icon, children }: NavDropdownProps) {
             {isOpen && (
                 <div
                     role="menu"
-                    className="absolute right-0 top-12 z-[100] flex w-max min-w-56 flex-col bg-curious-blue-700 py-2 shadow-md dark:bg-mountain-mist-950"
+                    className="absolute right-0 top-12 z-100 flex w-max min-w-56 flex-col bg-curious-blue-700 py-2 shadow-md dark:bg-mountain-mist-950"
                 >
                     {children(close)}
                 </div>

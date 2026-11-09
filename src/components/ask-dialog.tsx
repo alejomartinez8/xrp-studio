@@ -13,7 +13,7 @@ function AskDialog() {
         return null;
     }
     return (
-        <div className="fixed inset-0 z-[1100] flex items-center justify-center bg-mountain-mist-500/40 p-4">
+        <div className="fixed inset-0 z-1100 flex items-center justify-center bg-mountain-mist-500/40 p-4">
             <div
                 role="alertdialog"
                 aria-modal="true"

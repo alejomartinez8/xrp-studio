@@ -308,7 +308,7 @@ function FolderTree(treeProps: TreeProps) {
                         className={`${node.isSelected ? 'visible' : 'invisible group-hover:visible'} flex flex-row items-center gap-0.5 px-1`}
                     >
                         <button
-                            className={`hover:bg-black/10 dark:hover:bg-white/15 dark:hover:text-white flex h-5 w-5 items-center justify-center rounded text-mountain-mist-600 hover:text-mountain-mist-900 dark:text-mountain-mist-400 ${isRunning ? 'pointer-events-none opacity-50' : 'pointer-events-auto opacity-100'}`}
+                            className={`hover:bg-black/10 dark:hover:bg-white/15 dark:hover:text-white flex h-5 w-5 items-center justify-center rounded-sm text-mountain-mist-600 hover:text-mountain-mist-900 dark:text-mountain-mist-400 ${isRunning ? 'pointer-events-none opacity-50' : 'pointer-events-auto opacity-100'}`}
                             onClick={() => node.edit()}
                             title={t('rename')}
                             aria-label={t('rename')}
@@ -316,7 +316,7 @@ function FolderTree(treeProps: TreeProps) {
                             <VscEdit size={14} />
                         </button>
                         <button
-                            className={`flex h-5 w-5 items-center justify-center rounded text-mountain-mist-600 hover:bg-red-500/15 hover:text-red-600 dark:text-mountain-mist-400 dark:hover:text-red-400 ${isRunning ? 'pointer-events-none opacity-50' : 'pointer-events-auto opacity-100'}`}
+                            className={`flex h-5 w-5 items-center justify-center rounded-sm text-mountain-mist-600 hover:bg-red-500/15 hover:text-red-600 dark:text-mountain-mist-400 dark:hover:text-red-400 ${isRunning ? 'pointer-events-none opacity-50' : 'pointer-events-auto opacity-100'}`}
                             onClick={() => {
                                 tree.delete(node.id);
                             }}

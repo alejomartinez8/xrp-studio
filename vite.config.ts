@@ -1,6 +1,7 @@
 import { readFile } from 'fs/promises';
 import { defineConfig, type PluginOption, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
 import importMetaUrlPlugin from '@codingame/esbuild-import-meta-url-plugin';
 import { visualizer } from "rollup-plugin-visualizer";
 import { viteStaticCopy } from 'vite-plugin-static-copy'
@@ -99,6 +100,7 @@ export default defineConfig(({ mode, command }) => {
         },
         plugins: [
             react(),
+            tailwindcss(),
             googleAuthDevPlugin(env),
             pwaPlugin(),
             ...(isDev ? [devPublicPrefixPlugin()] : []),

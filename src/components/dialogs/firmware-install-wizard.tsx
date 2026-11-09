@@ -459,7 +459,7 @@ export default function FirmwareInstallWizard({
                     className="text-white mb-4 flex items-start gap-3 rounded-lg border-l-8 border-red-700 bg-red-600 p-4 text-base font-semibold shadow-lg dark:border-red-400 dark:bg-red-700"
                 >
                     <IoWarning size={28} className="mt-0.5 shrink-0" aria-hidden="true" />
-                    <span className="break-words">{error}</span>
+                    <span className="wrap-break-word">{error}</span>
                 </div>
             )}
 
@@ -602,7 +602,7 @@ export default function FirmwareInstallWizard({
             )}
 
             {phase.kind === 'success' && (
-                <div className="bg-black/40 fixed inset-0 z-[1002] flex items-center justify-center px-4">
+                <div className="bg-black/40 fixed inset-0 z-1002 flex items-center justify-center px-4">
                     <div className="bg-white w-full max-w-md rounded-lg border border-mountain-mist-200 p-8 shadow-xl dark:border-shark-600 dark:bg-shark-900">
                         <h2 className="mb-4 text-center text-lg font-bold text-mountain-mist-900 dark:text-shark-100">
                             {t('firmwareWizardSuccessTitle')}
