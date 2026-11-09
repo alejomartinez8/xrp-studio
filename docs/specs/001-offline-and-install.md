@@ -156,8 +156,13 @@ open without internet.
 #### Updates when the app opens
 
 - A new version is downloaded in the background (the app looks for one when it opens and every
-  hour) and waits. It never changes the page being used and shows no notice, so a child does not
-  lose work and nothing moves on screen.
+  hour) and waits. It never changes the page being used, so a child does not lose work in the
+  middle of a task.
+- In a browser tab nothing is shown: the next time the page is opened or reloaded it loads the
+  latest version, as any website does.
+- In the installed app, which can stay open for days, a small **New version · Update** button
+  appears at the right of the status bar once the new version is stored. Nothing reloads until it
+  is pressed; then the open files are saved first and the app restarts with the new version.
 - When the app is opened or the page is reloaded, a stored version that is waiting takes over and
   the page loads it. The open files that save themselves are written first (autosave, spec 004).
   The page reloads once more at that moment, and never in a loop.
@@ -186,6 +191,7 @@ open without internet.
   `src/utils/tests/stubs/pwa-register.ts`.
 - Changed: `vite.config.ts`, `vitest.config.ts` (stub alias), `tsconfig.node.json`,
   `src/vite-env.d.ts`, `src/main.tsx`, `src/App.tsx`, `src/components/navbar/quick-settings.tsx`,
+  `src/components/status-bar.tsx` (Update button), tests `src/components/tests/status-bar-update.spec.tsx`,
   `index.html`, `src/utils/i18n/locales/{en,es}/{en,es}.json` (`pwa`), `package.json` and
   `package-lock.json` (dev dependency `vite-plugin-pwa`).
 
@@ -196,9 +202,13 @@ open without internet.
    project: both work.
 3. Install: the ⚙ menu shows **Install app** (Chrome on a computer or Android); installing opens
    the app in its own window and the row goes away.
-4. Update: publish a new build and use the app for a while: nothing changes and no notice
-   appears. Reload the page (or open the app again): the new version loads.
-5. On a build served over HTTPS, repeat 2 and 3 on an Android tablet.
+4. Update in a browser tab: publish a new build and use the app for a while: nothing changes and
+   no notice appears. Reload the page: the new version loads.
+5. Update in the installed app: keep it open while a new build is published. Within an hour the
+   status bar shows **New version · Update** and the page does not reload by itself. Press it: the
+   work is saved and the app restarts with the new version. Close and open the app instead: the new
+   version loads without pressing anything.
+6. On a build served over HTTPS, repeat 2 and 3 on an Android tablet.
 
 ### Upstream
 

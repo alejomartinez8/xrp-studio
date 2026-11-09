@@ -5,6 +5,8 @@ import { flushAutosave } from '@/utils/autosave';
 export type PwaState = {
     /** The browser lets the app be installed (Chrome and Edge). */
     canInstall: boolean;
+    /** A new version is stored and waits for the user to update (installed app only). */
+    updateReady: boolean;
 };
 
 /** The `beforeinstallprompt` event, not in the DOM types yet. */
@@ -24,7 +26,7 @@ const TAKE_OVER_TIMEOUT_MS = 3000;
 /** How often an open app checks for a new version. */
 const UPDATE_CHECK_MS = 60 * 60 * 1000;
 
-let state: PwaState = { canInstall: false };
+let state: PwaState = { canInstall: false, updateReady: false };
 const listeners = new Set<() => void>();
 let installPrompt: InstallPromptEvent | null = null;
 
@@ -44,6 +46,16 @@ const registerWithPlugin: Register = (options) => {
 /** Session key set when a stored version was just applied, so the page does not reload in a loop. */
 const APPLIED_KEY = 'PwaApplied';
 
+/** Display modes of an installed app (the manifest asks for full screen). */
+const INSTALLED_QUERY =
+    '(display-mode: standalone), (display-mode: fullscreen), (display-mode: minimal-ui)';
+
+/** Whether the page runs as the installed app and not in a browser tab. */
+export function isInstalledApp(): boolean {
+    const ios = (navigator as Navigator & { standalone?: boolean }).standalone === true;
+    return ios || (typeof matchMedia === 'function' && matchMedia(INSTALLED_QUERY).matches);
+}
+
 /** Time during which a second automatic update is not tried after one was applied. */
 const APPLIED_GUARD_MS = 20 * 1000;
 
@@ -54,7 +66,9 @@ const APPLIED_GUARD_MS = 20 * 1000;
  *
  * A new version is stored in the background and never changes the page being used. It is applied
  * when the app is opened or the page is reloaded: if a stored version is waiting at that moment,
- * it takes over and the page loads it. Does nothing where service workers are not available (an
+ * it takes over and the page loads it. In the installed app, which can stay open for days, a
+ * version found while it is open sets `updateReady` so the user chooses when to update; in a
+ * browser tab nothing is shown. Does nothing where service workers are not available (an
  * `http://` address on the network).
  */
 export function startPwa(register: Register = registerWithPlugin): void {
@@ -78,8 +92,23 @@ export function startPwa(register: Register = registerWithPlugin): void {
             if (registration.waiting && !justApplied()) {
                 void applyUpdate();
             }
+            if (isInstalledApp()) {
+                watchForUpdates(registration);
+            }
             setInterval(() => registration.update(), UPDATE_CHECK_MS);
         },
+    });
+}
+
+/** Sets `updateReady` when a new version finishes storing while the app is open. */
+function watchForUpdates(registration: ServiceWorkerRegistration): void {
+    registration.addEventListener('updatefound', () => {
+        const worker = registration.installing;
+        worker?.addEventListener('statechange', () => {
+            if (worker.state === 'installed' && navigator.serviceWorker.controller) {
+                setState({ updateReady: true });
+            }
+        });
     });
 }
 

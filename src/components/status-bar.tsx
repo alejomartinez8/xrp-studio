@@ -5,9 +5,11 @@ import {
     TbCloudOff,
     TbDeviceLaptop,
     TbLoader2,
+    TbRefresh,
 } from 'react-icons/tb';
 import { SyncStatus, useSyncStatus } from '@/services/drive-sync';
 import { useAutosaveStatus } from '@/utils/autosave';
+import { applyUpdate, usePwaState } from '@/utils/pwa';
 
 const SYNC_ICONS: Record<SyncStatus, typeof TbCloudCheck> = {
     off: TbDeviceLaptop,
@@ -31,12 +33,14 @@ export const STATUS_BAR_HEIGHT_PX = 28;
  * icon for where the projects are kept (a device when no account is signed in, a cloud with a
  * check when they are saved in the account, a spinner while changes are uploaded, a crossed cloud
  * without connection) and, after the first change, the automatic save text ("Saving…", "Saved",
- * or a warning when a save failed). The tooltip explains the icon in full.
+ * or a warning when a save failed). The tooltip explains the icon in full. In the installed app
+ * it also shows an Update button when a new version is stored (spec 001).
  */
 function StatusBar() {
     const { t } = useTranslation();
     const status = useSyncStatus();
     const autosave = useAutosaveStatus();
+    const { updateReady } = usePwaState();
     const failed = autosave === 'error';
     const Icon = failed ? TbAlertTriangle : SYNC_ICONS[status];
     const spinning = !failed && (status === 'syncing' || autosave === 'saving');
@@ -63,6 +67,18 @@ function StatusBar() {
                     <span data-testid="save-status">{t(`autosave.${autosave}`)}</span>
                 )}
             </span>
+            {updateReady && (
+                <button
+                    type="button"
+                    data-testid="update-app"
+                    title={t('pwa.updateHint')}
+                    onClick={() => void applyUpdate()}
+                    className="ml-auto flex items-center gap-1.5 rounded px-2 text-sm font-medium text-blue-700 dark:text-blue-300 hover:bg-black/[0.07] dark:hover:bg-white/[0.12]"
+                >
+                    <TbRefresh size={16} />
+                    {t('pwa.update')}
+                </button>
+            )}
         </footer>
     );
 }

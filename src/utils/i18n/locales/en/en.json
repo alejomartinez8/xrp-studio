@@ -345,7 +345,9 @@
         }
     },
     "pwa": {
-        "install": "Install app"
+        "install": "Install app",
+        "update": "New version · Update",
+        "updateHint": "Your work is saved first and the app restarts."
     },
     "autosave": {
         "saving": "Saving…",

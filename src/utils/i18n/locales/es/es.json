@@ -345,7 +345,9 @@
         }
     },
     "pwa": {
-        "install": "Instalar app"
+        "install": "Instalar app",
+        "update": "Nueva versión · Actualizar",
+        "updateHint": "Tu trabajo se guarda primero y la app se reinicia."
     },
     "autosave": {
         "saving": "Guardando…",

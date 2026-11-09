@@ -50,7 +50,7 @@ loaded and no client ID is requested, the AI chat is hidden, and telemetry is no
 
 All builds are also an installable app (PWA, `pwa-plugin.ts`, `src/utils/pwa.ts`): a service
 worker precaches the whole build, so the hosted app opens without internet after the first visit;
-a new version is applied when the app is opened or reloaded (spec 001).
+a new version is applied when the page is opened or reloaded, and the installed app shows an Update button in the status bar (spec 001).
 
 Files in My projects or Google Drive save themselves (`src/utils/autosave.ts`, spec 004); Save
 no longer writes them to the robot, Run does. Robot-memory files keep the manual save.
