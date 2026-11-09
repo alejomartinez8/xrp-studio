@@ -311,3 +311,45 @@ test.describe('trash', () => {
         await expect.poll(() => mock.files.has(id)).toBe(false);
     });
 });
+
+test.describe('archived projects', () => {
+    test('archives a project in Drive and brings it back', async ({ page, context }) => {
+        const mock = await setUpGoogle(context);
+        await openApp(page);
+        await signIn(page);
+        await createPythonProject(page, 'robot');
+        await expect.poll(() => mock.find('robot.py')?.id).toBeTruthy();
+        const id = mock.find('robot.py')!.id;
+        await expect(page.getByTestId('archived-open')).toHaveCount(0);
+
+        const tree = await showTree(page);
+        const item = tree.getByRole('treeitem').filter({ hasText: 'robot.py' });
+        await item.hover();
+        await item.getByRole('button', { name: 'Archive (put away without deleting)' }).click();
+        await expectInTree(page, 'robot.py', false);
+        await expect(page.getByTestId('archived-count')).toHaveText('1');
+        await expect(page.getByTestId('trash-count')).toHaveCount(0);
+        await expect.poll(() => mock.files.get(id)?.appProperties?.xrpArchived).toBe('true');
+        expect(mock.files.get(id)?.trashed).toBe(false);
+
+        await page.getByTestId('archived-open').click();
+        const panel = page.getByTestId('archived-panel');
+        await panel.getByRole('button', { name: 'Bring back' }).click();
+        await expect(panel.getByText('No archived projects.')).toBeVisible();
+        await page.keyboard.press('Escape');
+        await expectInTree(page, 'robot.py');
+        await expect.poll(() => mock.files.get(id)?.appProperties?.xrpArchived).toBeUndefined();
+    });
+
+    test('shows projects archived on another device as archived', async ({ page, context }) => {
+        const mock = await setUpGoogle(context);
+        const file = mock.addRemoteFile('old_robot.py', 'print("hi")\n');
+        file.appProperties = { xrpArchived: 'true' };
+        mock.addRemoteFile('new_robot.py', 'print("hi")\n');
+        await openApp(page);
+        await signIn(page);
+        await expectInTree(page, 'new_robot.py');
+        await expectInTree(page, 'old_robot.py', false);
+        await expect(page.getByTestId('archived-count')).toHaveText('1');
+    });
+});

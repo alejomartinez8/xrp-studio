@@ -1,42 +1,20 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { TbFolder, TbRestore, TbTrash, TbTrashX } from 'react-icons/tb';
-import { FaFileAlt } from 'react-icons/fa';
+import { TbRestore, TbTrash, TbTrashX } from 'react-icons/tb';
 import AppMgr, { EventType } from '@/managers/appmgr';
-import LocalDriveService, { TRASH_DAYS, TrashItem, FOLDER_MIME_TYPE } from '@/services/local-drive';
-import BlocklyIcon from '@/components/icons/blockly-icon';
-import MicropythonIcon from '@/components/icons/micropython-icon';
+import LocalDriveService, { TRASH_DAYS, TrashItem } from '@/services/local-drive';
+import ItemIcon from '@/components/item-icon';
 import Dialog from '@/components/dialogs/dialog';
 import { useDialogClose } from '@/components/dialogs/dialog-close';
-import { fireGoogleUserTree, getUsernameFromEmail } from '@/utils/google-utils';
+import { localDrive, refreshTree } from '@/utils/hidden-items';
 import { Constants } from '@/utils/constants';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
-
-/** The My projects service, or null while the tree shows something else. */
-function localDrive(): LocalDriveService | null {
-    const service = AppMgr.getInstance().driveService;
-    return service instanceof LocalDriveService ? service : null;
-}
-
-/** Reload the project tree after the trash changed it. */
-function refreshTree(): void {
-    void fireGoogleUserTree(
-        getUsernameFromEmail(AppMgr.getInstance().authService.userProfile.email) ?? '',
-    );
-}
 
 /** Days before an item trashed at `trashedTime` is deleted for good (at least 1). */
 export function daysLeft(trashedTime: string | undefined, now: number = Date.now()): number {
     const end = Date.parse(trashedTime ?? '') + TRASH_DAYS * DAY_MS;
     return Number.isNaN(end) ? TRASH_DAYS : Math.max(1, Math.ceil((end - now) / DAY_MS));
-}
-
-function ItemIcon({ item }: { item: TrashItem }) {
-    if (item.mimeType === FOLDER_MIME_TYPE) return <TbFolder size={18} />;
-    if (item.name.endsWith('.blocks')) return <BlocklyIcon width={18} height={18} />;
-    if (item.name.endsWith('.py')) return <MicropythonIcon width={18} height={18} />;
-    return <FaFileAlt size={16} />;
 }
 
 /** The trash dialog: restore items, delete them for good, or empty the whole trash. */
