@@ -30,6 +30,7 @@ import Login from '@/widgets/login';
 import { isLocalProjectsEnabled } from '@/utils/offline';
 import { isSignInInNavbar } from '@/utils/session';
 import StorageSwitch from '@components/storage-switch';
+import Trash from '@components/trash';
 import { openFilesOnSingleClick } from '@/utils/folder-tree-options';
 import { UserProfile } from '@/services/google-auth';
 import CreateNodeDlg from './dialogs/create-node-dlg';
@@ -302,7 +303,10 @@ function FolderTree(treeProps: TreeProps) {
                     </span>
                 </div>
                 {!treeProps.onSelected && (
-                    <div className="invisible flex flex-row items-center gap-0.5 px-1 group-hover:visible">
+                    <div
+                        data-testid="tree-item-actions"
+                        className={`${node.isSelected ? 'visible' : 'invisible group-hover:visible'} flex flex-row items-center gap-0.5 px-1`}
+                    >
                         <button
                             className={`hover:bg-black/10 dark:hover:bg-white/15 dark:hover:text-white flex h-5 w-5 items-center justify-center rounded text-mountain-mist-600 hover:text-mountain-mist-900 dark:text-mountain-mist-400 ${isRunning ? 'pointer-events-none opacity-50' : 'pointer-events-auto opacity-100'}`}
                             onClick={() => node.edit()}
@@ -361,17 +365,22 @@ function FolderTree(treeProps: TreeProps) {
         if (rootNodes.length === 0) return;
 
         const found = findNode(rootNodes, nodes[0].data.id);
+        const moveToTrash = isLogin && isLocalProjectsEnabled;
 
         /**
-         * handleOnDeleteConfirmation - handle the delete confirmation
+         * handleOnDeleteConfirmation - handle the delete confirmation. My projects items go to the
+         * trash (spec 004, part 5) without asking.
          */
         const handleOnDeleteConfirmation = async () => {
-            toggleDialog();
+            if (!moveToTrash) toggleDialog();
             if (found) {
                 if (isLogin) {
                     // delete the actual file in Google Drive
                     if (found.fileId) {
-                        await AppMgr.getInstance().driveService?.DeleteFile(found.fileId);
+                        const driveService = AppMgr.getInstance().driveService;
+                        await (moveToTrash
+                            ? driveService?.trashFile(found.fileId)
+                            : driveService?.DeleteFile(found.fileId));
                         const username = getUsernameFromEmail(
                             AppMgr.getInstance().authService.userProfile.email,
                         );
@@ -399,7 +408,9 @@ function FolderTree(treeProps: TreeProps) {
             }
         };
 
-        if (found) {
+        if (found && moveToTrash) {
+            await handleOnDeleteConfirmation();
+        } else if (found) {
             setDialogContent(
                 <ConfirmationDlg
                     acceptCallback={handleOnDeleteConfirmation}
@@ -853,6 +864,7 @@ function FolderTree(treeProps: TreeProps) {
                     {Node}
                 </Tree>
             </div>
+            {treeProps.isHeader && isLocalProjectsEnabled && isLogin && <Trash />}
             <Dialog isOpen={false} toggleDialog={toggleDialog} ref={dialogRef}>
                 {dialogContent}
             </Dialog>

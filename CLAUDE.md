@@ -53,7 +53,8 @@ worker precaches the whole build, so the hosted app opens without internet after
 a new version is applied when the page is opened or reloaded, and the installed app shows an Update button in the status bar (spec 001).
 
 Files in My projects or Google Drive save themselves (`src/utils/autosave.ts`, spec 004); Save
-no longer writes them to the robot, Run does. Robot-memory files keep the manual save.
+no longer writes them to the robot, Run does. Robot-memory files keep the manual save. Delete in
+My projects moves to the Trash (`src/components/trash.tsx`, 30 days, synced with the Drive trash).
 
 Every build opens straight into My projects (no login needed): `isLocalProjectsEnabled` in
 `src/utils/offline.ts` is always true. `src/services/local-drive.ts` implements the

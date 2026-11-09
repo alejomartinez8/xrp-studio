@@ -9,8 +9,8 @@ import type { BrowserContext, Route } from '@playwright/test';
  * - the auth backend endpoints under `/api/google-auth/` (client ID, handshake, code exchange,
  *   token refresh, sign-out), with the session kept here the way the real backend keeps it in its
  *   cookie;
- * - the Drive REST API used by the app (`about`, `files` list, create, update, trash, download and
- *   multipart upload), over an in-memory folder tree.
+ * - the Drive REST API used by the app (`about`, `files` list, create, update, trash, delete, download
+ *   and multipart upload), over an in-memory folder tree.
  *
  * Nothing here is part of the app: it only exists in the test run, so no production build can
  * contain it. It does not replace a manual test with a real Google account.
@@ -29,6 +29,7 @@ export type MockFile = {
     parents: string[];
     modifiedTime: string;
     trashed: boolean;
+    trashedTime?: string;
     content: string;
 };
 
@@ -186,8 +187,17 @@ export class MockGoogle {
     }
 
     private view(file: MockFile) {
-        const { id, name, mimeType, parents, modifiedTime } = file;
-        return { kind: 'drive#file', id, name, mimeType, parents, modifiedTime };
+        const { id, name, mimeType, parents, modifiedTime, trashed, trashedTime } = file;
+        return {
+            kind: 'drive#file',
+            id,
+            name,
+            mimeType,
+            parents,
+            modifiedTime,
+            explicitlyTrashed: trashed,
+            trashedTime,
+        };
     }
 
     private json(route: Route, body: unknown, status = 200, headers: Record<string, string> = {}) {
@@ -304,7 +314,10 @@ export class MockGoogle {
             const { metadata, file: content } = this.body(request, upload);
             const meta = JSON.parse(metadata) as Partial<MockFile>;
             if (meta.name !== undefined) file.name = meta.name;
-            if (meta.trashed !== undefined) file.trashed = meta.trashed;
+            if (meta.trashed !== undefined) {
+                file.trashed = meta.trashed;
+                file.trashedTime = meta.trashed ? new Date().toISOString() : undefined;
+            }
             if (upload) file.content = content;
             const add = url.searchParams.get('addParents');
             const remove = url.searchParams.get('removeParents');
@@ -313,6 +326,16 @@ export class MockGoogle {
             }
             file.modifiedTime = this.tick();
             return this.json(route, this.view(file));
+        }
+        if (method === 'DELETE' && id) {
+            const drop = (target: string) => {
+                this.files.delete(target);
+                [...this.files.values()]
+                    .filter((f) => f.parents.includes(target))
+                    .forEach((f) => drop(f.id));
+            };
+            drop(id);
+            return route.fulfill({ status: 204, headers: CORS });
         }
         return this.json(route, { error: { message: 'Not implemented by the mock' } }, 501);
     }
@@ -331,7 +354,8 @@ export class MockGoogle {
         const parent = /'([^']+)' in parents/.exec(q)?.[1];
         const name = /name = '([^']+)'/.exec(q)?.[1];
         const mime = /mimeType = '([^']+)'/.exec(q)?.[1];
-        return this.liveFiles()
+        const files = q.includes('trashed = false') ? this.liveFiles() : [...this.files.values()];
+        return files
             .filter((file) => !parent || file.parents.includes(parent))
             .filter((file) => !name || file.name === name)
             .filter((file) => !mime || file.mimeType === mime)

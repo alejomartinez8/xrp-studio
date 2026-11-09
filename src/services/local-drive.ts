@@ -21,9 +21,21 @@ export interface LocalDriveRecord {
     syncedParent?: string;
     /** Changed in this browser and not uploaded yet. */
     dirty?: boolean;
-    /** Deleted in this browser; kept until Drive moves its copy to the trash. */
+    /** Deleted for good in this browser; kept until sync deletes the copy in Drive. */
     deleted?: boolean;
+    /** In the trash (spec 004, part 5). Whatever is inside a trashed folder is hidden with it. */
+    trashed?: boolean;
+    /** When it went to the trash. */
+    trashedTime?: string;
+    /** Whether the copy in Drive was in the trash when this record last matched it. */
+    syncedTrashed?: boolean;
 }
+
+/** An item in the trash, with the time it went there. */
+export type TrashItem = GoogleDriveFile & { trashedTime?: string };
+
+/** Days an item stays in the trash before it is deleted for good, as in Google Drive. */
+export const TRASH_DAYS = 30;
 
 /** Persistence backend for LocalDriveService (IndexedDB in the app, memory in tests). */
 export interface LocalDriveStore {
@@ -194,9 +206,9 @@ class LocalDriveService extends GoogleDriveService {
         await this._store.delete(id);
     }
 
-    /** Records the app can see: everything but deleted ones. */
+    /** Records the app can see: everything but deleted and trashed ones. */
     private async visible(): Promise<LocalDriveRecord[]> {
-        return [...(await this.records()).values()].filter((r) => !r.deleted);
+        return [...(await this.records()).values()].filter((r) => !r.deleted && !r.trashed);
     }
 
     /** Store a change made through the app: marks it for upload and notifies the listener. */
@@ -399,8 +411,59 @@ class LocalDriveService extends GoogleDriveService {
         }
     }
 
+    /** Move a file or folder to the trash; a folder takes everything inside it along. */
     async trashFile(fileId: string): Promise<void> {
-        await this.DeleteFile(fileId);
+        const record = (await this.records()).get(fileId);
+        if (record && !record.deleted && !record.trashed) {
+            await this.change({ ...record, trashed: true, trashedTime: new Date().toISOString() });
+        }
+    }
+
+    /**
+     * What is in the trash, newest first. Items trashed more than {@link TRASH_DAYS} days ago are
+     * deleted for good first.
+     */
+    async trashItems(now: number = Date.now()): Promise<TrashItem[]> {
+        const all = [...(await this.records()).values()].filter((r) => r.trashed && !r.deleted);
+        const limit = now - TRASH_DAYS * 24 * 60 * 60 * 1000;
+        const expired = all.filter((r) => Date.parse(r.trashedTime ?? '') < limit);
+        for (const record of expired) {
+            await this.DeleteFile(record.id);
+        }
+        return all
+            .filter((r) => !expired.includes(r))
+            .sort((a, b) => (b.trashedTime ?? '').localeCompare(a.trashedTime ?? ''))
+            .map((r) => ({ ...this.toDriveFile(r), trashedTime: r.trashedTime }));
+    }
+
+    /**
+     * Take an item out of the trash. It goes back to its folder, or to the top folder when that
+     * folder is gone or in the trash too; a name already used there gets a number.
+     */
+    async restoreFile(fileId: string, rootId: string): Promise<void> {
+        const records = await this.records();
+        const record = records.get(fileId);
+        if (!record?.trashed || record.deleted) {
+            return;
+        }
+        const reachable = (id: string | undefined): boolean => {
+            const folder = id ? records.get(id) : undefined;
+            if (!folder || folder.deleted || folder.trashed) {
+                return false;
+            }
+            return !folder.parents?.length || reachable(folder.parents[0]);
+        };
+        const parent = reachable(record.parents?.[0]) ? record.parents![0] : rootId;
+        const taken = new Set(
+            (await this.visible()).filter((r) => r.parents?.includes(parent)).map((r) => r.name),
+        );
+        await this.change({
+            ...record,
+            name: freeName(record.name, taken),
+            parents: [parent],
+            trashed: false,
+            trashedTime: undefined,
+        });
     }
 
     async moveFile(fileId: string, oldParentId: string, newParentId: string): Promise<void> {
@@ -411,6 +474,20 @@ class LocalDriveService extends GoogleDriveService {
         const parents = (record.parents ?? []).filter((p) => p !== oldParentId);
         await this.change({ ...record, parents: [...parents, newParentId] });
     }
+}
+
+/** `name`, or `name (2).ext`, `name (3).ext`… when it is taken. */
+function freeName(name: string, taken: Set<string>): string {
+    if (!taken.has(name)) {
+        return name;
+    }
+    const dot = name.lastIndexOf('.');
+    const [base, ext] = dot > 0 ? [name.slice(0, dot), name.slice(dot)] : [name, ''];
+    let n = 2;
+    while (taken.has(`${base} (${n})${ext}`)) {
+        n++;
+    }
+    return `${base} (${n})${ext}`;
 }
 
 export default LocalDriveService;

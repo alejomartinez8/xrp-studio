@@ -8,12 +8,14 @@ import { Constants } from '@/utils/constants';
  * Drive sync (spec 005): projects live in the browser (LocalDriveService); while a Google account
  * is signed in, its space is copied to the XRPCode folder of that account's Drive.
  *
- * - Push: every change made in the app is uploaded a moment later. Folders go first; deleted files
- *   go to the Drive trash.
+ * - Push: every change made in the app is uploaded a moment later. Folders go first. The trash is
+ *   the Drive trash: items moved to it or restored in the app are moved there or back in Drive,
+ *   and items deleted for good are deleted in Drive too (spec 004, part 5).
  * - Pull (on sign-in, when the network comes back, when the app is shown again and every minute
  *   while it is visible): files added or changed in Drive by another device are downloaded. A
  *   file that is open in an editor is left as it is until its tab is closed. When the same file changed here and there, the newer edit
- *   wins and there is a single file, without copies.
+ *   wins and there is a single file, without copies. Items trashed or restored on another device
+ *   are trashed or restored here too, unless that changed here as well since the last sync.
  */
 
 /** What the cloud in the status bar shows. `off`: no account signed in. */
@@ -146,7 +148,9 @@ export function syncNow(options: { pull?: boolean } = {}): Promise<void> {
 
 /** Whether the open space has changes that are not in Drive yet. */
 export async function hasUnsyncedChanges(local: LocalDriveService): Promise<boolean> {
-    return (await local.allRecords()).some((r) => r.parents?.length && (r.dirty || r.deleted));
+    return (await local.allRecords()).some(
+        (r) => r.parents?.length && !(r.trashed && !r.driveId) && (r.dirty || r.deleted),
+    );
 }
 
 async function runOnce(current: Session, pull: boolean): Promise<void> {
@@ -221,6 +225,9 @@ async function pullChanges({ local, api, options }: Session, root: LocalDriveRec
             driveId: item.id,
             syncedTime: item.modifiedTime,
             syncedParent: parent,
+            trashed: item.explicitlyTrashed || undefined,
+            trashedTime: item.explicitlyTrashed ? item.trashedTime : undefined,
+            syncedTrashed: item.explicitlyTrashed || undefined,
         };
         await local.putRecord(record);
         localIdOf.set(item.id, id);
@@ -250,6 +257,9 @@ async function pullChanges({ local, api, options }: Session, root: LocalDriveRec
                 localIdOf.set(item.id, record.id);
             } else {
                 await fromRemote(item, parent, record.id);
+            }
+            if (record && !options.isOpen?.(record.id) && (await pullTrash(local, record, item))) {
+                changed = true;
             }
             if (item.mimeType === FOLDER_MIME_TYPE) {
                 queue.push(item.id);
@@ -288,6 +298,40 @@ async function pullChanges({ local, api, options }: Session, root: LocalDriveRec
     return changed;
 }
 
+/**
+ * Settle whether an item is in the trash, after the rest of the pull: a trash change made here
+ * since the last sync (seen in `before`, the record as it was) wins and is uploaded; otherwise
+ * Drive's state is taken. Returns whether that moved the item in or out of the trash here.
+ */
+async function pullTrash(
+    local: LocalDriveService,
+    before: LocalDriveRecord,
+    item: RemoteItem,
+): Promise<boolean> {
+    const record = await local.getRecord(before.id);
+    if (!record || record.deleted || before.deleted) {
+        return false;
+    }
+    const inDrive = Boolean(item.explicitlyTrashed);
+    const changedHere = Boolean(before.trashed) !== Boolean(before.syncedTrashed);
+    const trashed = changedHere ? Boolean(before.trashed) : inDrive;
+    const next: LocalDriveRecord = {
+        ...record,
+        trashed: trashed || undefined,
+        trashedTime: trashed ? (before.trashedTime ?? item.trashedTime) : undefined,
+        syncedTrashed: inDrive,
+        dirty: record.dirty || trashed !== inDrive || undefined,
+    };
+    if (
+        Boolean(next.trashed) !== Boolean(record.trashed) ||
+        next.syncedTrashed !== record.syncedTrashed ||
+        next.dirty !== record.dirty
+    ) {
+        await local.putRecord(next);
+    }
+    return Boolean(before.trashed) !== trashed;
+}
+
 /** Upload local changes: new and changed records (parents first), then deletions. */
 async function pushChanges({ local, api }: Session): Promise<void> {
     const records = await local.allRecords();
@@ -303,7 +347,13 @@ async function pushChanges({ local, api }: Session): Promise<void> {
     };
 
     const pending = records
-        .filter((r) => r.parents?.length && !r.deleted && (r.dirty || !r.driveId))
+        .filter(
+            (r) =>
+                r.parents?.length &&
+                !r.deleted &&
+                !(r.trashed && !r.driveId) &&
+                (r.dirty || !r.driveId),
+        )
         .sort((a, b) => depth(a) - depth(b));
     for (const record of pending) {
         const parent = byId.get(record.parents![0]);
@@ -322,15 +372,20 @@ async function pushChanges({ local, api }: Session): Promise<void> {
                 content: isFolder ? undefined : (record.content ?? ''),
                 addParent: moved ? parent.driveId : undefined,
                 removeParent: moved ? byId.get(record.syncedParent!)?.driveId : undefined,
+                trashed:
+                    Boolean(record.trashed) !== Boolean(record.syncedTrashed)
+                        ? Boolean(record.trashed)
+                        : undefined,
             });
         }
         const now = await local.getRecord(record.id);
         if (!now) {
-            await api.trash(item.id);
+            await api.remove(item.id);
             continue;
         }
         const unchanged =
             !now.deleted &&
+            Boolean(now.trashed) === Boolean(record.trashed) &&
             now.name === record.name &&
             now.content === record.content &&
             now.parents?.[0] === record.parents![0];
@@ -339,6 +394,7 @@ async function pushChanges({ local, api }: Session): Promise<void> {
             driveId: item.id,
             syncedTime: item.modifiedTime,
             syncedParent: parent.id,
+            syncedTrashed: Boolean(record.trashed),
             dirty: !unchanged,
         };
         await local.putRecord(synced);
@@ -347,7 +403,7 @@ async function pushChanges({ local, api }: Session): Promise<void> {
 
     for (const record of records.filter((r) => r.deleted)) {
         if (record.driveId) {
-            await api.trash(record.driveId);
+            await api.remove(record.driveId);
         }
         await local.removeRecord(record.id);
     }

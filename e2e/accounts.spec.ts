@@ -6,6 +6,7 @@ import {
     setKeepSignedIn,
     setUpGoogle,
     shortenIdleSignOut,
+    showTree,
     signIn,
     syncStatus,
     expectInTree,
@@ -271,5 +272,42 @@ test.describe('signing out', () => {
         await expect(syncStatus(page)).toHaveAttribute('title', SYNCED);
         await expectInTree(page, 'lost.py', false);
         expect(mock.find('lost.py')).toBeUndefined();
+    });
+});
+
+test.describe('trash', () => {
+    test('moves a project to the Drive trash, restores it and deletes it for good', async ({
+        page,
+        context,
+    }) => {
+        const mock = await setUpGoogle(context);
+        await openApp(page);
+        await signIn(page);
+        await createPythonProject(page, 'robot');
+        await expect.poll(() => mock.find('robot.py')?.id).toBeTruthy();
+        const id = mock.find('robot.py')!.id;
+
+        const tree = await showTree(page);
+        const item = tree.getByRole('treeitem').filter({ hasText: 'robot.py' });
+        await item.hover();
+        await item.getByRole('button', { name: 'Delete' }).click();
+        await expectInTree(page, 'robot.py', false);
+        await expect(page.getByTestId('trash-count')).toHaveText('1');
+        await expect.poll(() => mock.files.get(id)?.trashed).toBe(true);
+
+        await page.getByTestId('trash-open').click();
+        const panel = page.getByTestId('trash-panel');
+        await panel.getByRole('button', { name: 'Restore' }).click();
+        await expect(panel.getByText('The trash is empty.')).toBeVisible();
+        await expectInTree(page, 'robot.py');
+        await expect.poll(() => mock.files.get(id)?.trashed).toBe(false);
+
+        await page.keyboard.press('Escape');
+        await item.hover();
+        await item.getByRole('button', { name: 'Delete' }).click();
+        await page.getByTestId('trash-open').click();
+        await panel.getByRole('button', { name: 'Delete forever' }).click();
+        await expect(panel.getByText('The trash is empty.')).toBeVisible();
+        await expect.poll(() => mock.files.has(id)).toBe(false);
     });
 });

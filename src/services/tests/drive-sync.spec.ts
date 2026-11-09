@@ -13,6 +13,8 @@ import { Constants } from '@/utils/constants';
 
 type RemoteFile = RemoteItem & { content?: string; trashed?: boolean };
 
+const TRASH_TIME = new Date().toISOString();
+
 /** A Drive held in memory, with the requests Drive sync makes. */
 class FakeDrive {
     files = new Map<string, RemoteFile>();
@@ -31,8 +33,16 @@ class FakeDrive {
         }
     }
 
-    private view({ id, name, mimeType, parents, modifiedTime }: RemoteFile): RemoteItem {
-        return { id, name, mimeType, parents, modifiedTime };
+    private view({ id, name, mimeType, parents, modifiedTime, trashed }: RemoteFile): RemoteItem {
+        return {
+            id,
+            name,
+            mimeType,
+            parents,
+            modifiedTime,
+            explicitlyTrashed: Boolean(trashed),
+            trashedTime: trashed ? TRASH_TIME : undefined,
+        };
     }
 
     add(name: string, parent: string | undefined, content?: string): RemoteFile {
@@ -69,7 +79,7 @@ class FakeDrive {
         listFolder: async (id: string) => {
             this.check();
             return [...this.files.values()]
-                .filter((f) => f.parents?.includes(id) && !f.trashed)
+                .filter((f) => f.parents?.includes(id))
                 .map((f) => this.view(f));
         },
         create: async (name: string, mimeType: string, parent?: string, content?: string) => {
@@ -83,7 +93,13 @@ class FakeDrive {
         },
         update: async (
             id: string,
-            change: { name: string; content?: string; addParent?: string; removeParent?: string },
+            change: {
+                name: string;
+                content?: string;
+                addParent?: string;
+                removeParent?: string;
+                trashed?: boolean;
+            },
         ) => {
             this.check();
             const file = this.files.get(id)!;
@@ -93,6 +109,7 @@ class FakeDrive {
                 name: change.name,
                 parents,
                 ...(change.content !== undefined ? { content: change.content } : {}),
+                ...(change.trashed !== undefined ? { trashed: change.trashed } : {}),
             });
             return this.view(file);
         },
@@ -102,6 +119,16 @@ class FakeDrive {
             if (file) {
                 file.trashed = true;
             }
+        },
+        remove: async (id: string) => {
+            this.check();
+            const drop = (target: string) => {
+                this.files.delete(target);
+                [...this.files.values()]
+                    .filter((f) => f.parents?.includes(target))
+                    .forEach((f) => drop(f.id));
+            };
+            drop(id);
         },
         download: async (id: string) => {
             this.check();
@@ -167,17 +194,40 @@ describe('drive sync', () => {
         });
     });
 
-    it('sends deleted files to the Drive trash', async () => {
-        const file = await write('old.py', 'x');
+    it('moves trashed items to the Drive trash and back, and deletes them for good', async () => {
+        const folder = await local.createFolder('box', rootId);
+        await write('in.py', 'x', folder!.id);
         await syncNow();
-        const id = remote.find('old.py')!.id;
+        const id = remote.find('box')!.id;
 
-        await local.DeleteFile(file!.id);
+        await local.trashFile(folder!.id);
         expect(await local.getFileListByFolderId(rootId)).toHaveLength(0);
         await syncNow();
-
         expect(remote.files.get(id)!.trashed).toBe(true);
+        expect(remote.files.size).toBe(3);
+
+        await local.restoreFile(folder!.id, rootId);
+        await syncNow();
+        expect(remote.files.get(id)!.trashed).toBe(false);
+
+        await local.trashFile(folder!.id);
+        await local.DeleteFile(folder!.id);
+        await syncNow();
+        expect(remote.files.has(id)).toBe(false);
+        expect(remote.files.size).toBe(1);
         expect(await local.allRecords()).toHaveLength(1);
+    });
+
+    it('keeps items trashed before their first upload on this device only', async () => {
+        const file = await write('draft.py', 'x');
+        await local.trashFile(file!.id);
+        await syncNow();
+        expect(remote.find('draft.py')).toBeUndefined();
+        expect(await hasUnsyncedChanges(local)).toBe(false);
+
+        await local.restoreFile(file!.id, rootId);
+        await syncNow();
+        expect(remote.find('draft.py')!.content).toBe('x');
     });
 
     it('downloads files added or changed in Drive', async () => {
@@ -246,12 +296,44 @@ describe('drive sync', () => {
         expect(await local.getFileContents(file!.id)).toBe('theirs');
     });
 
-    it('removes local files deleted in Drive', async () => {
-        await write('gone.py', 'x');
+    it('follows items trashed, restored or deleted for good on another device', async () => {
+        const file = await write('gone.py', 'x');
         await syncNow();
-        remote.find('gone.py')!.trashed = true;
+        const id = remote.find('gone.py')!.id;
+
+        remote.files.get(id)!.trashed = true;
         await syncNow({ pull: true });
         expect(await local.getFileListByFolderId(rootId)).toHaveLength(0);
+        expect((await local.trashItems()).map((f) => [f.name, f.trashedTime])).toEqual([
+            ['gone.py', TRASH_TIME],
+        ]);
+        expect(remoteChanges).toBe(1);
+
+        remote.files.get(id)!.trashed = false;
+        await syncNow({ pull: true });
+        expect((await local.getFileListByFolderId(rootId)).map((f) => f.id)).toEqual([file!.id]);
+
+        remote.files.delete(id);
+        await syncNow({ pull: true });
+        expect(await local.getFileListByFolderId(rootId)).toHaveLength(0);
+        expect(await local.trashItems()).toHaveLength(0);
+    });
+
+    it('keeps a trash change made here when the file also changed in Drive', async () => {
+        const file = await write('both.py', 'base');
+        await syncNow();
+        const id = remote.find('both.py')!.id;
+
+        remote.offline = true;
+        await local.trashFile(file!.id);
+        await syncNow();
+        remote.offline = false;
+        remote.edit(id, { content: 'theirs', modifiedTime: '2999-01-01T00:00:00.000Z' });
+        await syncNow({ pull: true });
+
+        expect(remote.files.get(id)).toMatchObject({ content: 'theirs', trashed: true });
+        expect((await local.trashItems()).map((f) => f.id)).toEqual([file!.id]);
+        expect(await local.getFileContents(file!.id)).toBe('theirs');
     });
 
     /** Edit `both.py` here without connection and in Drive; `driveIsNewer` tells whose edit is later. */

@@ -374,5 +374,18 @@
         "offline": "No connection: your changes are kept on this device and will be saved to your account when the internet is back",
         "local": "Saved on this device only. Sign in to have your projects on any device."
     },
-    "statusBar": "Status bar"
+    "statusBar": "Status bar",
+    "trash": {
+        "title": "Trash",
+        "hint": "Deleted items stay here for {{days}} days, then they are deleted for good.",
+        "empty": "The trash is empty.",
+        "daysLeft_one": "{{count}} day left",
+        "daysLeft_other": "{{count}} days left",
+        "restore": "Restore",
+        "deleteForever": "Delete forever",
+        "emptyTrash": "Empty trash",
+        "confirmEmpty_one": "Delete {{count}} item for good? This cannot be undone.",
+        "confirmEmpty_other": "Delete {{count}} items for good? This cannot be undone.",
+        "emptyNow": "Delete for good"
+    }
 }

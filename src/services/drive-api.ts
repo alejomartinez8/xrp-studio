@@ -8,6 +8,9 @@ export type RemoteItem = {
     mimeType: string;
     parents?: string[];
     modifiedTime: string;
+    /** Put in the Drive trash itself (not just inside a trashed folder). */
+    explicitlyTrashed?: boolean;
+    trashedTime?: string;
 };
 
 /** A Drive request that failed; `status` is 0 when the network could not be reached. */
@@ -22,7 +25,7 @@ export class DriveApiError extends Error {
 
 const FILES_URL = 'https://www.googleapis.com/drive/v3/files';
 const UPLOAD_URL = 'https://www.googleapis.com/upload/drive/v3/files';
-const FIELDS = 'id,name,mimeType,parents,modifiedTime';
+const FIELDS = 'id,name,mimeType,parents,modifiedTime,explicitlyTrashed,trashedTime';
 
 type Fetch = typeof fetch;
 
@@ -73,13 +76,13 @@ class DriveApi extends GoogleDriveService {
         return response;
     }
 
-    /** Files and folders directly inside a folder, all pages. */
+    /** Files and folders directly inside a folder, trashed ones included, all pages. */
     async listFolder(folderId: string): Promise<RemoteItem[]> {
         const items: RemoteItem[] = [];
         let pageToken = '';
         do {
             const url = new URL(FILES_URL);
-            url.searchParams.set('q', `'${folderId}' in parents and trashed = false`);
+            url.searchParams.set('q', `'${folderId}' in parents`);
             url.searchParams.set('fields', `nextPageToken,files(${FIELDS})`);
             url.searchParams.set('pageSize', '1000');
             if (pageToken) {
@@ -135,7 +138,7 @@ class DriveApi extends GoogleDriveService {
         return (await response.json()) as RemoteItem;
     }
 
-    /** Change a file's name, content (files only) and folder. */
+    /** Change a file's name, content (files only), folder and, when given, its place in the trash. */
     async update(
         id: string,
         change: {
@@ -144,6 +147,7 @@ class DriveApi extends GoogleDriveService {
             content?: string;
             addParent?: string;
             removeParent?: string;
+            trashed?: boolean;
         },
     ): Promise<RemoteItem> {
         const params = new URLSearchParams({ fields: FIELDS });
@@ -151,7 +155,10 @@ class DriveApi extends GoogleDriveService {
             params.set('addParents', change.addParent);
             params.set('removeParents', change.removeParent);
         }
-        const metadata = { name: change.name };
+        const metadata = {
+            name: change.name,
+            ...(change.trashed !== undefined ? { trashed: change.trashed } : {}),
+        };
         if (change.mimeType === FOLDER_MIME_TYPE || change.content === undefined) {
             const response = await this.request(`${FILES_URL}/${id}?${params}`, {
                 method: 'PATCH',
@@ -176,6 +183,17 @@ class DriveApi extends GoogleDriveService {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ trashed: true }),
             });
+        } catch (error) {
+            if (!(error instanceof DriveApiError && error.status === 404)) {
+                throw error;
+            }
+        }
+    }
+
+    /** Delete for good, skipping the Drive trash. A file already gone counts as done. */
+    async remove(id: string): Promise<void> {
+        try {
+            await this.request(`${FILES_URL}/${id}`, { method: 'DELETE' });
         } catch (error) {
             if (!(error instanceof DriveApiError && error.status === 404)) {
                 throw error;

@@ -71,4 +71,19 @@ describe('DriveApi', () => {
         const missing = new DriveApi(vi.fn().mockResolvedValue(json({}, 404)));
         await expect(missing.trash('gone')).resolves.toBeUndefined();
     });
+
+    it('lists trashed items too, moves items in and out of the trash and deletes them', async () => {
+        const fetch = vi.fn().mockImplementation(() => Promise.resolve(json({ files: [] })));
+        const api = new DriveApi(fetch);
+        await api.listFolder('folder');
+        expect(new URL(fetch.mock.calls[0][0]).searchParams.get('q')).toBe("'folder' in parents");
+
+        await api.update('f1', { name: 'box', mimeType: FOLDER_MIME_TYPE, trashed: true });
+        expect(JSON.parse(fetch.mock.calls[1][1].body)).toEqual({ name: 'box', trashed: true });
+
+        await api.remove('f1');
+        expect(fetch.mock.calls[2][1].method).toBe('DELETE');
+        const missing = new DriveApi(vi.fn().mockResolvedValue(json({}, 404)));
+        await expect(missing.remove('gone')).resolves.toBeUndefined();
+    });
 });
