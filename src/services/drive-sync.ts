@@ -12,8 +12,8 @@ import { Constants } from '@/utils/constants';
  *   go to the Drive trash.
  * - Pull (on sign-in, when the network comes back, when the app is shown again and every minute
  *   while it is visible): files added or changed in Drive by another device are downloaded. A
- *   file that is open in an editor is left as it is until its tab is closed. When the same file changed here and there, both are kept: the Drive
- *   version keeps the file and this device's version becomes a copy.
+ *   file that is open in an editor is left as it is until its tab is closed. When the same file changed here and there, the newer edit
+ *   wins and there is a single file, without copies.
  */
 
 /** What the cloud in the status bar shows. `off`: no account signed in. */
@@ -32,8 +32,6 @@ export const PULL_MIN_GAP_MS = 10000;
 export const SYNC_RETRY_MS = 30000;
 
 type SyncOptions = {
-    /** Name for this device's copy when a file changed here and in Drive. */
-    conflictName: (name: string) => string;
     /** Called after a pull changed what the tree shows. */
     onRemoteChange: () => void;
     /** Whether a file is open in an editor, so a pull must not replace it under the user. */
@@ -247,16 +245,11 @@ async function pullChanges({ local, api, options }: Session, root: LocalDriveRec
             } else if (item.mimeType === FOLDER_MIME_TYPE) {
                 await local.putRecord({ ...record, syncedTime: item.modifiedTime });
                 localIdOf.set(item.id, record.id);
+            } else if (Date.parse(record.modifiedTime) > Date.parse(item.modifiedTime)) {
+                await local.putRecord({ ...record, syncedTime: item.modifiedTime });
+                localIdOf.set(item.id, record.id);
             } else {
-                await local.putRecord({
-                    ...record,
-                    name: options.conflictName(record.name),
-                    driveId: undefined,
-                    syncedTime: undefined,
-                    syncedParent: undefined,
-                    dirty: true,
-                });
-                await fromRemote(item, parent);
+                await fromRemote(item, parent, record.id);
             }
             if (item.mimeType === FOLDER_MIME_TYPE) {
                 queue.push(item.id);

@@ -1,4 +1,3 @@
-import i18n from 'i18next';
 import AppMgr from '@/managers/appmgr';
 import EditorMgr from '@/managers/editormgr';
 import { UserProfile } from '@/services/google-auth';
@@ -187,46 +186,6 @@ export async function openActiveSpace(): Promise<UserProfile | null> {
     return active?.profile ?? null;
 }
 
-/** The browser and system of this device, such as "Chrome on Android", or "" when unknown. */
-export function deviceLabel(userAgent = navigator.userAgent): string {
-    const browser = /Edg\//.test(userAgent)
-        ? 'Edge'
-        : /OPR\/|Opera/.test(userAgent)
-          ? 'Opera'
-          : /Firefox\//.test(userAgent)
-            ? 'Firefox'
-            : /Chrome\/|CriOS/.test(userAgent)
-              ? 'Chrome'
-              : /Safari\//.test(userAgent)
-                ? 'Safari'
-                : '';
-    const system = /Android/.test(userAgent)
-        ? 'Android'
-        : /iPhone|iPad|iPod/.test(userAgent)
-          ? 'iOS'
-          : /CrOS/.test(userAgent)
-            ? 'ChromeOS'
-            : /Windows/.test(userAgent)
-              ? 'Windows'
-              : /Mac OS X|Macintosh/.test(userAgent)
-                ? 'macOS'
-                : /Linux/.test(userAgent)
-                  ? 'Linux'
-                  : '';
-    return browser && system ? i18n.t('account.deviceOn', { browser, system }) : browser || system;
-}
-
-/**
- * "cuadrado.py" → "cuadrado (Chrome on Android).py": this device's copy when a file changed in
- * both, named after the device so the copy is easy to recognise (spec 005).
- */
-export function conflictName(name: string): string {
-    const dot = name.lastIndexOf('.');
-    const base = dot > 0 ? name.slice(0, dot) : name;
-    const ext = dot > 0 ? name.slice(dot) : '';
-    return `${base} (${deviceLabel() || i18n.t('account.thisDevice')})${ext}`;
-}
-
 /** Whether a file of the open space is open in an editor tab. */
 function isOpenInEditor(recordId: string): boolean {
     return [...EditorMgr.getInstance().getAllEditorSessions().values()].some(
@@ -319,7 +278,6 @@ export async function enterAccount(profile: UserProfile): Promise<void> {
     }
     const username = getUsernameFromEmail(profile.email) ?? '';
     startSync(local(), AppMgr.getInstance().remoteDriveService, {
-        conflictName,
         isOpen: isOpenInEditor,
         onRemoteChange: () => void fireGoogleUserTree(username),
     });

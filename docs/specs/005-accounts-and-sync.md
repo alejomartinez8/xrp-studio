@@ -215,8 +215,8 @@ it. Two parts:
 - Deleted files go to the account's trash, where they stay 30 days.
 - At sign-in, when the network comes back, and when a sync failed (tried again after 30 s), the
   app also brings in what changed in the account: new, changed and deleted files.
-- **Same file changed here and in the account:** both are kept. The account's version keeps the
-  name; this device's version becomes a copy, for example `square (this device).py`.
+- **Same file changed here and in the account:** there is a single file and the newer edit wins,
+  as in a shared Drive folder. No copies are made.
 - Without internet nothing is lost: changes stay on the device and are uploaded later.
 
 #### Part (b): changes from other devices while signed in
@@ -228,9 +228,10 @@ it. Two parts:
 - A file that is open in an editor tab is not replaced under the user: changes made elsewhere to
   that file are brought in once its tab is closed. (If the same open file is edited here, the
   next upload still writes this device's version, as before.)
-- The copy kept when a file changed here and in the account is named after the device, for
-  example `square (Chrome on Android).py` or `square (Edge on Windows).py`, so it is easy to
-  recognise. When the browser or system cannot be told, it says "this device".
+- Because the same file is shared by every device, a file changed on two devices at the same time
+  keeps the newer edit and the older one is replaced (Drive usually keeps earlier versions for a
+  while, which can be recovered from Drive itself). With autosave and the regular check this only
+  happens when two devices edit the same file at once, or one edits it without internet.
 
 #### Part (a): status bar
 
@@ -277,10 +278,8 @@ A thin bar at the bottom of the screen, like MakeCode's. It has one indicator: a
 - Tests: `src/services/tests/drive-sync.spec.ts`, `src/services/tests/drive-api.spec.ts`,
   `src/services/tests/local-drive.spec.ts`, `src/utils/tests/accounts.spec.ts`,
   `src/components/tests/ask-dialog.spec.tsx`, `src/components/tests/status-bar.spec.tsx`.
-- Part (b): `src/services/drive-sync.ts` (regular pull, skip open files),
-  `src/utils/accounts.ts` (`deviceLabel`, `conflictName`, open files), `account.deviceOn` in
-  `src/utils/i18n/locales/{en,es}/{en,es}.json`; tests in `drive-sync.spec.ts` and
-  `accounts.spec.ts`.
+- Part (b): `src/services/drive-sync.ts` (regular pull, skip open files, newer edit wins),
+  `src/utils/accounts.ts` (open files); tests in `drive-sync.spec.ts`.
 
 ### How to test
 
@@ -294,8 +293,7 @@ A thin bar at the bottom of the screen, like MakeCode's. It has one indicator: a
 4. Go offline and edit: crossed cloud. Back online: spinner, then check.
 5. Change a file in Drive (another device, or upload a new version), sign out and in again: the new
    version is in the app. Change the same file here while offline and in Drive, then go online:
-   both versions are there, this device's one named after the browser and system, for example
-   "… (Chrome on Android)".
+   there is a single file with the newer of the two edits, and no copies.
 6. Stay signed in on two devices. Create or edit a file on one: within a minute it shows in the
    other's file tree (or at once when switching back to the app). Open the file on the second
    device and change it on the first: the open tab keeps its content until it is closed.

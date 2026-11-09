@@ -49,7 +49,9 @@ class FakeDrive {
     }
 
     edit(id: string, change: Partial<RemoteFile>): void {
-        Object.assign(this.files.get(id)!, change, { modifiedTime: this.stamp() });
+        Object.assign(this.files.get(id)!, change, {
+            modifiedTime: change.modifiedTime ?? this.stamp(),
+        });
     }
 
     find(name: string): RemoteFile | undefined {
@@ -123,7 +125,6 @@ describe('drive sync', () => {
         openIds = new Set();
         vi.spyOn(console, 'warn').mockImplementation(() => {});
         startSync(local, remote.api as unknown as DriveApi, {
-            conflictName: (name) => name.replace('.py', ' (this device).py'),
             onRemoteChange: () => remoteChanges++,
             isOpen: (id) => openIds.has(id),
         });
@@ -205,7 +206,6 @@ describe('drive sync', () => {
             configurable: true,
         });
         startSync(local, remote.api as unknown as DriveApi, {
-            conflictName: (name) => name,
             onRemoteChange: () => remoteChanges++,
         });
         await syncNow();
@@ -254,7 +254,8 @@ describe('drive sync', () => {
         expect(await local.getFileListByFolderId(rootId)).toHaveLength(0);
     });
 
-    it('keeps both versions when a file changed here and in Drive', async () => {
+    /** Edit `both.py` here without connection and in Drive; `driveIsNewer` tells whose edit is later. */
+    async function changeInBothPlaces(driveIsNewer: boolean) {
         const file = await write('both.py', 'base');
         await syncNow();
         const id = remote.find('both.py')!.id;
@@ -268,13 +269,26 @@ describe('drive sync', () => {
         );
         await syncNow();
         remote.offline = false;
-        remote.edit(id, { content: 'theirs' });
+        remote.edit(id, {
+            content: 'theirs',
+            modifiedTime: driveIsNewer ? '2999-01-01T00:00:00.000Z' : undefined,
+        });
         await syncNow({ pull: true });
+        return { id, file: file! };
+    }
 
+    it('keeps a single file when it changed here and in Drive: the newer edit in Drive wins', async () => {
+        const { id, file } = await changeInBothPlaces(true);
         expect(remote.files.get(id)!.content).toBe('theirs');
-        expect(remote.find('both (this device).py')!.content).toBe('mine');
-        const names = (await local.getFileListByFolderId(rootId)).map((f) => f.name).sort();
-        expect(names).toEqual(['both (this device).py', 'both.py']);
+        expect(await local.getFileContents(file.id)).toBe('theirs');
+        expect((await local.getFileListByFolderId(rootId)).map((f) => f.name)).toEqual(['both.py']);
+    });
+
+    it('keeps a single file when it changed here and in Drive: the newer edit here wins', async () => {
+        const { id, file } = await changeInBothPlaces(false);
+        expect(remote.files.get(id)!.content).toBe('mine');
+        expect(await local.getFileContents(file.id)).toBe('mine');
+        expect((await local.getFileListByFolderId(rootId)).map((f) => f.name)).toEqual(['both.py']);
     });
 
     it('keeps changes made without connection and uploads them later', async () => {

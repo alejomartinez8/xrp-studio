@@ -366,9 +366,7 @@
         "unsyncedTitle": "Cambios sin guardar en tu cuenta",
         "unsyncedMessage": "Algunos cambios no se pudieron guardar en tu cuenta (¿sin internet?). Si cierras sesión ahora, se pierden. Conéctate a internet y espera a que la nube muestre un check.",
         "unsyncedStay": "Seguir con la sesión",
-        "unsyncedLeave": "Cerrar sesión igual",
-        "deviceOn": "{{browser}} en {{system}}",
-        "thisDevice": "este equipo"
+        "unsyncedLeave": "Cerrar sesión igual"
     },
     "sync": {
         "synced": "Guardado en tu cuenta",
