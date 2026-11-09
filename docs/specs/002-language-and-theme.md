@@ -333,6 +333,14 @@ would help all its languages. Depurar for Dashboard is a naming choice to agree 
   screenshot of the visual tests (spec 007, part 1) stable: it used to differ now and then on a busy
   test machine.
 
+  Before and after, phone with DriveTrain open (captured with the processor slowed down, where it
+  happened every time):
+
+  ![Blocks panel under the toolbox, before, light](images/002-phone-panel-before-light.png)
+  ![Blocks panel beside the toolbox, after, light](images/002-phone-panel-after-light.png)
+  ![Blocks panel under the toolbox, before, dark](images/002-phone-panel-before-dark.png)
+  ![Blocks panel beside the toolbox, after, dark](images/002-phone-panel-after-dark.png)
+
 ### Files
 
 - New: `src/utils/breakpoints.ts` (Tailwind's `max-md` breakpoint for code: phones).
@@ -344,6 +352,7 @@ would help all its languages. Depurar for Dashboard is a naming choice to agree 
   `index.html` (`viewport-fit=cover`), `pwa-plugin.ts` (full screen).
 - Tests: `src/components/tests/toolbox-ui.spec.ts`; the visual tests' toolbox and block editor
   images (spec 007, part 1) show the new group and the phone icon column.
+- Images: `docs/specs/images/002-phone-panel-{before,after}-{light,dark}.png`.
 
 ### How to test
 
