@@ -181,13 +181,9 @@ Top bar while the session is restored:
 
 Projects always live in the browser (My projects, spec 004). Signing in with Google only adds a
 copy in the account: the `XRPCode` folder of its Drive. Drive is the backend; the UI never names
-it. Two parts:
+it.
 
-- **(a) This change:** every build opens into My projects, accounts on a device, sync on
-  sign-in and on every change, status bar.
-- **(b) Changes from other devices while signed in:** see Part (b) below.
-
-#### Part (a): accounts on a device
+#### Accounts on a device
 
 - Every build opens straight into My projects, without signing in. Without an account the user
   sees the device's guest projects.
@@ -208,32 +204,24 @@ it. Two parts:
   are removed from the device; they come back at the next sign-in.
 - The account's name and photo show in the bar, as before.
 
-#### Part (a): sync
+#### Sync
 
 - Every change (new file or folder, edit, rename, move, delete) is uploaded 2 s after the last
-  one. Folders go before their files.
-- Deleted files go to the account's trash, where they stay 30 days.
-- At sign-in, when the network comes back, and when a sync failed (tried again after 30 s), the
-  app also brings in what changed in the account: new, changed and deleted files.
-- **Same file changed here and in the account:** there is a single file and the newer edit wins,
-  as in a shared Drive folder. No copies are made.
+  one. Folders go before their files. Deleted files go to the account's trash, where they stay 30
+  days.
+- The app also brings in what changed in the account (new, changed and deleted files) at
+  sign-in, when the network comes back, after a failed sync (tried again after 30 s), every
+  minute while the app is visible, and right away when the user comes back to it. Work done on
+  another device shows up in the file tree without signing in again.
+- A file open in an editor tab is not replaced under the user: changes made elsewhere to it are
+  brought in once its tab is closed.
+- A file changed in two places is a single file, as in a shared Drive folder: the newer edit wins
+  and no copies are made. The older edit is replaced (Drive usually keeps earlier versions for a
+  while, recoverable from Drive itself). With autosave this only happens when two devices edit the
+  same file at once, or one edits it without internet.
 - Without internet nothing is lost: changes stay on the device and are uploaded later.
 
-#### Part (b): changes from other devices while signed in
-
-- While signed in, the app also looks for changes in the account every minute while it is
-  visible, and right away when the user comes back to the app (the tab or window is shown or
-  focused again). It stops looking while hidden. Work done on another device shows up in the file
-  tree without signing in again; the cloud spins for a moment while it checks.
-- A file that is open in an editor tab is not replaced under the user: changes made elsewhere to
-  that file are brought in once its tab is closed. (If the same open file is edited here, the
-  next upload still writes this device's version, as before.)
-- Because the same file is shared by every device, a file changed on two devices at the same time
-  keeps the newer edit and the older one is replaced (Drive usually keeps earlier versions for a
-  while, which can be recovered from Drive itself). With autosave and the regular check this only
-  happens when two devices edit the same file at once, or one edits it without internet.
-
-#### Part (a): status bar
+#### Status bar
 
 A thin bar at the bottom of the screen, like MakeCode's. It has one indicator: an icon for where the projects are kept, followed by the automatic save text (spec 004: "Saving…", "Saved", "Couldn't save") once there is a change. The tooltip explains the icon:
 
@@ -247,7 +235,7 @@ A thin bar at the bottom of the screen, like MakeCode's. It has one indicator: a
 ![Status bar, synced, light](images/020-status-bar-light.png)
 ![Status bar, synced, dark](images/020-status-bar-dark.png)
 
-#### Part (a): wording
+#### Wording
 
 - The project header says "My projects" instead of "Google Drive file system".
 - Since My projects is always on, the Drive wording elsewhere uses the My projects texts, and
@@ -267,8 +255,8 @@ A thin bar at the bottom of the screen, like MakeCode's. It has one indicator: a
 
 ### Files
 
-- New: `src/services/drive-api.ts` (Drive requests), `src/services/drive-sync.ts` (push and
-  pull), `src/utils/accounts.ts` (accounts on a device), `src/utils/ask.ts` and
+- New: `src/services/drive-api.ts` (Drive requests), `src/services/drive-sync.ts` (push, pull
+  every minute, newer edit wins), `src/utils/accounts.ts` (accounts on a device), `src/utils/ask.ts` and
   `src/components/ask-dialog.tsx` (questions), `src/components/status-bar.tsx`.
 - Changed: `src/services/local-drive.ts` (one store per account, sync fields, deleted files kept
   until uploaded), `src/utils/offline.ts`, `src/managers/appmgr.ts`, `src/widgets/login.tsx`,
@@ -278,8 +266,6 @@ A thin bar at the bottom of the screen, like MakeCode's. It has one indicator: a
 - Tests: `src/services/tests/drive-sync.spec.ts`, `src/services/tests/drive-api.spec.ts`,
   `src/services/tests/local-drive.spec.ts`, `src/utils/tests/accounts.spec.ts`,
   `src/components/tests/ask-dialog.spec.tsx`, `src/components/tests/status-bar.spec.tsx`.
-- Part (b): `src/services/drive-sync.ts` (regular pull, skip open files, newer edit wins),
-  `src/utils/accounts.ts` (open files); tests in `drive-sync.spec.ts`.
 
 ### How to test
 
