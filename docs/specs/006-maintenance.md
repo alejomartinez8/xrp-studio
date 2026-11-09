@@ -1,6 +1,6 @@
 # 006 — Maintenance
 
-Dependency, lockfile and build upkeep. Pending upgrades and the backlog are in [pending-upgrades.md](pending-upgrades.md). Six parts: lockfile and minor updates, faster builds, the build and test tools, React 19, unused and replaceable dependencies, and Blockly 13.
+Dependency, lockfile and build upkeep. Pending upgrades and the backlog are in [pending-upgrades.md](pending-upgrades.md). Seven parts: lockfile and minor updates, faster builds, the build and test tools, React 19, unused and replaceable dependencies, the tab layout, and Blockly 13.
 
 ## Part 1 — Lockfile, Tailwind config and minor updates
 
@@ -243,7 +243,61 @@ measured two elements, which `usehooks-ts`, already a dependency, also does (and
 
 Possible: these packages come from XRPWeb and the change does not depend on the fork's UI.
 
-## Part 6 — Blockly 13
+## Part 6 — Tab layout: flexlayout-react 0.11
+
+### Problem
+
+The tab layout (side bar, editor tabs, terminal) used `flexlayout-react` 0.8.4, a year and three
+minor versions behind. Versions 0.9 to 0.11 rewrote parts of the library, so the upgrade was left
+for its own change.
+
+### Solution
+
+`flexlayout-react` 0.11.1, with the screens kept exactly as they were. What changed in the library
+and how the app follows:
+
+- **Theme variables are renamed.** The colours, font and sizes are now set through
+  `--flexlayout-*` variables (for example `--flexlayout-color-text`, `--flexlayout-font-family`)
+  instead of `--color-*` and `--font-family`. The GitHub theme (`src/theme/github/app.css`) sets the
+  new names; without them the layout fell back to the library's own colours and font.
+- **The splitter size moved from the layout settings to CSS** (`--flexlayout-splitter-size: 6px`).
+- **Tab bars have a minimum height** (1.5 lines). The editor tab bar with no tabs (welcome screen)
+  keeps its former, slightly lower height, so the welcome screen does not move.
+- **The side bar's own buttons are drawn outside the rotated tabs.** The Terminal toggle was
+  centred in the side bar and drawn sideways; it is placed right below the Explorer icon again, is
+  no longer turned, and its "on" mark is on the left edge like the Explorer's.
+- **`Layout` is a function component.** Code that keeps a reference to the layout uses the new
+  `ILayoutApi` type (`RefObject<ILayoutApi | null>` instead of the `RefObject<Layout | null>` of
+  part 4; adding tabs works as before). The unused upstream `EditorChooser` read the
+  model from the layout's props, which no longer exist; it reads it from the editor manager.
+- The `Model` constructor is public again in 0.11, so the editor manager tests did not need to
+  change.
+
+The automated screenshots of every main screen (desktop, tablet and phone, light and dark) match
+the ones taken before the upgrade, pixel for pixel, so no image changed.
+
+### Files
+
+- `package.json`, `package-lock.json`
+- `src/theme/github/app.css`, `src/components/side-bar-icon.tsx`, `src/components/xrplayout.tsx`,
+  `src/utils/editorUtils.ts`, `src/components/editor-chooser.tsx`
+
+### How to test
+
+1. Open the app on a computer: the Explorer is open on the left, the welcome screen shows on the
+   right, and the side bar shows the Explorer icon with the Terminal icon right below it.
+2. Click the Terminal icon: the terminal opens under the editor and the icon gets a coloured mark
+   on its left edge; click it again: the terminal hides.
+3. Open an example: the block editor tab shows with its name; open the Dashboard from the
+   settings menu: it opens as a second tab. Drag the splitter between the editor and the terminal.
+4. Switch to the dark theme: the panels, tabs and side bar use the dark colours.
+5. Open the app on a phone: the Explorer starts closed; tap its icon to open it.
+
+### Upstream
+
+Possible: a dependency upgrade. XRPWeb would need the same theme variable renames in its own CSS.
+
+## Part 7 — Blockly 13
 
 ### Problem
 
