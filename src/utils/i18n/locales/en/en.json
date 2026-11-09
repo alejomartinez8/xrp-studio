@@ -27,6 +27,8 @@
     "makePythonCopy": "Make an editable Python copy",
     "increaseFont": "Increase Font",
     "decreaseFont": "Decrease Font",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
     "userGuide": "User Guide",
     "apiReference": "API Reference",
     "curriculum": "Curriculum",

@@ -27,6 +27,8 @@
     "makePythonCopy": "Hacer una copia de Python para editar",
     "increaseFont": "Aumentar Fuente",
     "decreaseFont": "Disminuir Fuente",
+    "zoomIn": "Acercar",
+    "zoomOut": "Alejar",
     "userGuide": "Guía del Usuario",
     "apiReference": "Referencia de API",
     "curriculum": "Currículo",

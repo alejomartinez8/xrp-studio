@@ -19,6 +19,12 @@ const emitter = mitt<{ change: ViewChange }>();
  */
 export const showPythonDialogs = false;
 
+/**
+ * Whether the upstream View menu entries "Increase Font" and "Decrease Font" are shown. The zoom
+ * buttons in the corner of the Python editor replace them, like the zoom buttons of the blocks.
+ */
+export const showFontMenu = false;
+
 /** The view of the given tab; blocks until the user picks Python. */
 export function getEditorView(tabId: string): EditorView {
     return views.get(tabId) ?? 'blocks';

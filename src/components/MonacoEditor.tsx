@@ -22,6 +22,7 @@ import { Constants } from '@/utils/constants';
 import { useTranslation } from 'react-i18next';
 import { whenReady } from '@codingame/monaco-vscode-python-default-extension';
 import { scheduleAutosave } from '@/utils/autosave';
+import ZoomControls from '@components/python/zoom-controls';
 
 const languageId = 'python';
 
@@ -389,8 +390,9 @@ const MonacoEditor = ({
 
     return (
         <>
-            <div ref={containerRef} className='w-full h-full'>
+            <div ref={containerRef} className='relative w-full h-full'>
                 <div ref={editorRef} style={{ width: childWidth, height: childHeight }} className={className} />
+                <ZoomControls />
             </div>
         </>
     );
