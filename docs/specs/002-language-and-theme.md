@@ -276,9 +276,10 @@ simpler measures for kids are a separate change.
 
 ### Upstream
 
-Possible: XRPWeb has the same Spanish file (Part 1 was sent as
-[Open-STEM/XRPWeb#337](https://github.com/Open-STEM/XRPWeb/pull/337)), and the sentence templates
-would help all its languages. Depurar for Dashboard is a naming choice to agree with them.
+Sent together with Part 1 in [Open-STEM/XRPWeb#337](https://github.com/Open-STEM/XRPWeb/pull/337):
+the sentence templates (registered from `applyBlocklyLocale`, since XRPWeb has no toolbox UI file),
+the Spanish block texts, help texts and categories, and Depurar for Dashboard, a naming choice to
+agree with them. The Motors group, search and Advanced group stay in the fork.
 
 ## Part 5 — Toolbox on tablets and phones
 
