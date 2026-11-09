@@ -4,6 +4,7 @@ import {
     addSearch,
     groupAdvancedCategories,
     groupMotorCategories,
+    phoneToolbox,
 } from '@components/blockly/toolbox-ui';
 
 const category = (categoryId: string) => ({ kind: 'CATEGORY', categoryId, contents: [] });
@@ -56,6 +57,57 @@ describe('Kid-friendly toolbox', () => {
     it('leaves the toolbox alone when there are no motor categories', () => {
         const basic = { contents: [category('logic')] };
         expect(groupMotorCategories(basic, 'Motors')).toBe(basic);
+    });
+
+    it('turns the toolbox into a column of icons on phones', () => {
+        const block = { kind: 'BLOCK', type: 'xrp_seteffort' };
+        const leaf = (categoryId: string, name: string) => ({
+            kind: 'CATEGORY',
+            categoryId,
+            name,
+            contents: [block],
+        });
+        const themed = {
+            contents: [
+                { kind: 'search', name: 'Search', contents: [] },
+                {
+                    kind: 'CATEGORY',
+                    categoryId: 'motors',
+                    name: 'Motors',
+                    contents: [leaf('driveTrain', 'DriveTrain'), leaf('servos', 'Servos')],
+                },
+                {
+                    kind: 'CATEGORY',
+                    categoryId: 'sensors',
+                    name: 'Sensors',
+                    contents: [leaf('gyro', 'Gyro')],
+                },
+                leaf('logic', 'Logic'),
+                { kind: 'SEP' },
+                {
+                    kind: 'CATEGORY',
+                    categoryId: 'advanced',
+                    name: 'Advanced',
+                    contents: [leaf('text', 'Text')],
+                },
+            ],
+        };
+        const phone = phoneToolbox(themed);
+        expect(phone.contents.map((item) => item.categoryId ?? item.kind)).toEqual([
+            'driveTrain',
+            'servos',
+            'gyro',
+            'logic',
+            'SEP',
+            'advanced',
+        ]);
+        expect(phone.contents[0]).toMatchObject({
+            contents: [{ kind: 'label', text: 'DriveTrain' }, block],
+        });
+        expect(phone.contents[5]).toMatchObject({
+            iconOnly: 'true',
+            contents: [{ categoryId: 'text', contents: [{ kind: 'label', text: 'Text' }, block] }],
+        });
     });
 
     it('adds the search field first', () => {

@@ -1,6 +1,6 @@
 # 002 — Language and theme
 
-Spanish first, and a friendly look in light and dark. Five parts: Spanish translation fixes, the friendly theme and block editor, theme switch fixes, plain Spanish for the blocks, and the Motors group.
+Spanish first, and a friendly look in light and dark. Five parts: Spanish translation fixes, the friendly theme and block editor, theme switch fixes, plain Spanish for the blocks, and the toolbox on tablets and phones.
 
 
 ## Part 1 — Spanish translation fixes
@@ -280,13 +280,17 @@ Possible: XRPWeb has the same Spanish file (Part 1 was sent as
 [Open-STEM/XRPWeb#337](https://github.com/Open-STEM/XRPWeb/pull/337)), and the sentence templates
 would help all its languages. Depurar for Dashboard is a naming choice to agree with them.
 
-## Part 5 — Motors group
+## Part 5 — Toolbox on tablets and phones
 
 ### Problem
 
-The toolbox started with three motor categories at the top level (DriveTrain, Individual Motors,
-Servos), next to the Sensors group that already gathered its four categories. The list was long,
-and the categories that move the robot were not presented as one family.
+- The toolbox started with three motor categories at the top level (DriveTrain, Individual
+  Motors, Servos), next to the Sensors group that already gathered its four categories. The list
+  was long, and the categories that move the robot were not presented as one family.
+- On a phone the toolbox showed every category name in tiny wrapped text, and still took a good
+  part of the narrow screen.
+- Installed on an Android tablet, the app kept the system's navigation bar at the bottom, so the
+  block editor had less room than it could.
 
 ### Solution
 
@@ -295,6 +299,16 @@ and the categories that move the robot were not presented as one family.
   like Sensors. The group is open by default so the motion blocks stay one tap away. Grouping
   happens when the toolbox is built, like the Advanced group (Part 2): blocks, saved files and the
   Python they produce do not change.
+- **Phone toolbox:** on screens narrower than 768 px the toolbox is a column of icons, like other
+  block editors on phones. The open groups give way to their categories (DriveTrain, Individual
+  Motors, Servos, Distance, Reflectance, Gyro, Accelerometer), each with its own icon and colour;
+  Advanced stays a collapsed group, shown as "•••". Names are hidden, so each panel of blocks starts
+  with its category name. The search field is left out (it does not fit). Turning a phone, or
+  resizing a window, across 768 px rebuilds the toolbox in the other layout. Tablets and computers
+  keep the toolbox with names.
+- **Installed app in full screen:** the installed app opens in full screen, without the system bars
+  of Android tablets and phones; a swipe from the edge shows them for a moment. Computers, which do
+  not offer full screen for installed apps, keep a normal app window.
 
 ### Fixes found on the way
 
@@ -311,11 +325,13 @@ and the categories that move the robot were not presented as one family.
 
 ### Files
 
-- Changed: `src/components/blockly/toolbox-ui.ts` (`groupMotorCategories`; icons drawn at once),
+- Changed: `src/components/blockly/toolbox-ui.ts` (`groupMotorCategories`, `phoneToolbox`; icons
+  drawn at once), `src/components/blockly/toolbox-ui.css` (phone icon column, panel title),
+  `src/components/blockly.tsx` (rebuilds the toolbox when the screen crosses the phone width),
   `src/theme/github/blocks.ts` (group colour), `src/utils/i18n/locales/{en,es}/blockly.json`
-  (group name), `src/index.css` (app box sized by the visible area).
+  (group name), `src/index.css` (app box sized by the visible area), `pwa-plugin.ts` (full screen).
 - Tests: `src/components/tests/toolbox-ui.spec.ts`; the visual tests' toolbox and block editor
-  images (spec 007, part 1) show the new group.
+  images (spec 007, part 1) show the new group and the phone icon column.
 
 ### How to test
 
@@ -323,9 +339,16 @@ and the categories that move the robot were not presented as one family.
    Motors and Servos, then the Sensors group.
 2. Collapse and expand Motors; open each of its categories: same blocks as before.
 3. On an Android tablet, with the address bar visible, open Individual Motors: every block can be
-   reached, down to "Reset encoder", and the bottom of the app is not under the bar.
+   reached, down to "Reset encoder", and the bottom of the app is not under the bar. With a short
+   screen, slide the toolbox up with a finger: it scrolls down to Advanced.
+4. On a phone (or a window narrower than 768 px), open a blocks file: the toolbox is a column of
+   icons, with no names and no search field. Tap the ruler icon: the panel starts with "Distance"
+   and shows its block. Tap "•••": the advanced categories appear below it as icons.
+5. Turn the phone sideways (wider than 768 px): the toolbox comes back with names and groups.
+6. Install the app on an Android tablet and open it: it fills the whole screen, without the
+   navigation bar at the bottom; swiping up from the bottom edge shows the bar for a moment.
 
 ### Upstream
 
-The grouping is fork-specific (kids toolbox). The tablet fix is in fork CSS, but XRPWeb's own
+The grouping, the phone toolbox and the full screen app are fork-specific (kids UI). The tablet fix is in fork CSS, but XRPWeb's own
 `100vh` has the same problem on Android tablets and could take the same idea.

@@ -26,7 +26,7 @@ export function pwaPlugin(): PluginOption {
             description: 'Program the XRP robot with blocks or Python, online or offline.',
             start_url: './',
             scope: './',
-            display: 'standalone',
+            display: 'fullscreen',
             background_color: HEADER_COLOR,
             theme_color: HEADER_COLOR,
             icons: [

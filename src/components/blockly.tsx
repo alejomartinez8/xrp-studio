@@ -13,7 +13,7 @@ import i18n from '@/utils/i18n';
 import moment from 'moment';
 import { blockThemeOptions } from '@components/blockly/block-theme';
 import { activeBlockTheme } from '@/theme';
-import { kidFriendlyToolbox, registerToolboxUi } from '@components/blockly/toolbox-ui';
+import { kidFriendlyToolbox, PHONE_QUERY, registerToolboxUi } from '@components/blockly/toolbox-ui';
 import { parseBlocksJson } from '@components/blockly/blocks-content';
 import { scheduleAutosave } from '@/utils/autosave';
 
@@ -504,6 +504,13 @@ function BlocklyEditor({ tabId, tabName }: BlocklyEditorProps) {
             }
         };
     }, [saveEditor, tabId, restoreViewportForTab, persistViewport, evaluateEditBlocked]);
+
+    useEffect(() => {
+        const phone = window.matchMedia?.(PHONE_QUERY);
+        const rebuildToolbox = () => setToolboxRevision((prev) => prev + 1);
+        phone?.addEventListener('change', rebuildToolbox);
+        return () => phone?.removeEventListener('change', rebuildToolbox);
+    }, []);
 
     useEffect(() => {
         const handleLanguageChanged = (lang: string) => {

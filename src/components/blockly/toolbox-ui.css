@@ -68,37 +68,34 @@ div#toolbox-search-input.blocklyToolboxCategory {
     background-color: transparent !important;
 }
 
-/** Phones: a small toolbox (about the size of the desktop one seen on a phone) leaves the room to the blocks. */
+/** Phones: a column of icons (spec 002, part 5); the category name heads its panel of blocks. */
 @media (max-width: 767px) {
     .blocklyToolboxCategory {
-        min-height: 26px;
+        min-height: 44px;
+        padding-left: 0 !important;
     }
 
     .blocklyToolboxCategoryLabel {
-        font-size: 11px;
-        max-width: 58px;
-        line-height: 1.15;
-        white-space: normal;
+        display: none;
     }
 
     .xrpToolboxIcon {
-        margin: 0 4px 0 2px;
+        margin: 0 10px 0 6px;
     }
 
     .xrpToolboxIcon svg {
-        width: 14px;
-        height: 14px;
+        width: 22px;
+        height: 22px;
     }
+}
 
-    #toolbox-search-input input {
-        width: 80px;
-        min-width: 0;
-        padding: 3px 8px;
-        font-size: 11px;
-    }
+/** Category name at the top of a phone panel of blocks. */
+.xrpFlyoutTitle .blocklyFlyoutLabelText {
+    font-size: 16px;
+    font-weight: 700;
+    fill: #1f2328;
+}
 
-    .blocklyToolboxCategoryIconClosed,
-    .blocklyToolboxCategoryIconOpen {
-        transform: scale(0.7);
-    }
+.dark .xrpFlyoutTitle .blocklyFlyoutLabelText {
+    fill: #e6edf3;
 }

@@ -171,8 +171,8 @@ open without internet.
 
 #### Install the app
 
-- Manifest: name "XRP Studio", standalone, theme colour `#24292f`, icons in `public/icons/`
-  (192, 512, maskable 512 and the Apple touch icon). `index.html` links the Apple icon and the
+- Manifest: name "XRP Studio", full screen (spec 002, part 5; it was standalone), theme colour
+  `#24292f`, icons in `public/icons/` (192, 512, maskable 512 and the Apple touch icon). `index.html` links the Apple icon and the
   theme colour.
 - **Install app** appears in the ⚙ menu (`src/components/navbar/quick-settings.tsx`) only while
   the browser offers it (`beforeinstallprompt`), and goes away once installed.
