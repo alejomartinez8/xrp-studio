@@ -2,15 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { VscCopy } from 'react-icons/vsc';
 import { makePythonCopy } from '@components/blockly/python-copy';
-import { highlightPython, PythonTokenType } from '@/utils/python-highlight';
-
-const TOKEN_CLASS: Record<PythonTokenType, string> = {
-    keyword: 'font-semibold text-curious-blue-800 dark:text-curious-blue-300',
-    string: 'text-chateau-green-800 dark:text-chateau-green-400',
-    number: 'text-ecstasy-700 dark:text-ecstasy-400',
-    comment: 'italic text-mountain-mist-500 dark:text-mountain-mist-400',
-    text: '',
-};
+import { highlightPython, PYTHON_TOKEN_CLASS as TOKEN_CLASS } from '@/utils/python-highlight';
 
 type PythonViewProps = {
     /** The editor tab of the blocks file. */

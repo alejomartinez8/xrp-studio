@@ -559,8 +559,8 @@ the middle of its top bar.
 - The Python view uses a small built-in highlighter instead of the full Python editor, so it opens
   at once, also offline, without downloading the Python editor.
 
-Later (backlog): an editable Python mirror of the blocks and a toolbox of code snippets with
-explanations, as MakeCode's Python editor has.
+Later: a toolbox of code snippets with explanations in Python files (part 7) and, in the backlog,
+an editable Python mirror of the blocks, as MakeCode's Python editor has.
 
 | | Light | Dark |
 | --- | --- | --- |
@@ -606,3 +606,91 @@ explanations, as MakeCode's Python editor has.
 
 Fork-only (kids UI). XRPWeb keeps its View menu entries; the selector could be offered to XRPWeb
 later.
+
+## Part 7 — Code snippets in the Python editor
+
+### Problem
+
+A child who moves from blocks to a Python file meets an empty page. The blocks toolbox showed
+what the robot can do (drive, turn, read the distance sensor); in Python they have to know the
+XRPLib names, the imports and the setup lines by heart. MakeCode's Python editor keeps its
+toolbox next to the code: each entry is a line of code that can be clicked or dragged into the
+program.
+
+### Solution
+
+- **Snippet panel:** a Python file shows a "Code" panel on the left of the editor. It lists code
+  snippets grouped like the block toolbox: DriveTrain, Individual Motors, Servos, Sensors, Control
+  Board, Logic, Loops, Math, Text, Variables and Functions, each with the colour and icon of its
+  block category. A category opens with a click; one is open at a time.
+- **Each snippet** shows its code, coloured as in the Python view, and a short explanation for
+  children ("Drives straight for 20 cm at half power. Use a negative distance to go backwards.").
+  The texts are in English and Spanish; the code stays Python.
+- **Click or drag to insert:** a click puts the snippet at the cursor; dragging it drops it where
+  it is released. On an empty line the code takes that line's indentation (or one level more
+  after a line that ends with `:`); a statement on a line holding only `pass` (the placeholder of
+  the `if`, `while` and `def` snippets) takes its place; on another line with code, a statement goes on a new line below it
+  and a value (such as `rangefinder.distance()`) goes right at the cursor, so it can complete an
+  `if` or a `print(...)`. One Undo removes the whole insertion.
+- **Imports and setup are added for you:** a robot snippet needs its import and its setup line
+  (`from XRPLib.differential_drive import DifferentialDrive`,
+  `differentialDrive = DifferentialDrive.get_default_differential_drive()`). Any of those lines
+  missing from the file is added at the top, imports first, as the blocks do. Lines already in
+  the file are not repeated.
+- **Same code as the blocks:** the robot snippets are not written by hand. They are made from the
+  blocks of the toolbox, with their default values, by the same code that turns blocks into
+  Python, so a snippet is exactly what the matching block would write. The plain Python ones
+  (`if`, `while True`, `for`, `print`, variables, functions) are written in the app.
+- **Collapsible:** a button at the top of the panel hides it and gives the whole width to the
+  code; a "Code" button on the left edge of the editor brings it back. On computers and tablets
+  the panel starts open. On phones (below 768 px) it starts closed and opens as a drawer over the
+  code, which closes after a snippet is inserted.
+- The panel only adds text to the file: the file saves itself as usual, and Run sends it to the
+  robot as before.
+
+| | Light | Dark |
+| --- | --- | --- |
+| Computer | ![Snippets, light](images/python-snippets-desktop-light.png) | ![Snippets, dark](images/python-snippets-desktop-dark.png) |
+| Phone (drawer) | ![Snippets on a phone, light](images/python-snippets-phone-light.png) | ![Snippets on a phone, dark](images/python-snippets-phone-dark.png) |
+
+Later (backlog): an editable Python mirror of the blocks, where changing the Python changes the
+blocks (MakeCode's two-way switch). That needs a Python-to-blocks converter and stays a later
+part.
+
+### Files
+
+- New: `src/components/python/snippet-panel.tsx` (the panel),
+  `src/components/python/snippets.ts` (the snippet list, made from the toolbox blocks with the
+  Python generator), `src/components/python/snippet-insert.ts` (where the code and the missing
+  imports and setup lines go).
+- Changed: `src/components/MonacoEditor.tsx` (shows the panel and inserts into the editor),
+  `src/components/blockly/toolbox-ui.ts` (shares the category icons),
+  `src/utils/python-highlight.ts` (shares the code colours of the Python view), en/es texts
+  (`pythonSnippets`).
+- Unit tests: `src/components/python/tests/snippets.spec.ts`,
+  `src/components/python/tests/snippet-insert.spec.ts`,
+  `src/components/python/tests/snippet-panel.spec.tsx`; browser test
+  `e2e/python-snippets.spec.ts`.
+
+### How to test
+
+1. Open a Python file on a computer: the Code panel is on the left of the editor, with the
+   categories in the colours and icons of the blocks.
+2. Open DriveTrain and click the "straight" snippet in an empty file: the file gets the
+   DifferentialDrive import, the setup line, an empty line and `differentialDrive.straight(20, 0.5)`.
+   Click "turn": only `differentialDrive.turn(90, 0.5)` is added, on the next line.
+3. Insert `while True:` from Loops, put the cursor on the `pass` line and click "Wait": it takes
+   the place of `pass`, inside the loop. Press Undo once: `pass` is back.
+4. Type `print(` and click Sensors > distance with the cursor after the bracket: the expression
+   goes there, and the Rangefinder import and setup lines are added at the top.
+5. Drag a snippet onto a line of the code: it is inserted where it was dropped.
+6. Hide the panel with its button and bring it back with "Code" on the left edge.
+7. Make the window phone-sized and reload: the panel is closed; "Code" opens it over the code, and
+   it closes after a snippet is inserted.
+8. Switch the language to Spanish: the categories and explanations are in Spanish.
+9. Run the program on a robot: the inserted code drives the robot as the matching blocks do
+   (needs a real robot).
+
+### Upstream
+
+Fork-only (kids UI). XRPWeb's Python editor has no toolbox; the panel could be offered later.

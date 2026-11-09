@@ -19,7 +19,7 @@ should be its own change, tested in the app.
 | Feature | Notes |
 | --- | --- |
 | Test My projects with a robot | Run from My projects, Robot memory switch, disconnect. See spec 004. |
-| Hybrid Python editor | The Blocks \| Python selector is done (spec 003, part 6) with read-only Python. Next, as in MakeCode: an editable Python mirror of the blocks and a toolbox of code snippets with explanations. |
+| Hybrid Python editor | The Blocks \| Python selector is done (spec 003, part 6) with read-only Python, and Python files have a panel of code snippets with explanations (spec 003, part 7). Next, as in MakeCode: an editable Python mirror of the blocks, where changing the Python changes the blocks. |
 | Archived projects | The trash is done (spec 004, part 5). Archiving a project (hide it without deleting) is still open. |
 | Dracula theme | Second app theme; needs runtime CSS variables instead of build-time Tailwind colours. |
 | Configurable Drive folder name | `Constants.XRPCODE` is fixed to `XRPCode`. With its own OAuth client the fork only sees the folders it created, so users of both apps get two `XRPCode` folders. A build setting (default `XRPCode`) would avoid renaming it for XRPWeb users; the hardcoded `'/XRPCode/'` paths in `folder-tree.tsx`, `newfiledlg.tsx` and `filesaveasdlg.tsx` would need to use the constant first (they map Drive paths to `/gusers/<user>/` on the robot, so test Run with a robot). |
