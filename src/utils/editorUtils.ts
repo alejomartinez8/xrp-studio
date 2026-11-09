@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
  * @param data - file data
  * @param layoutref - reference to the layout
  */
-export function CreateEditorTab(data: NewFileData, layoutref: React.RefObject<ILayoutApi>) : string {
+export function CreateEditorTab(data: NewFileData, layoutref: React.RefObject<ILayoutApi | null>) : string {
     switch (data.filetype) {
         case FileType.BLOCKLY:
             {

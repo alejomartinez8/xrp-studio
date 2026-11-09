@@ -119,7 +119,7 @@ const layout_json: IJsonModel = {
 const model = Model.fromJson(layout_json);
 syncShellVisibility(model);
 EditorMgr.getInstance().setLayoutModel(model);
-let layoutRef: React.RefObject<ILayoutApi> = {
+let layoutRef: React.RefObject<ILayoutApi | null> = {
     current: null,
 };
 

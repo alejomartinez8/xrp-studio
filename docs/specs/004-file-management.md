@@ -476,3 +476,71 @@ trash, but they could only be restored from Drive, which children do not use.
 Fork-only for now: it depends on My projects. The Drive part (trash and restore follow the Drive
 trash) could help XRPWeb's Google Drive mode, which today trashes in Drive without a way back in
 the app.
+
+## Part 6 — Archived projects
+
+### Problem
+
+Children keep every project they ever made, so the Explorer grows long and the project they want
+is hard to find. Deleting old projects to tidy up is risky: after 30 days in the trash they are
+gone for good.
+
+### Solution
+
+- **Archive button.** In My projects, each project at the top of the tree (a file or folder
+  directly inside `XRPCode`) has an archive-box icon next to Rename and Delete ("Archive (put away
+  without deleting)"). Archiving hides the project from the Explorer and from the recent projects
+  on the welcome screen at once, with no dialog. Nothing is deleted, and it never expires. Its
+  editor tab closes.
+- **Archived row.** While there are archived projects, an "Archived" row above the Trash row at
+  the bottom of the Explorer shows how many. It opens the "Archived projects" dialog, newest
+  first, where **Bring back** puts a project back in the tree. If the name is taken by then, it
+  gets a number, for example `maze (2).py`, as Restore does in the trash.
+- **Sync with the account (spec 005).** With Google sign-in, an archived project stays in the
+  account's `XRPCode` folder in Drive, marked as archived with a hidden app property
+  (`xrpArchived`). Archiving or bringing back here does the same in the account; projects archived
+  or brought back on another device follow here at the next sync. If the same project was
+  archived or brought back here since the last sync, this device's choice wins, as with the
+  trash. A project archived before it was ever uploaded is uploaded already archived.
+- Files inside an archived folder are hidden with it and come back with it. An archived project
+  that goes to the trash (for example inside a trashed folder) leaves the Archived list.
+
+![Explorer with the Archive button and the Archived row, light](images/archived-explorer-light.png)
+![Explorer with the Archive button and the Archived row, dark](images/archived-explorer-dark.png)
+![Archived projects dialog, light](images/archived-dialog-light.png)
+![Archived projects dialog, dark](images/archived-dialog-dark.png)
+
+### Files
+
+- New: `src/components/archived.tsx` (Archived row and dialog), tests in
+  `src/components/tests/archived.spec.tsx`.
+- New: `src/components/item-icon.tsx` and `src/utils/hidden-items.ts`, shared by the Trash and
+  Archived rows (moved out of `src/components/trash.tsx`).
+- `src/services/local-drive.ts`: `archiveFile`, `archivedItems`, `unarchiveFile`; archived
+  projects are hidden from the tree. Tests in `src/services/tests/local-drive.spec.ts`.
+- `src/services/drive-sync.ts` and `src/services/drive-api.ts`: the archived state in both
+  directions, as an app property in Drive. Tests in `src/services/tests/drive-sync.spec.ts` and
+  `src/services/tests/drive-api.spec.ts`.
+- `src/components/folder-tree.tsx` (upstream, small hook): the Archive button and the Archived row.
+- `src/utils/i18n/locales/{en,es}/{en,es}.json` (`archived`).
+- Browser tests: `e2e/accounts.spec.ts` (archive and bring back with a signed-in account; a project
+  archived on another device), with app properties in `e2e/support/google-mock.ts`.
+
+### How to test
+
+1. In My projects, create two projects. Hover (or tap) one in the tree and press the archive-box
+   icon: it leaves the tree and the welcome screen, and an "Archived 1" row appears above Trash.
+2. Open Archived: the project is listed. Bring back: it is in the tree again, with its content,
+   and the Archived row goes away.
+3. Archive `maze.py`, create a new `maze.py`, bring the first one back: it comes back as
+   `maze (2).py`.
+4. Reload the app: archived projects stay archived.
+5. With Google sign-in: archive a project; it stays in the `XRPCode` folder in Drive. On a second
+   device with the same account, it shows under Archived, not in the tree. Bring it back there:
+   here it is back in the tree at the next sync (within a minute, or when coming back to the app).
+6. Switch to Robot memory: there is no Archive button and no Archived row.
+
+### Upstream
+
+Fork-only: it depends on My projects. The app property keeps archived projects in the same Drive
+folder, so XRPWeb with the same folder still sees them as normal files.

@@ -5,7 +5,7 @@ import { Actions, IJsonTabNode, ILayoutApi } from 'flexlayout-react';
 import EditorMgr from '@/managers/editormgr';
 
 type EditorChooserProps = {
-    flref: React.RefObject<ILayoutApi>;
+    flref: React.RefObject<ILayoutApi | null>;
 };
 
 /**

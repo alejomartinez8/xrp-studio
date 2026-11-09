@@ -29,10 +29,19 @@ export interface LocalDriveRecord {
     trashedTime?: string;
     /** Whether the copy in Drive was in the trash when this record last matched it. */
     syncedTrashed?: boolean;
+    /** Archived: hidden from the tree without being deleted (spec 004, part 6). */
+    archived?: boolean;
+    /** When it was archived. */
+    archivedTime?: string;
+    /** Whether the copy in Drive was archived when this record last matched it. */
+    syncedArchived?: boolean;
 }
 
 /** An item in the trash, with the time it went there. */
 export type TrashItem = GoogleDriveFile & { trashedTime?: string };
+
+/** An archived project, with the time it was archived. */
+export type ArchivedItem = GoogleDriveFile & { archivedTime?: string };
 
 /** Days an item stays in the trash before it is deleted for good, as in Google Drive. */
 export const TRASH_DAYS = 30;
@@ -206,9 +215,11 @@ class LocalDriveService extends GoogleDriveService {
         await this._store.delete(id);
     }
 
-    /** Records the app can see: everything but deleted and trashed ones. */
+    /** Records the app can see: everything but deleted, trashed and archived ones. */
     private async visible(): Promise<LocalDriveRecord[]> {
-        return [...(await this.records()).values()].filter((r) => !r.deleted && !r.trashed);
+        return [...(await this.records()).values()].filter(
+            (r) => !r.deleted && !r.trashed && !r.archived,
+        );
     }
 
     /** Store a change made through the app: marks it for upload and notifies the listener. */
@@ -438,17 +449,56 @@ class LocalDriveService extends GoogleDriveService {
 
     /**
      * Take an item out of the trash. It goes back to its folder, or to the top folder when that
-     * folder is gone or in the trash too; a name already used there gets a number.
+     * folder is gone or hidden too; a name already used there gets a number.
      */
     async restoreFile(fileId: string, rootId: string): Promise<void> {
-        const records = await this.records();
-        const record = records.get(fileId);
-        if (!record?.trashed || record.deleted) {
-            return;
+        const record = (await this.records()).get(fileId);
+        if (record?.trashed && !record.deleted) {
+            await this.putBack(record, rootId, { trashed: false, trashedTime: undefined });
         }
+    }
+
+    /** Archive a project: hide it from the tree without deleting it, until it is unarchived. */
+    async archiveFile(fileId: string): Promise<void> {
+        const record = (await this.records()).get(fileId);
+        if (record && !record.deleted && !record.trashed && !record.archived) {
+            await this.change({
+                ...record,
+                archived: true,
+                archivedTime: new Date().toISOString(),
+            });
+        }
+    }
+
+    /** Archived projects (not in the trash), newest first. */
+    async archivedItems(): Promise<ArchivedItem[]> {
+        return [...(await this.records()).values()]
+            .filter((r) => r.archived && !r.deleted && !r.trashed)
+            .sort((a, b) => (b.archivedTime ?? '').localeCompare(a.archivedTime ?? ''))
+            .map((r) => ({ ...this.toDriveFile(r), archivedTime: r.archivedTime }));
+    }
+
+    /** Bring an archived project back to the tree, the way {@link restoreFile} does. */
+    async unarchiveFile(fileId: string, rootId: string): Promise<void> {
+        const record = (await this.records()).get(fileId);
+        if (record?.archived && !record.deleted) {
+            await this.putBack(record, rootId, { archived: false, archivedTime: undefined });
+        }
+    }
+
+    /**
+     * Show a hidden record again with `patch` applied: in its folder, or in the top folder when
+     * that folder is gone or hidden; a name already used there gets a number.
+     */
+    private async putBack(
+        record: LocalDriveRecord,
+        rootId: string,
+        patch: Partial<LocalDriveRecord>,
+    ): Promise<void> {
+        const records = await this.records();
         const reachable = (id: string | undefined): boolean => {
             const folder = id ? records.get(id) : undefined;
-            if (!folder || folder.deleted || folder.trashed) {
+            if (!folder || folder.deleted || folder.trashed || folder.archived) {
                 return false;
             }
             return !folder.parents?.length || reachable(folder.parents[0]);
@@ -459,10 +509,9 @@ class LocalDriveService extends GoogleDriveService {
         );
         await this.change({
             ...record,
+            ...patch,
             name: freeName(record.name, taken),
             parents: [parent],
-            trashed: false,
-            trashedTime: undefined,
         });
     }
 
