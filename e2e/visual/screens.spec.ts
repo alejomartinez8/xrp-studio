@@ -163,7 +163,7 @@ for (const theme of THEMES) {
         test('toolbox search', async ({ page, context }) => {
             await openWelcome(page, context, theme);
             await openBlocksExample(page);
-            await page.locator('.blocklyToolbox input').fill('drive');
+            await page.locator('.blocklyToolbox input').fill('effort');
             await settle(page);
             await expect(flyout(page)).toHaveScreenshot(`toolbox-search-${theme}.png`);
         });

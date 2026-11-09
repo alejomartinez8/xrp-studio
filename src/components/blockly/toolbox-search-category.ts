@@ -5,10 +5,11 @@ import { collectBlocks, sharedSearchIndex } from '@components/blockly/block-sear
 /**
  * Toolbox search field (toolbox kind `search`) that shows the matching blocks in its flyout.
  *
- * Adapted from `ToolboxSearchCategory` in `@blockly/toolbox-search` 3.1.9 (Copyright 2023 Google
- * LLC, Apache-2.0). Changes: the block index is shared and built on first search
- * (`sharedSearchIndex`), the Ctrl+B shortcut is registered once for the whole app
- * (`registerSearchShortcut`) instead of once per editor, and the texts go through i18n.
+ * Adapted from `ToolboxSearchCategory` in `@blockly/toolbox-search` 13.4.0 (Copyright 2023 Google
+ * LLC, Apache-2.0), which follows Blockly 13's focus and keyboard navigation. Changes: the block
+ * index is shared and built on first search (`sharedSearchIndex`), the Ctrl+B shortcut is
+ * registered once for the whole app (`registerSearchShortcut`) instead of once per editor, and
+ * the texts go through i18n.
  */
 export class XrpToolboxSearchCategory extends Blockly.ToolboxCategory {
     static readonly KIND = 'search';
@@ -28,13 +29,9 @@ export class XrpToolboxSearchCategory extends Blockly.ToolboxCategory {
         } else {
             field.style.marginLeft = '8px';
         }
-        field.addEventListener('keyup', (event) => {
-            if (event.key === 'Escape') {
-                this.parentToolbox_.clearSelection();
-                return;
-            }
-            this.matchBlocks();
-        });
+        field.addEventListener('keydown', (event) => this.onKeyDown(event));
+        field.addEventListener('input', () => this.matchBlocks());
+        field.addEventListener('pointerdown', (event) => this.onPointerDown(event));
         this.searchField = field;
         this.rowContents_?.replaceChildren(field);
         return dom;
@@ -53,14 +50,46 @@ export class XrpToolboxSearchCategory extends Blockly.ToolboxCategory {
         return this.searchField;
     }
 
-    /** See IFocusableNode.onNodeFocus. */
-    override onNodeFocus(): void {
-        this.matchBlocks();
+    /**
+     * Keys in the search field: the arrows leave it for the toolbox or the flyout when the caret is
+     * at the start or end of the text, as in the plugin, and Escape clears the text first.
+     */
+    private onKeyDown(event: KeyboardEvent): void {
+        const field = this.searchField;
+        if (!field) return;
+        const navigator = this.parentToolbox_.getNavigator();
+        const atStart = field.selectionStart === 0;
+        const atEnd = field.selectionStart === field.value.length;
+        let target: Blockly.IFocusableNode | null = null;
+        if (event.key === 'ArrowUp' && atStart) {
+            target = navigator.getPreviousNode();
+        } else if (event.key === 'ArrowRight' && atEnd) {
+            target = navigator.getInNode();
+        } else if (event.key === 'ArrowDown' && atEnd) {
+            target = navigator.getNextNode();
+        } else if (event.key === 'Escape' && field.value !== '') {
+            field.value = '';
+            event.stopPropagation();
+            this.matchBlocks();
+        }
+        if (target) Blockly.getFocusManager().focusNode(target);
     }
 
-    /** See IFocusableNode.onNodeBlur. */
-    override onNodeBlur(): void {
-        if (this.searchField) this.searchField.value = '';
+    /**
+     * A tap in the field while it is already open only moves the caret. Blockly 13's toolbox
+     * closes a selected item when it is clicked again and moves the focus to the toolbox, so the
+     * next letters typed would be lost.
+     */
+    private onPointerDown(event: PointerEvent): void {
+        if (this.parentToolbox_.getSelectedItem() === this) event.stopPropagation();
+    }
+
+    /** See IFocusableNode.onNodeFocus. Shows the hint once pending renders are done. */
+    override onNodeFocus(): void {
+        super.onNodeFocus();
+        if (!this.searchField?.value) {
+            void Blockly.renderManagement.finishQueuedRenders().then(() => this.matchBlocks());
+        }
     }
 
     /** Show the blocks that match the query, or a hint when there are none. */
@@ -81,6 +110,7 @@ export class XrpToolboxSearchCategory extends Blockly.ToolboxCategory {
             });
         }
         this.flyoutItems_ = items;
+        if (this.parentToolbox_.getSelectedItem() !== this) return;
         this.parentToolbox_.refreshSelection();
     }
 }

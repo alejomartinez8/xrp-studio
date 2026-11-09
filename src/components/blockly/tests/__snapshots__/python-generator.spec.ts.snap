@@ -1,0 +1,568 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Python generator > generates the same Python for every example > avoidObstacles 1`] = `
+"from XRPLib.board import Board
+from XRPLib.rangefinder import Rangefinder
+from XRPLib.differential_drive import DifferentialDrive
+
+board = Board.get_default_board()
+
+rangefinder = Rangefinder.get_default_rangefinder()
+
+differentialDrive = DifferentialDrive.get_default_differential_drive()
+
+
+board.wait_for_button()
+while True:
+  if (rangefinder.distance()) < 20:
+    differentialDrive.stop()
+    differentialDrive.turn(90, 0.5)
+  else:
+    differentialDrive.set_effort(0.5, 0.5)
+"
+`;
+
+exports[`Python generator > generates the same Python for every example > driveAndTurn 1`] = `
+"from XRPLib.board import Board
+from XRPLib.differential_drive import DifferentialDrive
+
+board = Board.get_default_board()
+
+differentialDrive = DifferentialDrive.get_default_differential_drive()
+
+
+board.wait_for_button()
+differentialDrive.straight(30, 0.5)
+differentialDrive.turn(180, 0.5)
+differentialDrive.straight(30, 0.5)
+board.led_on()
+"
+`;
+
+exports[`Python generator > generates the same Python for every example > followLine 1`] = `
+"from XRPLib.board import Board
+from XRPLib.reflectance import Reflectance
+from XRPLib.differential_drive import DifferentialDrive
+
+board = Board.get_default_board()
+
+reflectance = Reflectance.get_default_reflectance()
+
+differentialDrive = DifferentialDrive.get_default_differential_drive()
+
+
+board.wait_for_button()
+while True:
+  if (reflectance.get_left()) > (reflectance.get_right()):
+    differentialDrive.set_effort(0.2, 0.5)
+  else:
+    differentialDrive.set_effort(0.5, 0.2)
+"
+`;
+
+exports[`Python generator > generates the same Python for every example > square 1`] = `
+"from XRPLib.board import Board
+from XRPLib.differential_drive import DifferentialDrive
+
+board = Board.get_default_board()
+
+differentialDrive = DifferentialDrive.get_default_differential_drive()
+
+
+board.wait_for_button()
+for count in range(4):
+  differentialDrive.straight(20, 0.5)
+  differentialDrive.turn(90, 0.5)
+"
+`;
+
+exports[`Python generator > generates the same Python for every toolbox block 1`] = `
+Object {
+  "0 xrp_motor_effort": "from XRPLib.encoded_motor import EncodedMotor
+
+motor1 = EncodedMotor.get_default_encoded_motor(1)
+
+
+motor1.set_effort(0.5)
+",
+  "1 xrp_motor_speed": "from XRPLib.encoded_motor import EncodedMotor
+
+motor1 = EncodedMotor.get_default_encoded_motor(1)
+
+
+motor1.set_speed(60)
+",
+  "10 xrp_speed": "from XRPLib.differential_drive import DifferentialDrive
+
+differentialDrive = DifferentialDrive.get_default_differential_drive()
+
+
+differentialDrive.set_speed(60, 60)
+",
+  "11 xrp_arcade": "from XRPLib.differential_drive import DifferentialDrive
+
+differentialDrive = DifferentialDrive.get_default_differential_drive()
+
+
+differentialDrive.arcade(0.8, 0.2)
+",
+  "12 xrp_stop_motors": "from XRPLib.differential_drive import DifferentialDrive
+
+differentialDrive = DifferentialDrive.get_default_differential_drive()
+
+
+differentialDrive.stop()
+",
+  "13 xrp_resetencoders": "Error: Input "degrees" doesn't exist on "xrp_resetencoders"",
+  "14 xrp_getleftencoder": "from XRPLib.differential_drive import DifferentialDrive
+
+differentialDrive = DifferentialDrive.get_default_differential_drive()
+
+
+differentialDrive.get_left_encoder_position()
+",
+  "15 xrp_getrightencoder": "from XRPLib.differential_drive import DifferentialDrive
+
+differentialDrive = DifferentialDrive.get_default_differential_drive()
+
+
+differentialDrive.get_right_encoder_position()
+",
+  "16 xrp_servo_deg": "from XRPLib.servo import Servo
+
+servo1 = Servo.get_default_servo(1)
+
+
+servo1.set_angle(90)
+",
+  "17 xrp_getsonardist": "from XRPLib.rangefinder import Rangefinder
+
+rangefinder = Rangefinder.get_default_rangefinder()
+
+
+rangefinder.distance()
+",
+  "18 xrp_l_refl": "from XRPLib.reflectance import Reflectance
+
+reflectance = Reflectance.get_default_reflectance()
+
+
+reflectance.get_left()
+",
+  "19 xrp_r_refl": "from XRPLib.reflectance import Reflectance
+
+reflectance = Reflectance.get_default_reflectance()
+
+
+reflectance.get_right()
+",
+  "2 xrp_motor_direction": "from XRPLib.encoded_motor import EncodedMotor
+
+motor1 = EncodedMotor.get_default_encoded_motor(1)
+
+
+motor1._motor.flip_dir = (True)
+",
+  "20 xrp_yaw": "from XRPLib.imu import IMU
+
+imu = IMU.get_default_imu()
+imu.calibrate(1)
+
+
+imu.get_yaw()
+",
+  "21 xrp_roll": "from XRPLib.imu import IMU
+
+imu = IMU.get_default_imu()
+imu.calibrate(1)
+
+
+imu.get_roll()
+",
+  "22 xrp_pitch": "from XRPLib.imu import IMU
+
+imu = IMU.get_default_imu()
+imu.calibrate(1)
+
+
+imu.get_pitch()
+",
+  "23 xrp_acc_x": "from XRPLib.imu import IMU
+
+imu = IMU.get_default_imu()
+imu.calibrate(1)
+
+
+imu.get_acc_x()
+",
+  "24 xrp_acc_y": "from XRPLib.imu import IMU
+
+imu = IMU.get_default_imu()
+imu.calibrate(1)
+
+
+imu.get_acc_y()
+",
+  "25 xrp_acc_z": "from XRPLib.imu import IMU
+
+imu = IMU.get_default_imu()
+imu.calibrate(1)
+
+
+imu.get_acc_z()
+",
+  "26 xrp_led_on": "from XRPLib.board import Board
+
+board = Board.get_default_board()
+
+
+board.led_on()
+",
+  "27 xrp_led_off": "from XRPLib.board import Board
+
+board = Board.get_default_board()
+
+
+board.led_off()
+",
+  "28 xrp_button_pressed": "from XRPLib.board import Board
+
+board = Board.get_default_board()
+
+
+board.is_button_pressed()
+",
+  "29 xrp_wait_for_button_press": "from XRPLib.board import Board
+
+board = Board.get_default_board()
+
+
+board.wait_for_button()
+",
+  "3 xrp_motor_get_speed": "from XRPLib.encoded_motor import EncodedMotor
+
+motor1 = EncodedMotor.get_default_encoded_motor(1)
+
+
+motor1.get_speed()
+",
+  "30 xrp_ws_forward_button": "from XRPLib.webserver import Webserver
+
+webserver = Webserver.get_default_webserver()
+
+
+
+def func1():
+
+webserver.registerForwardButton(func1)
+",
+  "31 xrp_ws_back_button": "from XRPLib.webserver import Webserver
+
+webserver = Webserver.get_default_webserver()
+
+
+
+def func2():
+
+webserver.registerBackwardButton(func2)
+",
+  "32 xrp_ws_left_button": "from XRPLib.webserver import Webserver
+
+webserver = Webserver.get_default_webserver()
+
+
+
+def func3():
+
+webserver.registerLeftButton(func3)
+",
+  "33 xrp_ws_right_button": "from XRPLib.webserver import Webserver
+
+webserver = Webserver.get_default_webserver()
+
+
+
+def func4():
+
+webserver.registerRightButton(func4)
+",
+  "34 xrp_ws_stop_button": "from XRPLib.webserver import Webserver
+
+webserver = Webserver.get_default_webserver()
+
+
+
+def func5():
+
+webserver.registerStopButton(func5)
+",
+  "35 xrp_ws_add_button": "from XRPLib.webserver import Webserver
+
+webserver = Webserver.get_default_webserver()
+
+
+
+def func6():
+
+webserver.add_button("name", func6)
+",
+  "36 xrp_ws_log_data": "Error: data is not defined",
+  "37 xrp_ws_start_server": "Error: Cannot read properties of null (reading 'getFieldValue')",
+  "38 xrp_ws_connect_server": "Error: Cannot read properties of null (reading 'getFieldValue')",
+  "39 xrp_dashboard_start_all": "from XRPLib.dashboard import Dashboard
+
+dashboard = Dashboard.get_default_dashboard()
+
+
+dashboard.start()
+",
+  "4 xrp_motor_get_position": "from XRPLib.encoded_motor import EncodedMotor
+
+motor1 = EncodedMotor.get_default_encoded_motor(1)
+
+
+motor1.get_position()
+",
+  "40 xrp_dashboard_stop_all": "from XRPLib.dashboard import Dashboard
+
+dashboard = Dashboard.get_default_dashboard()
+
+
+dashboard.stop()
+",
+  "41 xrp_dashboard_set_value": "Error: Cannot read properties of null (reading 'getFieldValue')",
+  "42 xrp_dashboard_get_value": "Error: Cannot read properties of null (reading 'getFieldValue')",
+  "43 xrp_gp_get_value": "from XRPLib.gamepad import *
+
+gp = Gamepad.get_default_gamepad()
+
+
+gp.get_value(gp.X1)
+",
+  "44 xrp_gp_button_pressed": "from XRPLib.gamepad import *
+
+gp = Gamepad.get_default_gamepad()
+
+
+gp.is_button_pressed(gp.BUTTON_A)
+",
+  "45 xrp_sleep": "import time
+
+
+time.sleep(0.5)
+",
+  "46 controls_if": "if False:
+  pass
+",
+  "47 logic_compare": "0 == 0
+",
+  "48 logic_operation": "False and False
+",
+  "49 logic_negate": "not True
+",
+  "5 xrp_motor_get_count": "from XRPLib.encoded_motor import EncodedMotor
+
+motor1 = EncodedMotor.get_default_encoded_motor(1)
+
+
+motor1.get_position_counts()
+",
+  "50 logic_boolean": "True
+",
+  "51 logic_null": "None
+",
+  "52 logic_ternary": "None if False else None
+",
+  "53 controls_whileUntil": "while False:
+  pass
+",
+  "54 controls_repeat_ext": "for count in range(0):
+  pass
+",
+  "55 controls_whileUntil": "while False:
+  pass
+",
+  "56 controls_for": "i = None
+
+
+for i in range(1):
+  pass
+",
+  "57 controls_forEach": "i = None
+
+
+for i in []:
+  pass
+",
+  "58 controls_flow_statements": "break
+",
+  "59 math_number": "0
+",
+  "6 xrp_motor_reset_position": "from XRPLib.encoded_motor import EncodedMotor
+
+motor1 = EncodedMotor.get_default_encoded_motor(1)
+
+
+motor1.reset_encoder_position()
+",
+  "60 math_arithmetic": "0 + 0
+",
+  "61 math_single": "import math
+
+
+math.sqrt(0)
+",
+  "62 math_trig": "import math
+
+
+math.sin(0 / 180.0 * math.pi)
+",
+  "63 math_constant": "import math
+
+
+math.pi
+",
+  "64 math_number_property": "0 % 2 == 0
+",
+  "65 math_round": "import math
+
+
+round(0)
+",
+  "66 math_on_list": "sum([])
+",
+  "67 math_modulo": "0 % 0
+",
+  "68 math_constrain": "min(max(0, 0), float('inf'))
+",
+  "69 math_random_int": "import random
+
+
+random.randint(0, 0)
+",
+  "7 xrp_straight_effort": "from XRPLib.differential_drive import DifferentialDrive
+
+differentialDrive = DifferentialDrive.get_default_differential_drive()
+
+
+differentialDrive.straight(20, 0.5)
+",
+  "70 math_random_float": "import random
+
+
+random.random()
+",
+  "71 comment": "#
+",
+  "72 text_print": "print('')
+",
+  "73 text": "''
+",
+  "74 text_join": "'' + ''
+",
+  "75 text_append": "item = None
+
+
+item = str(item) + ''
+",
+  "76 text_length": "len('')
+",
+  "77 text_isEmpty": "not len('')
+",
+  "78 text_indexOf": "''.find('') + 1
+",
+  "79 text_charAt": "''[0]
+",
+  "8 xrp_turn_effort": "from XRPLib.differential_drive import DifferentialDrive
+
+differentialDrive = DifferentialDrive.get_default_differential_drive()
+
+
+differentialDrive.turn(90, 0.5)
+",
+  "80 text_getSubstring": "''[ : 1]
+",
+  "81 text_changeCase": "''.upper()
+",
+  "82 text_trim": "''.strip()
+",
+  "83 text_prompt_ext": "def text_prompt(msg):
+  try:
+    return raw_input(msg)
+  except NameError:
+    return input(msg)
+
+
+text_prompt('')
+",
+  "84 lists_create_with": "[None, None, None]
+",
+  "85 lists_create_with": "[None, None, None]
+",
+  "86 lists_repeat": "[None] * 0
+",
+  "87 lists_length": "len([])
+",
+  "88 lists_isEmpty": "not len([])
+",
+  "89 lists_indexOf": "def first_index(my_list, elem):
+  try: index = my_list.index(elem) + 1
+  except: index = 0
+  return index
+
+
+first_index('', [])
+",
+  "9 xrp_seteffort": "from XRPLib.differential_drive import DifferentialDrive
+
+differentialDrive = DifferentialDrive.get_default_differential_drive()
+
+
+differentialDrive.set_effort(0.5, 0.5)
+",
+  "90 lists_getIndex": "[][0]
+",
+  "91 lists_setIndex": "[][0] = None
+",
+  "92 lists_getSublist": "[][ : 1]
+",
+  "93 lists_split": "''.split()
+",
+  "94 lists_sort": "def lists_sort(my_list, type, reverse):
+  def try_float(s):
+    try:
+      return float(s)
+    except:
+      return 0
+  key_funcs = {
+    "NUMERIC": try_float,
+    "TEXT": str,
+    "IGNORE_CASE": lambda s: str(s).lower()
+  }
+  key_func = key_funcs[type]
+  list_cpy = list(my_list)
+  return sorted(list_cpy, key=key_func, reverse=reverse)
+
+
+lists_sort([], "NUMERIC", False)
+",
+}
+`;
+
+exports[`Python generator > generates the same Python for variables and functions 1`] = `
+"from XRPLib.differential_drive import DifferentialDrive
+
+side = None
+
+differentialDrive = DifferentialDrive.get_default_differential_drive()
+
+def drive_square():
+  global side
+  for count in range(4):
+    side = 20
+    differentialDrive.straight(side, 0.5)
+
+
+drive_square()
+"
+`;
