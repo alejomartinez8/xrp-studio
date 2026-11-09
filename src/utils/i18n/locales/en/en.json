@@ -312,7 +312,7 @@
         "newBlocksHint": "Snap blocks together to program your robot",
         "newPython": "New Python project",
         "newPythonHint": "Write Python code for your robot",
-        "openHint": "Or open one of your projects from the Folders panel.",
+        "openHint": "Or open one of your projects from the Explorer.",
         "signInFirst": "Sign in with Google (top right) to save your projects.",
         "nameTitle": "Name your project",
         "nameHint": "Pick a name you will remember.",
@@ -323,7 +323,7 @@
         "namePlaceholder": "Type a name",
         "recentTitle": "Your recent projects",
         "justNow": "Just now",
-        "moreHint": "Find all your projects in the Folders panel.",
+        "moreHint": "Find all your projects in the Explorer.",
         "examplesTitle": "Start from an example",
         "examples": {
             "driveAndTurn": {
