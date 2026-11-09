@@ -177,4 +177,53 @@ describe('LocalDriveService', () => {
             expect(await drive.allRecords()).toHaveLength(1);
         });
     });
+
+    describe('archive', () => {
+        const file = (name: string, parent = rootId) =>
+            drive.uploadFile(new Blob(['x']), name, 'text/x-python', parent);
+
+        it('hides an archived project without deleting it, and lists it newest first', async () => {
+            const folder = await drive.createFolder('box', rootId);
+            await file('in.py', folder!.id);
+            const loose = await file('loose.py');
+
+            await drive.archiveFile(folder!.id);
+            await new Promise((resolve) => setTimeout(resolve, 2));
+            await drive.archiveFile(loose!.id);
+
+            expect(await drive.getFileListByFolderId(rootId)).toHaveLength(0);
+            expect(await drive.trashItems()).toHaveLength(0);
+            expect((await drive.archivedItems()).map((f) => f.name)).toEqual(['loose.py', 'box']);
+            expect(await drive.getFileContents(loose!.id)).toBe('x');
+            expect((await drive.getRecord(loose!.id))!.dirty).toBe(true);
+        });
+
+        it('brings a project back with a free name', async () => {
+            const old = await file('main.py');
+            await drive.archiveFile(old!.id);
+            await file('main.py');
+            await drive.unarchiveFile(old!.id, rootId);
+            expect((await drive.getFileListByFolderId(rootId)).map((f) => f.name)).toEqual([
+                'main (2).py',
+                'main.py',
+            ]);
+            expect(await drive.archivedItems()).toHaveLength(0);
+        });
+
+        it('leaves archived projects out of the list once they go to the trash', async () => {
+            const folder = await drive.createFolder('box', rootId);
+            const inner = await file('in.py', folder!.id);
+            await drive.archiveFile(inner!.id);
+            await drive.trashFile(folder!.id);
+            await drive.unarchiveFile(inner!.id, rootId);
+            expect((await drive.getFileListByFolderId(rootId)).map((f) => f.name)).toEqual([
+                'in.py',
+            ]);
+
+            await drive.restoreFile(folder!.id, rootId);
+            await drive.archiveFile(folder!.id);
+            await drive.trashFile(folder!.id);
+            expect(await drive.archivedItems()).toHaveLength(0);
+        });
+    });
 });
