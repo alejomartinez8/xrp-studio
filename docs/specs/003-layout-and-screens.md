@@ -485,3 +485,40 @@ Phone width:
 
 Fork-specific (kids UI). XRPWeb could take the Explorer icon on its own; hiding the terminal by
 default suits a kids' editor more than XRPWeb's.
+
+## Part 5 — Bottom of the app on phones
+
+### Problem
+
+In Chrome on an Android phone, the bottom of the app (the status bar, the Trash row, the last
+toolbox icon and the workspace scrollbar) was under the bottom edge of the screen. About 56 px were
+missing, the height of Chrome's address bar. The earlier fix for tablets (spec 002, part 5) sized
+the app box by the visible area, but an older rule of the app gave the box the full screen height
+(`100vh`, which counts the address bar as hidden). That rule is loaded later and won, so the fix had
+no effect.
+
+### Solution
+
+- The app box rule is now more specific than the older one, so the visible area always wins.
+- The page is exactly the visible height, and the app box takes the dynamic viewport height
+  (`100dvh`, the area that is really visible) where the browser supports it.
+
+### Files
+
+- Changed: `src/index.css`.
+
+### How to test
+
+1. On an Android phone, open the app in Chrome with the address bar showing.
+2. Open a blocks file: the status bar is at the bottom of the screen, and the last toolbox icon and
+   the workspace scrollbar are fully visible.
+3. Open the side bar: the Trash row is visible.
+4. Repeat on an Android tablet: the bottom of the app is not under the bar.
+
+No screenshots: desktop browsers and test browsers have no address bar that changes the height, so
+the problem only shows on a real phone.
+
+### Upstream
+
+XRPWeb's `100vh` app height has the same problem on Android phones and tablets and could take the
+same idea.

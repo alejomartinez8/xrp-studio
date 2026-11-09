@@ -44,11 +44,12 @@ svg[display="none"] {
  * browser's own bar comes and goes and `vh` and `body` centring would push the top out of reach.
  * The size comes only from the edges: the `100vw`/`100vh` of `App.css` would win over `inset` and,
  * on a tablet with the address bar showing, push the bottom of the app (and of the blocks panel)
- * under the bar. The page asks to draw edge to edge (`viewport-fit=cover`) and keeps clear of the
+ * under the bar. `body > #root` is more specific than the `#root` of `App.css`, which is loaded
+ * later and would otherwise win. The page asks to draw edge to edge (`viewport-fit=cover`) and keeps clear of the
  * system bars and screen cutouts itself, so on Android, where the browser or the full screen app
  * can draw under the navigation bar, the bottom of the app is never under it.
  */
-#root {
+body > #root {
   position: fixed;
   inset: 0;
   width: auto;
@@ -59,6 +60,25 @@ svg[display="none"] {
   background-color: var(--app-frame);
   display: flex;
   flex-direction: column;
+}
+
+/**
+ * Phones: Chrome's address bar takes 56 px that `100vh` (the "large" viewport) still counts. The
+ * `min-height: 100vh` above made the page that much taller than the screen, and the fixed app box
+ * then took that height too, so the bottom of the app (the Trash row and the status bar) was
+ * under the screen's bottom edge. The page is now exactly the visible height, and the app box is
+ * the dynamic viewport's height (`100dvh`, the area that is really visible) where supported.
+ */
+body {
+  min-height: 0;
+  height: 100%;
+}
+
+@supports (height: 100dvh) {
+  body > #root {
+    bottom: auto;
+    height: 100dvh;
+  }
 }
 
 .app-main {
