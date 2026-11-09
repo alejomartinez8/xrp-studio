@@ -7,8 +7,7 @@ should be its own change, tested in the app.
 | --- | --- | --- | --- |
 | Python editor (`@codingame/monaco-vscode-*`, `monaco-languageclient`, `vscode-ws-jsonrpc`) | 11 / 14, 9.4.1, 3.4.0 | 2x, 10+, 4 | npm reports the 14.x `*-common` packages as no longer supported. The whole editor stack must move together; updating one piece installs a second, incompatible copy. |
 | `flexlayout-react` | 0.8.4 | 0.11 | 0.8.19 already makes the `Model` constructor protected (affects `editormgr` tests). |
-| `react-xtermjs` | 1.0.9 | 1.0.12 | Newer versions use React 19 ref types; fits with the React 19 upgrade. |
-| React | 18 | 19 | Also `@types/react`, `react-i18next` 17, `react-hotkeys-hook` 5. |
+| `react-blockly`, `use-resize-observer` | 9, 9 | — | Run on React 19 through `overrides` in `package.json` (spec 006, part 4). Remove the override when `react-blockly` declares React 19; `use-resize-observer` 10 accepts React 19 but changes its API. |
 | Tailwind CSS | 3.4 | 4 | New config format; the theme palette approach needs a review. |
 | Blockly | 12.3 | 13 | Also `@blockly/field-colour` 13.x. Check the block search field (spec 004), adapted from `@blockly/toolbox-search`. |
 | recharts | 2 | 3 | 2.x is no longer maintained; used by the dashboard. |

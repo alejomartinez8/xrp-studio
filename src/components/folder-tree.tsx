@@ -56,7 +56,7 @@ function FolderTree(treeProps: TreeProps) {
     const [treeData, setTreeData] = useState<FolderItem[] | undefined>(undefined);
     const [, setSelectedItems] = useState<FolderItem[] | undefined>(undefined);
     const [isRunning, setIsRunning] = useState<boolean>(false);
-    const appMgrRef = useRef<AppMgr>();
+    const appMgrRef = useRef<AppMgr>(undefined);
     const treeRef = useRef(null);
     const { ref, width, height } = useResizeObserver();
     const folderLogger = logger.child({ module: 'folder-tree' });
