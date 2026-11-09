@@ -1,6 +1,6 @@
 # 006 — Maintenance
 
-Dependency, lockfile and build upkeep. Pending upgrades and the backlog are in [pending-upgrades.md](pending-upgrades.md). Three parts: lockfile and minor updates, faster builds, and the build and test tools.
+Dependency, lockfile and build upkeep. Pending upgrades and the backlog are in [pending-upgrades.md](pending-upgrades.md). Four parts: lockfile and minor updates, faster builds, the build and test tools, and Blockly 13.
 
 ## Part 1 — Lockfile, Tailwind config and minor updates
 
@@ -147,3 +147,76 @@ part 2.
 ### Upstream
 
 Possible: dependency upgrades, independent of the fork's UI.
+
+## Part 4 — Blockly 13
+
+### Problem
+
+The block editor used Blockly 12 (12.5, which came in through `react-blockly`) and
+`@blockly/field-colour` 6. Blockly 13 is the maintained line and its plugins (`@blockly/*` 13.x)
+only support it. Blockly 13 also turns on keyboard navigation and its own focus handling by
+default, which changes how the toolbox reacts to clicks and keys. The block search field of the
+toolbox is our own copy of `@blockly/toolbox-search` (spec 004), so it did not get the plugin's
+fixes for that.
+
+### Solution
+
+- **Blockly 13.4** is now a direct dependency (it was only installed through `react-blockly`), with
+  `@blockly/field-colour` 13.4. Blockly 13 asks for jsdom 27.4 or newer, which only the unit tests
+  use, so jsdom goes from 26 to 30. jsdom 30 and Blockly 13 need Node 22 to run the unit tests;
+  the app itself is unchanged for the browser.
+- **The Python sent to the robot is the same.** A new unit test keeps the Python generated for
+  every welcome example, every toolbox block and a program with a variable and a function. It was
+  recorded with Blockly 12 and passes unchanged with Blockly 13.
+- **Block search follows the plugin's 13.4 version**: the results update on every change of the
+  text (not only on key release), the arrow keys leave the field for the toolbox or the block list
+  when the caret is at the start or end of the text, Escape clears the text, and the hint shows
+  once the toolbox has finished drawing. The shared index and the translated texts stay.
+- **A second tap in the search field keeps the typing.** In Blockly 13 a click on the selected
+  toolbox row closes it and moves the focus to the toolbox, so after tapping the field again the
+  next letters were lost. A tap in the field while it is open now only moves the caret.
+- **Small drawing changes.** The app already chose the `zelos` renderer and its own media folder,
+  so the new default renderer and media location of Blockly 13 do not apply. The blocks look the
+  same, with differences of one or two pixels: block edges are drawn a little sharper, the round
+  number fields are slightly wider, and the toolbox scrolls a few pixels differently when a group
+  is opened.
+
+Editor with an example, light and dark:
+
+![Blocks editor, light](images/006-blockly-13-editor-light.png)
+![Blocks editor, dark](images/006-blockly-13-editor-dark.png)
+
+Search for "effort", light and dark:
+
+![Block search, light](images/006-blockly-13-search-light.png)
+![Block search, dark](images/006-blockly-13-search-dark.png)
+
+Found while testing, not changed here: the generator of the "reset encoders" block (inherited from
+XRPWeb) reads an input that block does not have, so a program with that block fails to generate
+Python. It fails the same way with Blockly 12; it is listed under known issues in
+[pending-upgrades.md](pending-upgrades.md).
+
+### Files
+
+- `package.json`, `package-lock.json`.
+- `src/components/blockly/toolbox-search-category.ts`.
+- Tests: `src/components/blockly/tests/python-generator.spec.ts` (new, with its snapshot),
+  `e2e/block-search.spec.ts` (new, typing in the search field), `e2e/visual/screens.spec.ts`
+  (the search screenshot now searches for "effort", which shows blocks) and the approved
+  screenshots in `e2e/visual/__screenshots__`.
+
+### How to test
+
+1. Open an example in the block editor: the blocks look as before; zoom in, zoom out and reset
+   with the buttons; drag a block from the toolbox; undo.
+2. Tap the search field and type "effort": the matching blocks show while typing. Tap the field
+   again and keep typing: no letter is lost. Press Escape: the text is cleared.
+3. Switch to the Python view: the code is the same as before the upgrade.
+4. Open the toolbox groups (Sensors, Advanced) and every category: the blocks show and can be
+   dragged. Repeat in Spanish and in dark mode.
+5. On a phone-sized window, the toolbox is a column of icons and the blocks open in their panel.
+
+### Upstream
+
+Possible: XRPWeb uses Blockly 12 and the same search plugin, so the upgrade and the search fix
+apply there too.
