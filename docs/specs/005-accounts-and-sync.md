@@ -208,7 +208,8 @@ it.
 
 - Every change (new file or folder, edit, rename, move, delete) is uploaded 2 s after the last
   one. Folders go before their files. Deleted files go to the account's trash, where they stay 30
-  days.
+  days. The app's Trash (spec 004, part 5) is that trash: trashing, restoring and deleting for
+  good follow it in both directions.
 - The app also brings in what changed in the account (new, changed and deleted files) at
   sign-in, when the network comes back, after a failed sync (tried again after 30 s), every
   minute while the app is visible, and right away when the user comes back to it. Work done on
@@ -275,7 +276,8 @@ A thin bar at the bottom of the screen, like MakeCode's. It has one indicator: a
    The cloud spins, then shows a check. The project is in the `XRPCode` folder of the account's
    Drive.
 3. Edit, rename, move and delete files: each change reaches Drive a few seconds later; deleted
-   files are in the Drive trash.
+   files are in the Drive trash. Restoring one from the app's Trash takes it out of the Drive
+   trash.
 4. Go offline and edit: crossed cloud. Back online: spinner, then check.
 5. Change a file in Drive (another device, or upload a new version), sign out and in again: the new
    version is in the app. Change the same file here while offline and in Drive, then go online:

@@ -1,5 +1,9 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import LocalDriveService, { FOLDER_MIME_TYPE, MemoryDriveStore } from '@/services/local-drive';
+import LocalDriveService, {
+    FOLDER_MIME_TYPE,
+    MemoryDriveStore,
+    TRASH_DAYS,
+} from '@/services/local-drive';
 import { Constants } from '@/utils/constants';
 
 describe('LocalDriveService', () => {
@@ -116,5 +120,61 @@ describe('LocalDriveService', () => {
         await drive.uploadFile(new Blob(['a']), 'a.py', 'text/x-python', rootId);
         drive.useStore(new MemoryDriveStore());
         expect(await drive.allRecords()).toHaveLength(0);
+    });
+
+    describe('trash', () => {
+        const file = (name: string, parent = rootId) =>
+            drive.uploadFile(new Blob(['x']), name, 'text/x-python', parent);
+
+        it('hides a trashed folder with everything inside it, and lists it newest first', async () => {
+            const folder = await drive.createFolder('box', rootId);
+            await file('in.py', folder!.id);
+            const loose = await file('loose.py');
+
+            await drive.trashFile(folder!.id);
+            await new Promise((resolve) => setTimeout(resolve, 2));
+            await drive.trashFile(loose!.id);
+
+            expect(await drive.getFileListByFolderId(rootId)).toHaveLength(0);
+            expect(await drive.findFolderByName('box', rootId)).toBeNull();
+            expect((await drive.trashItems()).map((f) => f.name)).toEqual(['loose.py', 'box']);
+        });
+
+        it('restores to the same folder, or to the top folder when that one is trashed', async () => {
+            const folder = await drive.createFolder('box', rootId);
+            const inner = await file('in.py', folder!.id);
+            await drive.trashFile(inner!.id);
+            await drive.restoreFile(inner!.id, rootId);
+            expect((await drive.getFileListByFolderId(folder!.id)).map((f) => f.id)).toEqual([
+                inner!.id,
+            ]);
+
+            await drive.trashFile(inner!.id);
+            await drive.trashFile(folder!.id);
+            await drive.restoreFile(inner!.id, rootId);
+            expect((await drive.getFileListByFolderId(rootId)).map((f) => f.name)).toEqual([
+                'in.py',
+            ]);
+            expect((await drive.trashItems()).map((f) => f.name)).toEqual(['box']);
+        });
+
+        it('gives a restored item a free name', async () => {
+            const old = await file('main.py');
+            await drive.trashFile(old!.id);
+            await file('main.py');
+            await drive.restoreFile(old!.id, rootId);
+            expect((await drive.getFileListByFolderId(rootId)).map((f) => f.name)).toEqual([
+                'main (2).py',
+                'main.py',
+            ]);
+        });
+
+        it(`deletes items for good after ${TRASH_DAYS} days`, async () => {
+            const old = await file('old.py');
+            await drive.trashFile(old!.id);
+            const later = Date.now() + (TRASH_DAYS + 1) * 24 * 60 * 60 * 1000;
+            expect(await drive.trashItems(later)).toHaveLength(0);
+            expect(await drive.allRecords()).toHaveLength(1);
+        });
     });
 });

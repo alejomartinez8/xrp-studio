@@ -394,3 +394,79 @@ Hooks in upstream files:
 
 Possible behind a setting. It changes XRPWeb's save model (Save wrote to the robot), so it would
 need their agreement.
+
+
+## Part 5 — Trash
+
+### Problem
+
+Deleting a file or folder in My projects asked for confirmation and then removed it. A child who
+deleted the wrong project had no way back. With Google sign-in, deleted files went to the Drive
+trash, but they could only be restored from Drive, which children do not use.
+
+### Solution
+
+- **Delete moves to the trash, with no confirmation.** In My projects, Delete in the folder tree
+  moves the file or folder to the trash at once. Files in Robot memory keep the old delete (with
+  confirmation, no trash).
+- **Trash row.** A "Trash" row at the bottom of the Explorer shows how many items are in the
+  trash. It opens a dialog that lists them, newest first, with the days left for each one:
+  - **Restore** puts the item back in its folder. If that folder is in the trash or gone, the item
+    goes to the top folder. If the name is taken, it gets a number, for example `maze (2).py`.
+  - **Delete forever** (trash-can icon) deletes the item for good.
+  - **Empty trash** asks once ("Delete 2 items for good? This cannot be undone.") and deletes all
+    of them.
+- **30 days.** Items are deleted for good 30 days after they were trashed.
+- **Sync with the account (spec 005).** With Google sign-in, the trash is the Drive trash of the
+  account:
+  - Trashing or restoring here does the same in Drive; Delete forever deletes the file in Drive
+    too.
+  - Items trashed, restored or deleted for good on another device (or in Drive) follow here at
+    the next sync.
+  - If the same item was trashed or restored here since the last sync, this device's choice wins.
+  - Items trashed before they were ever uploaded stay on this device only.
+- Only the trashed item is marked; the files inside a trashed folder are hidden with it and come
+  back with it.
+
+![Explorer with the Trash row, light](images/trash-explorer-light.png)
+![Explorer with the Trash row, dark](images/trash-explorer-dark.png)
+![Trash dialog, light](images/trash-dialog-light.png)
+![Trash dialog, dark](images/trash-dialog-dark.png)
+
+### Files
+
+- New: `src/components/trash.tsx` (Trash row and dialog), tests in
+  `src/components/tests/trash.spec.tsx`.
+- `src/services/local-drive.ts`: `trashFile`, `trashItems` (also deletes items older than 30
+  days), `restoreFile`; trashed items are hidden from the tree. Tests in
+  `src/services/tests/local-drive.spec.ts`.
+- `src/services/drive-sync.ts` and `src/services/drive-api.ts`: trash state in both directions,
+  permanent delete in Drive. Tests in `src/services/tests/drive-sync.spec.ts` and
+  `src/services/tests/drive-api.spec.ts`.
+- `src/components/folder-tree.tsx` (upstream, small hooks): Delete moves to the trash in My
+  projects, and the Trash row.
+- `src/utils/i18n/locales/{en,es}/{en,es}.json` (`trash`).
+- Browser test: `e2e/accounts.spec.ts` (trash, restore and delete forever with a signed-in
+  account), with trash support in `e2e/support/google-mock.ts`.
+
+### How to test
+
+1. In My projects, create a project with two files. Delete one from the tree: it goes away with no
+   dialog, and the Trash row shows 1.
+2. Open Trash: the file is listed with "30 days left". Restore: it is back in its folder.
+3. Delete a folder with files, then create a new folder with the same name. Restore the first
+   one: it comes back as `name (2)` with its files.
+4. Delete two files, open Trash, Empty trash → Delete for good: the trash is empty and the files
+   do not come back after a reload.
+5. With Google sign-in: delete a file; a few seconds later it is in the Drive trash. Restore it in
+   the app; it leaves the Drive trash. Delete forever; it is gone from Drive.
+6. Same account on a second device (or in Drive): trash a file there. Here it moves to the trash
+   at the next sync (within a minute, or when coming back to the app).
+7. Switch to Robot memory with a robot connected: Delete still asks for confirmation and there is
+   no Trash row. **Pending: needs a robot.**
+
+### Upstream
+
+Fork-only for now: it depends on My projects. The Drive part (trash and restore follow the Drive
+trash) could help XRPWeb's Google Drive mode, which today trashes in Drive without a way back in
+the app.

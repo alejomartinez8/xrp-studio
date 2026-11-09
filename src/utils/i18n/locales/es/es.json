@@ -374,5 +374,18 @@
         "offline": "Sin conexión: tus cambios quedan en este equipo y se guardarán en tu cuenta cuando vuelva internet",
         "local": "Guardado solo en este equipo. Inicia sesión para tener tus proyectos en cualquier equipo."
     },
-    "statusBar": "Barra de estado"
+    "statusBar": "Barra de estado",
+    "trash": {
+        "title": "Papelera",
+        "hint": "Lo que borras se queda aquí {{days}} días; después se elimina para siempre.",
+        "empty": "La papelera está vacía.",
+        "daysLeft_one": "Queda {{count}} día",
+        "daysLeft_other": "Quedan {{count}} días",
+        "restore": "Restaurar",
+        "deleteForever": "Eliminar para siempre",
+        "emptyTrash": "Vaciar papelera",
+        "confirmEmpty_one": "¿Eliminar {{count}} elemento para siempre? No se puede deshacer.",
+        "confirmEmpty_other": "¿Eliminar {{count}} elementos para siempre? No se puede deshacer.",
+        "emptyNow": "Eliminar para siempre"
+    }
 }

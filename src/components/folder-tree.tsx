@@ -30,6 +30,7 @@ import Login from '@/widgets/login';
 import { isLocalProjectsEnabled } from '@/utils/offline';
 import { isSignInInNavbar } from '@/utils/session';
 import StorageSwitch from '@components/storage-switch';
+import Trash from '@components/trash';
 import { openFilesOnSingleClick } from '@/utils/folder-tree-options';
 import { UserProfile } from '@/services/google-auth';
 import CreateNodeDlg from './dialogs/create-node-dlg';
@@ -361,17 +362,22 @@ function FolderTree(treeProps: TreeProps) {
         if (rootNodes.length === 0) return;
 
         const found = findNode(rootNodes, nodes[0].data.id);
+        const moveToTrash = isLogin && isLocalProjectsEnabled;
 
         /**
-         * handleOnDeleteConfirmation - handle the delete confirmation
+         * handleOnDeleteConfirmation - handle the delete confirmation. My projects items go to the
+         * trash (spec 004, part 5) without asking.
          */
         const handleOnDeleteConfirmation = async () => {
-            toggleDialog();
+            if (!moveToTrash) toggleDialog();
             if (found) {
                 if (isLogin) {
                     // delete the actual file in Google Drive
                     if (found.fileId) {
-                        await AppMgr.getInstance().driveService?.DeleteFile(found.fileId);
+                        const driveService = AppMgr.getInstance().driveService;
+                        await (moveToTrash
+                            ? driveService?.trashFile(found.fileId)
+                            : driveService?.DeleteFile(found.fileId));
                         const username = getUsernameFromEmail(
                             AppMgr.getInstance().authService.userProfile.email,
                         );
@@ -399,7 +405,9 @@ function FolderTree(treeProps: TreeProps) {
             }
         };
 
-        if (found) {
+        if (found && moveToTrash) {
+            await handleOnDeleteConfirmation();
+        } else if (found) {
             setDialogContent(
                 <ConfirmationDlg
                     acceptCallback={handleOnDeleteConfirmation}
@@ -853,6 +861,7 @@ function FolderTree(treeProps: TreeProps) {
                     {Node}
                 </Tree>
             </div>
+            {treeProps.isHeader && isLocalProjectsEnabled && isLogin && <Trash />}
             <Dialog isOpen={false} toggleDialog={toggleDialog} ref={dialogRef}>
                 {dialogContent}
             </Dialog>
