@@ -11,7 +11,17 @@ export type RemoteItem = {
     /** Put in the Drive trash itself (not just inside a trashed folder). */
     explicitlyTrashed?: boolean;
     trashedTime?: string;
+    /** The app's own properties; {@link ARCHIVED_PROPERTY} marks an archived project. */
+    appProperties?: Record<string, string>;
 };
+
+/** App property set to `'true'` on archived projects (spec 004, part 6). */
+export const ARCHIVED_PROPERTY = 'xrpArchived';
+
+/** Whether a Drive item is an archived project. */
+export function isArchived(item: RemoteItem): boolean {
+    return item.appProperties?.[ARCHIVED_PROPERTY] === 'true';
+}
 
 /** A Drive request that failed; `status` is 0 when the network could not be reached. */
 export class DriveApiError extends Error {
@@ -25,7 +35,7 @@ export class DriveApiError extends Error {
 
 const FILES_URL = 'https://www.googleapis.com/drive/v3/files';
 const UPLOAD_URL = 'https://www.googleapis.com/upload/drive/v3/files';
-const FIELDS = 'id,name,mimeType,parents,modifiedTime,explicitlyTrashed,trashedTime';
+const FIELDS = 'id,name,mimeType,parents,modifiedTime,explicitlyTrashed,trashedTime,appProperties';
 
 type Fetch = typeof fetch;
 
@@ -115,14 +125,20 @@ class DriveApi extends GoogleDriveService {
         return this.create(name, FOLDER_MIME_TYPE);
     }
 
-    /** Create a folder, or a file with its content. */
+    /** Create a folder, or a file with its content; `archived` marks it as an archived project. */
     async create(
         name: string,
         mimeType: string,
         parentId?: string,
         content?: string,
+        archived?: boolean,
     ): Promise<RemoteItem> {
-        const metadata = { name, mimeType, ...(parentId ? { parents: [parentId] } : {}) };
+        const metadata = {
+            name,
+            mimeType,
+            ...(parentId ? { parents: [parentId] } : {}),
+            ...(archived ? { appProperties: { [ARCHIVED_PROPERTY]: 'true' } } : {}),
+        };
         if (mimeType === FOLDER_MIME_TYPE) {
             const response = await this.request(`${FILES_URL}?fields=${FIELDS}`, {
                 method: 'POST',
@@ -138,7 +154,10 @@ class DriveApi extends GoogleDriveService {
         return (await response.json()) as RemoteItem;
     }
 
-    /** Change a file's name, content (files only), folder and, when given, its place in the trash. */
+    /**
+     * Change a file's name, content (files only), folder and, when given, its place in the trash
+     * and whether it is archived.
+     */
     async update(
         id: string,
         change: {
@@ -148,6 +167,7 @@ class DriveApi extends GoogleDriveService {
             addParent?: string;
             removeParent?: string;
             trashed?: boolean;
+            archived?: boolean;
         },
     ): Promise<RemoteItem> {
         const params = new URLSearchParams({ fields: FIELDS });
@@ -158,6 +178,9 @@ class DriveApi extends GoogleDriveService {
         const metadata = {
             name: change.name,
             ...(change.trashed !== undefined ? { trashed: change.trashed } : {}),
+            ...(change.archived !== undefined
+                ? { appProperties: { [ARCHIVED_PROPERTY]: change.archived ? 'true' : null } }
+                : {}),
         };
         if (change.mimeType === FOLDER_MIME_TYPE || change.content === undefined) {
             const response = await this.request(`${FILES_URL}/${id}?${params}`, {

@@ -433,5 +433,13 @@
             "variable": "Guarda un valor con un nombre, para usarlo otra vez y cambiarlo en un solo sitio.",
             "function": "Pone nombre a unos pasos. Escribe my_function() para ejecutarlos."
         }
+    },
+    "archived": {
+        "row": "Archivados",
+        "title": "Proyectos archivados",
+        "hint": "Proyectos que guardaste para tener tu lista ordenada. Aquí están a salvo: no se borra nada. Recupera uno cuando quieras.",
+        "empty": "No hay proyectos archivados.",
+        "archive": "Archivar (guardar sin borrar)",
+        "unarchive": "Recuperar"
     }
 }

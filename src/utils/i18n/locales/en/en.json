@@ -433,5 +433,13 @@
             "variable": "Keeps a value under a name, so you can use it again and change it in one place.",
             "function": "Gives a name to some steps. Write my_function() to run them."
         }
+    },
+    "archived": {
+        "row": "Archived",
+        "title": "Archived projects",
+        "hint": "Projects you put away to keep your list tidy. They are safe here: nothing is deleted. Bring one back whenever you want.",
+        "empty": "No archived projects.",
+        "archive": "Archive (put away without deleting)",
+        "unarchive": "Bring back"
     }
 }
