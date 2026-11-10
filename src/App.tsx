@@ -28,7 +28,7 @@ function App() {
 
     return (
         <>
-            <header className="sticky top-0 z-50 bg-curious-blue-700 dark:bg-(--app-frame)">
+            <header className="sticky top-0 z-100 bg-curious-blue-700 dark:bg-(--app-frame)">
                 <Navbar layoutref={xrpLayoutRef} />
             </header>
             <main className="app-main relative">

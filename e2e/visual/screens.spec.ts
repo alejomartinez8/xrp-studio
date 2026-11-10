@@ -241,5 +241,14 @@ for (const theme of THEMES) {
             await settle(page);
             await expect(page).toHaveScreenshot(`phone-menu-settings-${theme}.png`);
         });
+
+        test('phone menu over the blocks editor', async ({ page, context }) => {
+            await openWelcome(page, context, theme);
+            await openBlocksExample(page);
+            await page.getByRole('button', { name: 'Menu' }).click();
+            await expect(page.locator('#mobile-keepSignedInBtn')).toBeAttached();
+            await settle(page);
+            await expect(page).toHaveScreenshot(`phone-menu-blocks-${theme}.png`);
+        });
     });
 }
