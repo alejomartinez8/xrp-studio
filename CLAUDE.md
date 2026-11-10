@@ -2,7 +2,7 @@
 
 Fork of [Open-STEM/XRPWeb](https://github.com/Open-STEM/XRPWeb): web IDE for the XRP robot
 (Blockly blocks + Python/MicroPython). Fork goals: work without internet, a friendly and colourful
-block editor, a simple UI for kids, Spanish first; desktop and Android tablet.
+block editor, a simple UI for kids, multilingual (English by default); desktop and Android tablet.
 
 ## Commands
 
@@ -119,7 +119,7 @@ tooling (no npm or test commands, no hosting previews). Unit tests are listed un
 ## Conventions
 
 - Everything in the repo is in English: code, identifiers, comments, tests, docs, commit
-  messages and branch names. Spanish lives only in `src/utils/i18n/locales/es/`.
+  messages and branch names. Translations live only in `src/utils/i18n/locales/<lang>/`.
 - User-facing text always goes through i18n (en and es).
 - Comments: documentation comments only (`/** */` on modules, classes, functions). No inline
   `//` comments in code we add; put the explanation in the doc comment. Leave upstream comments as
