@@ -606,3 +606,48 @@ explanations, as MakeCode's Python editor has.
 
 Fork-only (kids UI). XRPWeb keeps its View menu entries; the selector could be offered to XRPWeb
 later.
+
+## Part 7 — Menus above the editor
+
+### Problem
+
+On a phone, in Blocks mode, the menu of the top bar (File, Help and Settings entries) was drawn
+under the coloured strip of block categories: the strip covered the start of the icons and texts
+of every entry. The top bar sat below the block editor's own layers, so any menu opened from it
+could be hidden by the toolbox.
+
+### Solution
+
+The top bar is now above every editor surface (toolbox, block lists, workspace, drag layer), so all
+its menus are on top: the phone menu, the Help and Settings menus on tablet and desktop, and the
+language and theme sub-menus. Dialogs still open above the top bar.
+
+Before (phone, Blocks mode, menu open):
+
+| Light | Dark |
+| --- | --- |
+| ![before light](images/003-menu-over-toolbox-before-light.png) | ![before dark](images/003-menu-over-toolbox-before-dark.png) |
+
+After:
+
+| Light | Dark |
+| --- | --- |
+| ![after light](images/003-menu-over-toolbox-after-light.png) | ![after dark](images/003-menu-over-toolbox-after-dark.png) |
+
+### Files
+
+- `src/App.tsx`: the top bar's stacking level.
+- `e2e/menu-layering.spec.ts`: on a phone the open menu is the topmost element over the toolbox; on
+  desktop the Settings menu is topmost.
+- `e2e/visual/screens.spec.ts`: `phone-menu-blocks-{light,dark}` screenshots.
+
+### How to test
+
+1. Open a Blocks project on an Android phone (portrait) and tap the menu button: every entry is
+   fully visible, nothing is drawn over it.
+2. On desktop and tablet open Help and Settings in Blocks mode: the menus cover the toolbox.
+3. Open a dialog (for example Backup/Restore): it is still above the top bar.
+
+### Upstream
+
+Fork-only (the phone menu belongs to the kids UI).
