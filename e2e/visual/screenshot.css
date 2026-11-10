@@ -5,3 +5,11 @@
 .debug-screens::before {
     display: none !important;
 }
+
+/**
+ * The version text in the status bar carries the commit, which changes with every commit
+ * (spec 006, part 6); it stays out of the screenshots.
+ */
+[data-testid='app-version'] {
+    visibility: hidden !important;
+}

@@ -607,3 +607,65 @@ Measured on the same machine with the same method, before (the fork's main branc
 ### Upstream
 
 Possible: dependency upgrade independent of the fork's UI. XRPWeb has the same stack.
+
+## Part 11 — App version and releases
+
+### Problem
+
+The app showed its version nowhere. `package.json` said 2.0.36 (inherited and unused), a
+hand-written number decided when the XRPWeb Change Log opened, and the tags and releases were
+XRPWeb's. Nobody could tell which build a tablet or a bug report was running, and the Change Log
+told the story of XRPWeb, not of the fork.
+
+### Solution
+
+- One number: the `version` in `package.json`, injected at build time. The fork has its own
+  version, separate from XRPWeb's, starting at 0.1.0. The XRPWeb version it is based on (2.1.0) is
+  recorded once, in `package.json` as `xrpwebBase`.
+- The status bar shows the version at the right, as `0.1.0 · a1b2c3d` (short commit). Hovering it
+  says "Based on XRPWeb 2.1.0". Builds that are not production on the host (preview deployments)
+  add `· preview`. Without a commit (no git, no host information) the version shows alone. The
+  Update button of the installed app is unchanged and sits next to it.
+- The fork's own Change Log (English and Spanish, short and for users) replaces XRPWeb's in the
+  "what's new" window. It opens the first time and whenever the version changes, and stays in the
+  Help menu. The window also shows the version and the XRPWeb base. XRPWeb's `CHANGELOG.md` stays
+  in the site, untouched and unused.
+- Releases: a release is a pull request that bumps the version in `package.json` (and adds an
+  entry to both Change Logs); once merged, the tag `vX.Y.Z` is pushed on `main`. The tag creates
+  the GitHub Release with notes built from the titles of the pull requests merged since the
+  previous tag, and attaches the build. The release stops if the tag does not match
+  `package.json`. The release workflow still fits the fork: it takes the firmware loader content
+  from XRPWeb's firmware repository, as the deployment does.
+
+The status bar and the Change Log, light and dark.
+
+| | Status bar | Change Log |
+| --- | --- | --- |
+| Light | ![Version, light](images/versioning-statusbar-light.png) | ![Change Log, light](images/versioning-changelog-light.png) |
+| Dark | ![Version, dark](images/versioning-statusbar-dark.png) | ![Change Log, dark](images/versioning-changelog-dark.png) |
+
+### Files
+
+- `package.json` (`version`, `xrpwebBase`), `package-lock.json`, `vite.config.ts` (injected
+  values), `src/vite-env.d.ts`, `src/utils/version.ts` (text and Change Log file),
+  `src/utils/constants.ts`, `src/components/status-bar.tsx`,
+  `src/components/dialogs/changelog.tsx`, `public/changelog/{en,es}.md`,
+  `src/utils/i18n/locales/{en,es}`, `.github/workflows/release.yml`.
+- Tests: `src/utils/tests/version.spec.ts`, `e2e/version.spec.ts`. The visual tests hide the
+  version text, because the commit changes every time.
+
+### How to test
+
+1. Open the app: the Change Log opens with "What's new in XRP Studio", the version and "Based on
+   XRPWeb 2.1.0". Close it and reload: it does not open again.
+2. The status bar shows `0.1.0 · <commit>` at the right; hover it for the XRPWeb base.
+3. Change the language to Spanish: the Change Log (Help menu) and the tooltip are in Spanish.
+4. In a preview deployment the version ends with `· preview`; in production it does not.
+5. In the installed app, with a new version waiting, the Update button shows left of the version
+   and still updates the app.
+6. Release: bump the version, merge, push the tag `v0.1.0`; the GitHub Release lists the merged
+   pull request titles.
+
+### Upstream
+
+Not for XRPWeb: the fork's own numbering and Change Log.

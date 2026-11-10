@@ -21,6 +21,15 @@ jobs:
             # Same staging as deploy.yml: the /firmware-loader/boards content
             # is never checked in, so pull it from the firmware repo before
             # the build or the released site 404s on all firmware loader data.
+            # The tag must match package.json, the single source of the app version
+            # (docs/specs/006-maintenance.md, part 6), or the released build would show another number.
+            - name: Check the tag matches package.json
+              run: |
+                  VERSION=$(node -p "require('./package.json').version")
+                  if [ "v$VERSION" != "${{ github.ref_name }}" ]; then
+                      echo "Tag ${{ github.ref_name }} does not match package.json version $VERSION"
+                      exit 1
+                  fi
             - name: Resolve latest XRP_Firmware release
               id: firmware
               env:
@@ -72,6 +81,8 @@ jobs:
               with:
                   tag_name: ${{ github.ref_name }}
                   name: Release ${{ github.ref_name }}
+                  # Notes list the titles of the PRs merged since the previous tag.
+                  generate_release_notes: true
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             - name: Upload Build artifacts
