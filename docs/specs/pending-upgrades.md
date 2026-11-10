@@ -7,7 +7,6 @@ should be its own change, tested in the app.
 | --- | --- | --- | --- |
 | `react-blockly` | 9 | — | Runs on React 19 through `overrides` in `package.json` (spec 006, part 4). Remove the override when `react-blockly` declares React 19. |
 | Tailwind CSS | 3.4 | 4 | New config format; the theme palette approach needs a review. |
-| recharts | 2 | 3 | 2.x is no longer maintained; used by the dashboard. |
 | `npm audit` leftovers | — | — | 20 reports, none critical (spec 006, part 3): 2 high in `flowbite-react` through `deepmerge-ts` and moderate ones in build and lint tools. They go away as those packages release fixes; check with `npm audit` after each update. |
 
 ## Feature backlog
