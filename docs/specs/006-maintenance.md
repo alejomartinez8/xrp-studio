@@ -471,6 +471,16 @@ the backlog) needs colours that can change while the app runs.
   breakpoint label in debug mode.
 - One visible difference by design: Tailwind 4 applies `hover:` styles only on devices that can
   hover, so on a tablet a tapped button no longer stays highlighted.
+- **Focus.** Tailwind 4 changed the focus defaults (`ring` is 1px in the text colour instead of
+  3px blue, `outline-none` now really removes the outline). The upgrade tool moved
+  `outline-none` to `outline-hidden` (the old behaviour) and `src/index.css` keeps the old ring
+  colour, so focus looks as before: the keyboard focus (Tab) of the top bar, the Blocks | Python
+  selector, My projects | Robot memory, the file tree, the toolbox and its search, the welcome
+  cards and the New file dialog was compared between the Tailwind 3 and Tailwind 4 builds, light
+  and dark, with no difference. A focused welcome card (identical before and after):
+
+  ![Focused card, light](images/tailwind4-focus-light.png)
+  ![Focused card, dark](images/tailwind4-focus-dark.png)
 
 ### Files
 
@@ -492,6 +502,8 @@ the backlog) needs colours that can change while the app runs.
    between the menus and the Connect button on a tablet or desktop.
 3. Open File > New file, the Help menu and the Trash: dialogs and lists look as before.
 4. Open Help > Changelog (typography styles): headings, code and tables keep their colours.
+5. Press Tab through the top bar, the folder tree, the toolbox and a dialog: each control shows the
+   same focus ring as before.
 
 ### Upstream
 
