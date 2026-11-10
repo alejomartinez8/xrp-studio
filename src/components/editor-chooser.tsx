@@ -1,10 +1,11 @@
 import React from 'react';
 import blocklyImage from '@assets/images/blockly.svg';
 import pythonImage from '@assets/images/micropython.png';
-import { Actions, IJsonTabNode, Layout } from 'flexlayout-react';
+import { Actions, IJsonTabNode, ILayoutApi } from 'flexlayout-react';
+import EditorMgr from '@/managers/editormgr';
 
 type EditorChooserProps = {
-    flref: React.RefObject<Layout | null>;
+    flref: React.RefObject<ILayoutApi | null>;
 };
 
 /**
@@ -21,7 +22,7 @@ function EditorChooser({ flref }: EditorChooserProps) {
      * @param tabId - Id of the tab to be removed
      */
     function removeTab(tabId: string) {
-        const model = layoutRef.current?.props.model;
+        const model = EditorMgr.getInstance().getLayoutModel();
         model!.doAction(Actions.deleteTab(tabId));
     }
 
