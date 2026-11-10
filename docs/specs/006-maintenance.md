@@ -634,7 +634,10 @@ told the story of XRPWeb, not of the fork.
   entry to both Change Logs); once merged, the tag `vX.Y.Z` is pushed on `main`. The tag creates
   the GitHub Release with notes built from the titles of the pull requests merged since the
   previous tag, and attaches the build. The release stops if the tag does not match
-  `package.json`. The release workflow still fits the fork: it takes the firmware loader content
+  `package.json`. The build and its tests run on Node 22, like the deployment and the browser
+  tests; Node 20 cannot run the unit tests. The attached build is a real zip file. If a release
+  fails, fix the cause, delete the tag (and the half-made release, if any) and push the tag
+  again. The release workflow still fits the fork: it takes the firmware loader content
   from XRPWeb's firmware repository, as the deployment does.
 
 The status bar and the Change Log, light and dark.
