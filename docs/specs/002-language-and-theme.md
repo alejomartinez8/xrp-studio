@@ -1,6 +1,6 @@
 # 002 — Language and theme
 
-Spanish first, and a friendly look in light and dark. Five parts: Spanish translation fixes, the friendly theme and block editor, theme switch fixes, plain Spanish for the blocks, and the toolbox on tablets and phones.
+Language support (English by default, several languages) and a friendly look in light and dark. The first language added besides English was Spanish. Six parts: Spanish translation fixes, the friendly theme and block editor, theme switch fixes, plain Spanish for the blocks, the toolbox on tablets and phones, and how the initial language is chosen.
 
 
 ## Part 1 — Spanish translation fixes
@@ -380,3 +380,37 @@ agree with them. The Motors group, search and Advanced group stay in the fork.
 
 The grouping, the phone toolbox and the full screen app are fork-specific (kids UI). The tablet fix is in fork CSS, but XRPWeb's own
 `100vh` has the same problem on Android tablets and could take the same idea.
+
+## Part 6 — How the initial language is chosen
+
+### Problem
+
+The fork is global and multilingual: English is the default and no language is singled out. The
+rule for the first language had not been written down.
+
+### Solution
+
+No behaviour change; this documents what the app does:
+
+- The app opens in English by default.
+- If the browser language is one of the supported languages (English and Spanish today, with
+  regional variants such as `es-419` counting as `es`), the app opens in that language.
+- Any other browser language falls back to English.
+- The language can be changed at any time in Settings; the choice is remembered on the device and
+  wins over the browser language from then on.
+
+### Files
+
+- `src/utils/i18n/index.ts` (detector, `fallbackLng: 'en'`, `supportedLngs`)
+- `src/utils/i18n/languages.ts` (languages offered in Settings)
+
+### How to test
+
+1. Set the browser language to a language the app does not have (for example French) and open the
+   app with fresh site data: it is in English.
+2. Set it to Spanish (or `es-419`) with fresh site data: it is in Spanish.
+3. In Settings, choose English, reload: it stays in English whatever the browser language.
+
+### Upstream
+
+Same detection as XRPWeb; nothing to send.
