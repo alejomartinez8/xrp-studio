@@ -470,7 +470,20 @@ The whole stack moves together to the latest compatible set:
   longer switched the theme while the editor was open, and the old light value (`vs`) was not a
   theme name, so it fell back to VS Code's newer default light theme. The editor looks exactly as
   before in both themes (the approved screenshots did not change).
+- Colours for calls: function and method calls (`drivetrain.straight(20)`, `math.sqrt(2)`,
+  `Robot()`) were plain text in both themes, so the light theme in particular looked like a plain
+  notepad. In VS Code these colours come from Pylance's semantic highlighting, which Pyright does
+  not provide. The Python grammar does mark calls, so the editor now gives them each theme's
+  function colour (brown in light, pale yellow in dark), like the names in `def` lines. Module
+  names (`math`, `drivetrain`) stay plain: the grammar does not mark them.
 - The Python editor still loads on demand and is still stored for offline use.
+
+Before and after, light and dark:
+
+| | Before | After |
+| --- | --- | --- |
+| Light | ![Python editor before, light](images/python-colours-before-light.png) | ![Python editor after, light](images/python-colours-after-light.png) |
+| Dark | ![Python editor before, dark](images/python-colours-before-dark.png) | ![Python editor after, dark](images/python-colours-after-dark.png) |
 
 Measured on the same machine with the same method, before (the fork's main branch) and after
 (production build served locally, new Python project, average of five runs):
@@ -486,13 +499,14 @@ Measured on the same machine with the same method, before (the fork's main branc
 ### Files
 
 - `package.json`, `package-lock.json`, `vite.config.ts`, `src/components/MonacoEditor.tsx`,
-  `src/components/lsp-client.ts`.
+  `src/components/lsp-client.ts`, `docs/specs/images/python-colours-*.png`.
 
 ### How to test
 
 1. Open the app and create a Python project: the editor opens, keywords and strings are coloured.
 2. Type `import math` and, on a new line, `x: int = "a"`: Pyright underlines `"a"`. Type `math.`:
-   the list of `math` functions appears.
+   the list of `math` functions appears. Finish the line as `math.sqrt(2)`: `sqrt` takes the
+   function colour, in light and in dark.
 3. With a Python file open, switch the system between light and dark: the editor follows both
    ways, and the zoom level is kept.
 4. Use the round + and − buttons: the code gets bigger and smaller.
