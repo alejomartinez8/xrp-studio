@@ -8,6 +8,7 @@ import { Workspace } from 'react-blockly';
 import i18n from '@/utils/i18n';
 import { GoogleDriveFile } from '@/services/google-drive';
 import { rememberLastProject } from '@/utils/last-project';
+import { forgetEditorView } from '@/utils/editor-view';
 import { flushAutosave, isAutosaved, scheduleAutosave } from '@/utils/autosave';
 
 /**
@@ -146,6 +147,7 @@ export default class EditorMgr {
             }
             appMgr.eventOff(EventType.EVENT_SAVE_EDITOR);
             this.editorSessions.delete(id);
+            forgetEditorView(id);
             this.RemoveFromLocalStorage(id);
             if (this.editorSessions.size === 0 && sesion?.path) {
                 rememberLastProject(sesion.path);

@@ -15,10 +15,10 @@ import { blockThemeOptions } from '@components/blockly/block-theme';
 import { activeBlockTheme } from '@/theme';
 import { kidFriendlyToolbox, registerToolboxUi } from '@components/blockly/toolbox-ui';
 import { isMaxMd, MAX_MD_QUERY } from '@/utils/breakpoints';
-import { parseBlocksJson } from '@components/blockly/blocks-content';
+import { extractBlocksJson, parseBlocksJson } from '@components/blockly/blocks-content';
+import { usePythonView } from '@components/blockly/use-python-view';
 import { scheduleAutosave } from '@/utils/autosave';
 import PythonView from '@components/blockly/python-view';
-import { forgetEditorView, getEditorView, onEditorViewChange } from '@/utils/editor-view';
 
 registerFieldColour(); //Plugin needs to be registered. Used for the Color LED on the non beta board. 
 registerToolboxUi();
@@ -224,8 +224,7 @@ function loadBlocksIntoWorkspace(ws: Workspace, session: EditorSession) {
     if (!session.content) {
         return;
     }
-    const lines = session.content.split('##XRPBLOCKS ');
-    const blockContent = parseBlocksJson(lines.length > 1 ? lines[1] : lines[0]);
+    const blockContent = parseBlocksJson(extractBlocksJson(session.content));
     if (blockContent) {
         Blockly.serialization.workspaces.load(blockContent, ws);
     }
@@ -272,7 +271,8 @@ function BlocklyEditor({ tabId, tabName }: BlocklyEditorProps) {
     // signed out of Google Drive. The file cannot be saved, so editing is
     // blocked until they sign back in.
     const [editBlocked, setEditBlocked] = useState<boolean>(false);
-    const pythonCode = usePythonView(tabId, workspace);
+    const [loadRevision, setLoadRevision] = useState(0);
+    const pythonCode = usePythonView(tabId, workspace, loadRevision);
     const containerRef = useRef<HTMLDivElement>(null);
 
     const evaluateEditBlocked = useCallback(() => {
@@ -345,6 +345,7 @@ function BlocklyEditor({ tabId, tabName }: BlocklyEditorProps) {
                     Blockly.Events.enable();
                     isLoadingRef.current = false;
                 }
+                setLoadRevision((revision) => revision + 1);
             }
         }
         fixPhoneFlyoutScale(ws);
@@ -415,6 +416,7 @@ function BlocklyEditor({ tabId, tabName }: BlocklyEditorProps) {
                     } finally {
                         Blockly.Events.enable();
                     }
+                    setLoadRevision((revision) => revision + 1);
                     // First open of this file (no existing tab): fit + center the
                     // blocks, then save that as the tab's viewport. Deferred so the
                     // container has its real size before fitting.
@@ -545,6 +547,7 @@ function BlocklyEditor({ tabId, tabName }: BlocklyEditorProps) {
             if (event.type === Blockly.Events.FINISHED_LOADING) {
                 setIsLoading(false);
                 isLoadingRef.current = false;
+                setLoadRevision((revision) => revision + 1);
                 persistViewport(workspace);
                 if (!initialImportDoneRef.current) {
                     initialImportDoneRef.current = true;
@@ -690,32 +693,6 @@ function BlocklyEditor({ tabId, tabName }: BlocklyEditorProps) {
         />
         )}
         </div>
-    );
-}
-
-/**
- * The Python of the blocks in tab `tabId` while "Python" is chosen in the top bar (spec 003,
- * part 6), or null while the blocks show. The code is generated each time Python is chosen: the
- * blocks cannot change while their Python shows. The tab's choice is forgotten when it closes.
- */
-function usePythonView(tabId: string, workspace: Workspace | null): string | null {
-    const [isPython, setIsPython] = useState(() => getEditorView(tabId) === 'python');
-
-    useEffect(() => {
-        const stop = onEditorViewChange((changedTab, view) => {
-            if (changedTab === tabId) {
-                setIsPython(view === 'python');
-            }
-        });
-        return () => {
-            stop();
-            forgetEditorView(tabId);
-        };
-    }, [tabId]);
-
-    return useMemo(
-        () => (isPython ? (workspace ? pythonGenerator.workspaceToCode(workspace) : '') : null),
-        [isPython, workspace],
     );
 }
 
