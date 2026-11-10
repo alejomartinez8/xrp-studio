@@ -2,7 +2,7 @@ import '@codingame/monaco-vscode-python-default-extension';
 import '@codingame/monaco-vscode-theme-defaults-default-extension';
 import { useEffect, useRef, useState } from 'react';
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
-import { initialize } from 'vscode/services';
+import { initialize } from '@codingame/monaco-vscode-api/services';
 import getLanguagesServiceOverride from '@codingame/monaco-vscode-languages-service-override';
 import getThemeServiceOverride from '@codingame/monaco-vscode-theme-service-override';
 import getTextMateServiceOverride from '@codingame/monaco-vscode-textmate-service-override';
@@ -23,12 +23,16 @@ import { useTranslation } from 'react-i18next';
 import { whenReady } from '@codingame/monaco-vscode-python-default-extension';
 import { scheduleAutosave } from '@/utils/autosave';
 import ZoomControls from '@components/python/zoom-controls';
+import {
+    pythonTokenColours,
+    registerPythonObjectNames,
+} from '@components/python/python-colours';
 
 const languageId = 'python';
 
 export type WorkerLoader = () => Worker;
 const workerLoaders: Partial<Record<string, WorkerLoader>> = {
-    TextEditorWorker: () =>
+    editorWorkerService: () =>
         new Worker(new URL('monaco-editor/esm/vs/editor/editor.worker.js', import.meta.url), {
             type: 'module',
         }),
@@ -51,6 +55,23 @@ window.MonacoEnvironment = {
 };
 
 let initPromise: Promise<void> | null = null;
+
+/**
+ * Applies the app theme to the Python editor through the VS Code user settings. With the theme
+ * service override, `monaco.editor.setTheme` no longer changes the theme (monaco-vscode-api 37),
+ * so a theme change sets `workbench.colorTheme` to the theme ids (`vs` was not a theme name and
+ * now falls back to VS Code's newer default light theme). The default font size and the extra
+ * Python colours (`python-colours.ts`) are written with it because the settings are replaced as
+ * a whole; the zoom buttons set the size on each editor.
+ */
+const applyEditorTheme = (theme: string) =>
+    updateUserConfiguration(
+        JSON.stringify({
+            'editor.fontSize': Constants.DEFAULT_FONTSIZE,
+            'editor.tokenColorCustomizations': pythonTokenColours,
+            'workbench.colorTheme': theme === Themes.DARK ? 'Dark Modern' : 'Light Modern',
+        }),
+    );
 
 const ensureMonacoInitialized = () => {
     if (initPromise) {
@@ -133,6 +154,7 @@ const ensureMonacoInitialized = () => {
         };
 
         registerExtension(extension, ExtensionHostKind.LocalProcess);
+        registerPythonObjectNames();
         console.log('[MonacoEditor] Extension registered');
 
         // start web socket lsp client to the Web Worker python server
@@ -272,8 +294,7 @@ const MonacoEditor = ({
         ) {
             AppMgr.getInstance().on(EventType.EVENT_THEME, (theme) => {
                 console.log('Monaco set theme to ${selectedTheme}');
-                if (editor.current != null)
-                    monaco.editor.setTheme(theme === Themes.DARK ? 'Default Dark Modern' : 'vs');
+                if (editor.current != null) applyEditorTheme(theme);
             });
 
             AppMgr.getInstance().on(EventType.EVENT_EDITOR_LOAD, (content) => {
@@ -333,10 +354,7 @@ const MonacoEditor = ({
 
         if (isReady && editorRef.current) {
             if (editor.current === null) {
-                updateUserConfiguration(`{
-                    "editor.fontSize": ${Constants.DEFAULT_FONTSIZE},
-                    "workbench.colorTheme": "${AppMgr.getInstance().getTheme() === Themes.DARK ? 'Default Dark Modern' : 'vs'}"
-                }`);
+                applyEditorTheme(AppMgr.getInstance().getTheme());
 
                 editor.current = monaco.editor.create(editorRef.current, {
                     value: value,

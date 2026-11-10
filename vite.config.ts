@@ -2,7 +2,6 @@ import { readFile } from 'fs/promises';
 import { defineConfig, type PluginOption, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
-import importMetaUrlPlugin from '@codingame/esbuild-import-meta-url-plugin';
 import { visualizer } from "rollup-plugin-visualizer";
 import { viteStaticCopy } from 'vite-plugin-static-copy'
 import { fileURLToPath, URL } from 'url';
@@ -88,12 +87,6 @@ export default defineConfig(({ mode, command }) => {
     const isDev = mode === 'development' || command === 'serve';
     return {
         base: './',
-        esbuild: {
-            sourcemap: true,
-            supported: {
-                'top-level-await': true,
-            },
-        },
         define: {
             rootDirectory: JSON.stringify(__dirname),
             global: 'globalThis',
@@ -146,12 +139,6 @@ export default defineConfig(({ mode, command }) => {
         },
         optimizeDeps: {
             include: ['vscode-textmate', 'vscode-oniguruma'],
-            esbuildOptions: {
-                tsconfig: './tsconfig.json',
-                plugins: [
-                    importMetaUrlPlugin
-                ],
-            },
         },
         server: {
             port: 3000,
@@ -160,7 +147,7 @@ export default defineConfig(({ mode, command }) => {
             }
         },
         build: {
-            minify: 'esbuild',
+            minify: 'oxc',
             reportCompressedSize: false,
             rollupOptions: {
                 input: {
