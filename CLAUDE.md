@@ -89,8 +89,9 @@ plugin serves them in dev. Server variables: `OAUTH_CLIENT_ID`, `OAUTH_CLIENT_SE
 
 ## Themes
 
-- `src/theme/<name>/`: `tailwind.ts` (app palette applied over the named Tailwind palettes, used
-  via `withGitHubTheme()` in `tailwind.config.ts`), `app.css` (font, layout tabs), `blocks.ts`
+- `src/theme/<name>/`: `tailwind.css` (app palette for the named Tailwind palettes as a Tailwind 4
+  `@theme` block of CSS variables, imported by `src/index.css`; `tailwind.config.ts` only keeps the
+  typography styles), `app.css` (font, layout tabs), `blocks.ts`
   (one colour per toolbox `categoryId` plus editor surfaces). Types in `src/theme/types.ts`;
   `src/theme/index.ts` picks the active theme (GitHub by default).
 - `src/components/blockly/block-theme.ts` applies a block theme (category colours, block colours,

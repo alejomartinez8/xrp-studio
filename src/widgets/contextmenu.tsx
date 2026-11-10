@@ -37,7 +37,7 @@ function ContextMenu({children, items}: ContextMenuProps) {
             {visible && (
                 <ul
                     style={{top: `${position.y}px`, left: `${position.x}px`}}
-                    className='absolute flex flex-col p-2 gap-1 border rounded-sm shadow-md text-matisse-100 bg-curious-blue-700 z-50 transition-all'
+                    className='absolute flex flex-col p-2 gap-1 border rounded-xs shadow-md text-matisse-100 bg-curious-blue-700 z-50 transition-all'
                 >
                     {items.map((item, index) => (
                         <li 

@@ -49,7 +49,7 @@ function ChangeLogDlg({ closeDialog, changelogUrl = 'CHANGELOG.md' }: changelogP
                 className="h-[calc(100%-1rem)] max-h-full w-full items-center justify-center overflow-hidden md:inset-0"
             >
                 <div className="relative max-h-full w-full max-w-2xl">
-                    <div className="bg-white relative rounded-lg shadow-sm dark:bg-gray-700">
+                    <div className="bg-white relative rounded-lg shadow-xs dark:bg-gray-700">
                         {/* Modal header */}
                         <div className="flex items-center justify-between rounded-t border-b border-gray-200 md:p-4 dark:border-gray-600">
                             <h3 className="dark:text-white text-2xl font-semibold text-gray-400">
@@ -79,7 +79,7 @@ function ChangeLogDlg({ closeDialog, changelogUrl = 'CHANGELOG.md' }: changelogP
                         </div>
                         {/* Modal body */}
                         <div className="max-h-[85vh] overflow-y-auto overflow-x-hidden p-4">
-                            <div className="prose prose-lg max-[767px]:prose dark:prose-invert prose-headings:font-semibold prose-h1:text-curious-blue-600 prose-h2:text-curious-blue-700 prose-h3:text-curious-blue-800 prose-p:leading-relaxed prose-p:text-mountain-mist-800 prose-a:text-curious-blue-600 hover:prose-a:text-curious-blue-700 prose-strong:text-mountain-mist-900 prose-code:bg-curious-blue-50 prose-code:text-curious-blue-700 prose-ol:my-4 prose-ul:my-4 prose-li:text-mountain-mist-800 dark:prose-li:text-mountain-mist-300">
+                            <div className="prose prose-lg max-[767px]:prose dark:prose-invert prose-headings:font-semibold prose-h1:text-curious-blue-600 prose-h2:text-curious-blue-700 prose-h3:text-curious-blue-800 prose-p:leading-relaxed prose-p:text-mountain-mist-800 prose-a:text-curious-blue-600 prose-a:hover:text-curious-blue-700 prose-strong:text-mountain-mist-900 prose-code:bg-curious-blue-50 prose-code:text-curious-blue-700 prose-ol:my-4 prose-ul:my-4 prose-li:text-mountain-mist-800 dark:prose-li:text-mountain-mist-300">
                                 <div dangerouslySetInnerHTML={{ __html: markdown }} />
                             </div>
                         </div>

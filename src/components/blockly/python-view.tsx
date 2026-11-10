@@ -44,7 +44,7 @@ function PythonView({ tabId, code }: PythonViewProps) {
     return (
         <div
             data-testid="python-view"
-            className="absolute inset-0 z-[90] flex flex-col bg-mountain-mist-50 dark:bg-shark-950"
+            className="absolute inset-0 z-90 flex flex-col bg-mountain-mist-50 dark:bg-shark-950"
         >
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-mountain-mist-200 bg-mountain-mist-100 px-4 py-2 text-sm text-shark-700 dark:border-shark-700 dark:bg-shark-900 dark:text-mountain-mist-200">
                 <span>{t('pythonFromBlocks')}</span>

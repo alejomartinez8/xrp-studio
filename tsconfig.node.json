@@ -28,5 +28,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["vite.config.ts", "pwa-plugin.ts", "tailwind.config.ts", "tailwind-plugins.d.ts", "api", "server", "playwright.config.ts", "e2e"]
+  "include": ["vite.config.ts", "pwa-plugin.ts", "tailwind.config.ts", "api", "server", "playwright.config.ts", "e2e"]
 }

@@ -53,7 +53,7 @@ function EditorSwitch({ tabId, isBlocks }: EditorSwitchProps) {
                 title={label}
                 className={`flex items-center gap-2 rounded-full px-3 py-1 font-semibold transition-colors md:px-4 ${
                     selected
-                        ? 'bg-mountain-mist-50 text-shark-900 shadow-sm'
+                        ? 'bg-mountain-mist-50 text-shark-900 shadow-xs'
                         : 'text-mountain-mist-100 hover:bg-matisse-500'
                 }`}
                 onClick={() => setEditorView(tabId, value)}

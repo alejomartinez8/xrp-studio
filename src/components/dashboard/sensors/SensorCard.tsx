@@ -82,7 +82,7 @@ const SensorCard: React.FC<SensorCardProps> = ({
 
   return (
 
-    <div ref={cardRef} className="sensor-card relative flex h-full w-full flex-col rounded-xl border-2 border-mountain-mist-300 bg-mountain-mist-50 text-shark-900 shadow dark:border-shark-600 dark:bg-shark-900 dark:text-shark-50">
+    <div ref={cardRef} className="sensor-card relative flex h-full w-full flex-col rounded-xl border-2 border-mountain-mist-300 bg-mountain-mist-50 text-shark-900 shadow-sm dark:border-shark-600 dark:bg-shark-900 dark:text-shark-50">
       <div className="sensor-header flex items-center py-1.5 pl-3 pr-14">
         <div className="flex min-w-0 items-center gap-2">
           <div className="shrink-0 text-lg text-shark-700 dark:text-shark-100">
@@ -92,7 +92,7 @@ const SensorCard: React.FC<SensorCardProps> = ({
         </div>
       </div>
 
-      <div className="sensor-content-area flex flex-grow items-center justify-center overflow-hidden px-2 py-1">
+      <div className="sensor-content-area flex grow items-center justify-center overflow-hidden px-2 py-1">
         {children}
       </div>
 

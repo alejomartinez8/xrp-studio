@@ -45,7 +45,7 @@ export default function AnimatedThemeToggle({
                 <span className="select-none ml-3 text-shark-900 dark:text-shark-200">{labelLeft}</span>
             )}
             {/* Toggle Track */}
-            <div className="relative flex items-center h-9 w-20 rounded-full bg-curious-blue-700 dark:bg-curious-blue-500 transition-colors duration-200 ease-in-out peer-checked:bg-blue-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-curious-blue-400 dark:peer-focus:ring-mountain-mist-500">
+            <div className="relative flex items-center h-9 w-20 rounded-full bg-curious-blue-700 dark:bg-curious-blue-500 transition-colors duration-200 ease-in-out peer-checked:bg-blue-600 peer-focus:outline-hidden peer-focus:ring-4 peer-focus:ring-curious-blue-400 dark:peer-focus:ring-mountain-mist-500">
                 {/* Toggle slider/circle */}
                 <div
                     className={clsx(
