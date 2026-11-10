@@ -23,6 +23,10 @@ import { useTranslation } from 'react-i18next';
 import { whenReady } from '@codingame/monaco-vscode-python-default-extension';
 import { scheduleAutosave } from '@/utils/autosave';
 import ZoomControls from '@components/python/zoom-controls';
+import {
+    pythonTokenColours,
+    registerPythonObjectNames,
+} from '@components/python/python-colours';
 
 const languageId = 'python';
 
@@ -53,37 +57,18 @@ window.MonacoEnvironment = {
 let initPromise: Promise<void> | null = null;
 
 /**
- * Colours for function and method calls (`drivetrain.straight(...)`, `print(...)`), which the
- * Python grammar marks as `meta.function-call.generic` but the VS Code themes leave plain: in VS
- * Code they come from Pylance's semantic highlighting, which Pyright does not provide. Each theme
- * gets its own function colour.
- */
-const callColours = {
-    '[Light Modern]': {
-        textMateRules: [
-            { scope: 'meta.function-call.generic.python', settings: { foreground: '#795E26' } },
-        ],
-    },
-    '[Dark Modern]': {
-        textMateRules: [
-            { scope: 'meta.function-call.generic.python', settings: { foreground: '#DCDCAA' } },
-        ],
-    },
-};
-
-/**
  * Applies the app theme to the Python editor through the VS Code user settings. With the theme
  * service override, `monaco.editor.setTheme` no longer changes the theme (monaco-vscode-api 37),
  * so a theme change sets `workbench.colorTheme` to the theme ids (`vs` was not a theme name and
- * now falls back to VS Code's newer default light theme). The default font size and the call
- * colours are written with it because the settings are replaced as a whole; the zoom buttons set
- * the size on each editor.
+ * now falls back to VS Code's newer default light theme). The default font size and the extra
+ * Python colours (`python-colours.ts`) are written with it because the settings are replaced as
+ * a whole; the zoom buttons set the size on each editor.
  */
 const applyEditorTheme = (theme: string) =>
     updateUserConfiguration(
         JSON.stringify({
             'editor.fontSize': Constants.DEFAULT_FONTSIZE,
-            'editor.tokenColorCustomizations': callColours,
+            'editor.tokenColorCustomizations': pythonTokenColours,
             'workbench.colorTheme': theme === Themes.DARK ? 'Dark Modern' : 'Light Modern',
         }),
     );
@@ -169,6 +154,7 @@ const ensureMonacoInitialized = () => {
         };
 
         registerExtension(extension, ExtensionHostKind.LocalProcess);
+        registerPythonObjectNames();
         console.log('[MonacoEditor] Extension registered');
 
         // start web socket lsp client to the Web Worker python server
