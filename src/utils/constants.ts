@@ -7,7 +7,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // See the GNU General Public License for more details.
 export class Constants {
-    static readonly APP_VERSION = '2.1.0';
+    static readonly APP_VERSION = __APP_VERSION__;
     static readonly EDITOR_TABSET_ID = 'editorTabSetId';
     static readonly SHELL_TABSET_ID = 'shellTabSetId';
     static readonly SHELL_TAB_ID = 'shellTabId';

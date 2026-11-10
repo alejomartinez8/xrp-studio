@@ -79,6 +79,14 @@ and `offline.json` (Help links marked "online") in offline builds, both in
 Behaviour with a robot connected was designed from the code and still needs testing with a real
 robot; see `docs/specs/004-file-management.md`.
 
+## Version and releases
+
+The version is `package.json` `version` (the fork's own SemVer; `xrpwebBase` records the XRPWeb
+base), injected by Vite (`src/utils/version.ts`) and shown in the status bar. The fork's Change
+Log is `public/changelog/{en,es}.md`. A release = a PR that bumps the version and adds the Change
+Log entries; after it merges, the user or orchestrator pushes the tag `vX.Y.Z` on `main` and
+`release.yml` creates the GitHub Release (spec 006, part 11). Never push tags yourself.
+
 ## Google sign-in server
 
 `server/google-auth/` implements XRPWeb's `GOOGLE_AUTH_URL` endpoints (stateless, encrypted

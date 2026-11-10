@@ -1,4 +1,6 @@
 import { readFile } from 'fs/promises';
+import { readFileSync } from 'fs';
+import { execSync } from 'child_process';
 import { defineConfig, type PluginOption, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
@@ -81,6 +83,33 @@ function manualChunks(id: string): string | undefined {
     return undefined;
 }
 
+/**
+ * Version facts injected into the app (spec 006, part 6): the version and the upstream base come
+ * from package.json, the commit from the host (Vercel or GitHub Actions) or from git, and the
+ * preview flag is true on Vercel builds that are not production. Without git or host variables
+ * the commit is empty and the app shows the version alone.
+ */
+function versionDefines(env: Record<string, string>) {
+    const pkg = JSON.parse(readFileSync(resolve(__dirname, 'package.json'), 'utf8'));
+    let commit = env.VERCEL_GIT_COMMIT_SHA || env.GITHUB_SHA || '';
+    if (!commit) {
+        try {
+            commit = execSync('git rev-parse HEAD', { stdio: ['ignore', 'pipe', 'ignore'] })
+                .toString()
+                .trim();
+        } catch {
+            commit = '';
+        }
+    }
+    const vercelEnv = env.VERCEL_ENV || process.env.VERCEL_ENV || '';
+    return {
+        __APP_VERSION__: JSON.stringify(pkg.version),
+        __APP_UPSTREAM__: JSON.stringify(pkg.xrpwebBase ?? ''),
+        __APP_COMMIT__: JSON.stringify(commit.slice(0, 7)),
+        __APP_PREVIEW__: JSON.stringify(vercelEnv !== '' && vercelEnv !== 'production'),
+    };
+}
+
 // https://vite.dev/config/
 export default defineConfig(({ mode, command }) => {
     const env = loadEnv(mode, process.cwd(), '');
@@ -90,6 +119,7 @@ export default defineConfig(({ mode, command }) => {
         define: {
             rootDirectory: JSON.stringify(__dirname),
             global: 'globalThis',
+            ...versionDefines(env),
         },
         plugins: [
             react(),

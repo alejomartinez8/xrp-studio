@@ -2,6 +2,12 @@ import { fileURLToPath } from 'url'
 import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
+  define: {
+    __APP_VERSION__: JSON.stringify('0.0.0-test'),
+    __APP_UPSTREAM__: JSON.stringify('2.1.0'),
+    __APP_COMMIT__: JSON.stringify('abc1234'),
+    __APP_PREVIEW__: false,
+  },
   test: {
     environment: "jsdom",
     globals: true,

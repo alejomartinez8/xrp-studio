@@ -1,8 +1,9 @@
 import { expect, type BrowserContext, type Page } from '@playwright/test';
+import { readFileSync } from 'fs';
 import { MockGoogle } from './google-mock';
 
 /** App version stored by the app once the change log was shown (`Constants.APP_VERSION`). */
-const SEEN_VERSION = '2.1.0';
+const SEEN_VERSION: string = JSON.parse(readFileSync('package.json', 'utf8')).version;
 
 /** What a test gets: a context with the fake Google installed. */
 export type Setup = { mock: MockGoogle; context: BrowserContext };
