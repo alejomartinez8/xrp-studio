@@ -87,7 +87,8 @@ The rest of the app looks like an IDE for adults.
 
 A theme lives in `src/theme/<name>/`:
 
-- `tailwind.ts` — app palette, applied with `withGitHubTheme()` in `tailwind.config.ts`.
+- `tailwind.css` — app palette as a Tailwind `@theme` block (CSS variables), imported by
+  `src/index.css` (was `tailwind.ts` with `withGitHubTheme()` before Tailwind 4, spec 006 part 9).
 - `app.css` — font and layout tabs.
 - `blocks.ts` — one colour per toolbox category and the editor surfaces (light and dark), typed by
   `src/theme/types.ts`.

@@ -108,7 +108,7 @@ function SensorWidget<TData, THistoryEntry>({
           theme={{
             ...FlowBiteConstants.DropdownTheme,
             inlineWrapper:
-              'inline-flex items-center rounded border border-mountain-mist-300 bg-mountain-mist-100 p-1 text-shark-700 dark:border-shark-600 dark:bg-shark-800 dark:text-shark-100',
+              'inline-flex items-center rounded-sm border border-mountain-mist-300 bg-mountain-mist-100 p-1 text-shark-700 dark:border-shark-600 dark:bg-shark-800 dark:text-shark-100',
           }}
         >
           <DropdownItem onClick={() => handleViewChange('graph')}>
@@ -127,7 +127,7 @@ function SensorWidget<TData, THistoryEntry>({
 
         <button
           onClick={handleDelete}
-          className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded transition-colors duration-200"
+          className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-sm transition-colors duration-200"
           title="Delete widget"
         >
           <FaTrash size={12} />

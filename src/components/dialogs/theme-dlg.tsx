@@ -13,7 +13,7 @@ function Preview({ colors }: { colors: ThemePreview }) {
     return (
         <div
             aria-hidden="true"
-            className="flex h-28 w-full flex-col overflow-hidden rounded border"
+            className="flex h-28 w-full flex-col overflow-hidden rounded-sm border"
             style={{ borderColor: colors.lines, background: colors.canvas }}
         >
             <div
@@ -35,18 +35,18 @@ function Preview({ colors }: { colors: ThemePreview }) {
                     {['#df0c24', '#b88700', '#006edb', '#30a147'].map((color) => (
                         <span
                             key={color}
-                            className="h-1.5 w-full rounded-sm"
+                            className="h-1.5 w-full rounded-xs"
                             style={{ background: color }}
                         />
                     ))}
                 </div>
                 <div className="flex-1 p-2">
                     <span
-                        className="block h-3 w-3/5 rounded-sm"
+                        className="block h-3 w-3/5 rounded-xs"
                         style={{ background: '#006edb' }}
                     />
                     <span
-                        className="mt-1 block h-3 w-2/5 rounded-sm"
+                        className="mt-1 block h-3 w-2/5 rounded-xs"
                         style={{ background: '#30a147' }}
                     />
                 </div>

@@ -321,7 +321,7 @@ function GoogleLoginButton({ logoutCallback, onSuccess, compact }: LoginProps) {
         <>
             {isLogin && (
                 <div className="flex flex-col">
-                    <div className="border-1 flex flex-row items-center gap-1 rounded-md bg-mountain-mist-100 p-1 dark:bg-shark-500">
+                    <div className="border flex flex-row items-center gap-1 rounded-md bg-mountain-mist-100 p-1 dark:bg-shark-500">
                         {showProfileImage ? (
                             <img
                                 className="h-10 w-10 rounded-full object-cover"

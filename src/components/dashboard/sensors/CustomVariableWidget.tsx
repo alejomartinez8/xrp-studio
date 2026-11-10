@@ -129,7 +129,7 @@ const CustomVariableWidget: React.FC<CustomVariableWidgetProps> = ({
       <div className="absolute top-1 right-2">
         <button
           onClick={handleDelete}
-          className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded transition-colors duration-200"
+          className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-sm transition-colors duration-200"
           title="Delete widget"
         >
           <FaTrash size={12} />
@@ -147,7 +147,7 @@ const CustomVariableWidget: React.FC<CustomVariableWidgetProps> = ({
               onKeyDown={(e) => e.key === 'Enter' && confirmName()}
               placeholder="variable_name"
               list="custom-var-suggestions"
-              className="min-w-0 flex-1 rounded border border-mountain-mist-300 bg-mountain-mist-50 px-2 py-1 font-mono text-sm text-shark-900 focus:outline-none focus:ring-2 focus:ring-curious-blue-400 dark:border-shark-600 dark:bg-shark-800 dark:text-shark-50"
+              className="min-w-0 flex-1 rounded-sm border border-mountain-mist-300 bg-mountain-mist-50 px-2 py-1 font-mono text-sm text-shark-900 focus:outline-hidden focus:ring-2 focus:ring-curious-blue-400 dark:border-shark-600 dark:bg-shark-800 dark:text-shark-50"
             />
             <datalist id="custom-var-suggestions">
               {availableVars.map((v) => (
@@ -156,7 +156,7 @@ const CustomVariableWidget: React.FC<CustomVariableWidgetProps> = ({
             </datalist>
             <button
               onClick={confirmName}
-              className="rounded p-1.5 text-chateau-green-700 hover:bg-chateau-green-50"
+              className="rounded-sm p-1.5 text-chateau-green-700 hover:bg-chateau-green-50"
               title="Confirm"
             >
               <FaCheck size={12} />
@@ -170,7 +170,7 @@ const CustomVariableWidget: React.FC<CustomVariableWidgetProps> = ({
         ) : !isConnected ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-1">
             <div className="text-center text-xs text-mountain-mist-600 dark:text-mountain-mist-300">
-              Waiting for <code className="rounded bg-mountain-mist-200 px-1 font-mono dark:bg-shark-700">{varName}</code>
+              Waiting for <code className="rounded-sm bg-mountain-mist-200 px-1 font-mono dark:bg-shark-700">{varName}</code>
             </div>
             {availableVars.length > 0 && (
               <div className="text-center text-xs text-mountain-mist-600 dark:text-mountain-mist-300">
@@ -195,13 +195,13 @@ const CustomVariableWidget: React.FC<CustomVariableWidgetProps> = ({
                 ) : '—'}
               </span>
               {typeLabel && (
-                <span className="rounded bg-mountain-mist-200 px-1.5 py-0.5 text-xs text-mountain-mist-700 dark:bg-shark-700 dark:text-mountain-mist-200">
+                <span className="rounded-sm bg-mountain-mist-200 px-1.5 py-0.5 text-xs text-mountain-mist-700 dark:bg-shark-700 dark:text-mountain-mist-200">
                   {typeLabel}
                 </span>
               )}
               <button
                 onClick={() => { setIsEditingName(true); setNameInput(varName); }}
-                className="rounded p-1 text-mountain-mist-500 hover:bg-mountain-mist-200 hover:text-shark-700 dark:text-mountain-mist-300 dark:hover:bg-shark-700 dark:hover:text-shark-50"
+                className="rounded-sm p-1 text-mountain-mist-500 hover:bg-mountain-mist-200 hover:text-shark-700 dark:text-mountain-mist-300 dark:hover:bg-shark-700 dark:hover:text-shark-50"
                 title="Change variable name"
               >
                 <FaPen size={10} />
@@ -215,7 +215,7 @@ const CustomVariableWidget: React.FC<CustomVariableWidgetProps> = ({
                 onKeyDown={handleKeyDown}
                 placeholder={`Send ${typeLabel}`}
                 step={varMeta.type === 2 ? 'any' : '1'}
-                className="min-w-0 flex-1 rounded border border-mountain-mist-300 bg-mountain-mist-50 px-2 py-1 font-mono text-xs text-shark-900 focus:outline-none focus:ring-2 focus:ring-curious-blue-400 dark:border-shark-600 dark:bg-shark-800 dark:text-shark-50"
+                className="min-w-0 flex-1 rounded-sm border border-mountain-mist-300 bg-mountain-mist-50 px-2 py-1 font-mono text-xs text-shark-900 focus:outline-hidden focus:ring-2 focus:ring-curious-blue-400 dark:border-shark-600 dark:bg-shark-800 dark:text-shark-50"
               />
               <button
                 onClick={handleSendValue}

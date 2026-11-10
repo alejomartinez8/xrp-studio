@@ -53,7 +53,7 @@ function StatusBar() {
             role="status"
             aria-label={t('statusBar')}
             style={{ height: STATUS_BAR_HEIGHT_PX }}
-            className="flex items-center gap-3 bg-[var(--app-frame)] px-3 text-mountain-mist-800 dark:text-mountain-mist-300"
+            className="flex items-center gap-3 bg-(--app-frame) px-3 text-mountain-mist-800 dark:text-mountain-mist-300"
         >
             <span
                 data-testid="sync-status"
@@ -73,7 +73,7 @@ function StatusBar() {
                     data-testid="update-app"
                     title={t('pwa.updateHint')}
                     onClick={() => void applyUpdate()}
-                    className="ml-auto flex items-center gap-1.5 rounded px-2 text-sm font-medium text-blue-700 dark:text-blue-300 hover:bg-black/[0.07] dark:hover:bg-white/[0.12]"
+                    className="ml-auto flex items-center gap-1.5 rounded-sm px-2 text-sm font-medium text-blue-700 dark:text-blue-300 hover:bg-black/[0.07] dark:hover:bg-white/[0.12]"
                 >
                     <TbRefresh size={16} />
                     {t('pwa.update')}

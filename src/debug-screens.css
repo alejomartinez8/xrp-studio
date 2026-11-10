@@ -1,0 +1,49 @@
+/**
+ * Debug mode (`debug-screens` class on `body`, set from `main.tsx`): a label in the bottom left
+ * corner names the active Tailwind breakpoint. Replaces the `tailwindcss-debug-screens` plugin,
+ * which does not support Tailwind 4.
+ */
+.debug-screens::before {
+  position: fixed;
+  z-index: 2147483647;
+  bottom: 0;
+  left: 0;
+  padding: 0.3333333em 0.5em;
+  font-size: 12px;
+  line-height: 1;
+  font-family: sans-serif;
+  background-color: #000;
+  color: #fff;
+  box-shadow: 0 0 0 1px #fff;
+  content: 'screen: _';
+}
+
+@media (width >= theme(--breakpoint-sm)) {
+  .debug-screens::before {
+    content: 'screen: sm';
+  }
+}
+
+@media (width >= theme(--breakpoint-md)) {
+  .debug-screens::before {
+    content: 'screen: md';
+  }
+}
+
+@media (width >= theme(--breakpoint-lg)) {
+  .debug-screens::before {
+    content: 'screen: lg';
+  }
+}
+
+@media (width >= theme(--breakpoint-xl)) {
+  .debug-screens::before {
+    content: 'screen: xl';
+  }
+}
+
+@media (width >= theme(--breakpoint-2xl)) {
+  .debug-screens::before {
+    content: 'screen: 2xl';
+  }
+}
