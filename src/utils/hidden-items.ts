@@ -3,7 +3,7 @@ import LocalDriveService from '@/services/local-drive';
 import { fireGoogleUserTree, getUsernameFromEmail } from '@/utils/google-utils';
 
 /**
- * Helpers shared by the Trash and Archived rows of the Explorer (spec 004, parts 5 and 6), which
+ * Helpers shared by the Trash and Archived rows of the Explorer, which
  * show My projects items hidden from the tree.
  */
 

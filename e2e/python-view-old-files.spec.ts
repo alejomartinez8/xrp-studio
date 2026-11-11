@@ -2,7 +2,7 @@ import { test, expect, type Page } from '@playwright/test';
 import { expectInTree, openApp, setUpGoogle } from './support/app';
 
 /**
- * Blocks files saved before the "Blocks | Python" selector (spec 003, part 6) hold only the blocks
+ * Blocks files saved before the "Blocks | Python" selector hold only the blocks
  * JSON, with or without the `##XRPBLOCKS` marker and the date line. The Python view must show the
  * Python of their blocks all the same.
  */

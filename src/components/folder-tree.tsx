@@ -370,7 +370,7 @@ function FolderTree(treeProps: TreeProps) {
     };
 
     /**
-     * archiveNode - archive a project in My projects (spec 004, part 6): it leaves the tree without
+     * archiveNode - archive a project in My projects: it leaves the tree without
      * being deleted, and its editor tab closes.
      */
     const archiveNode = async (item: FolderItem) => {
@@ -402,7 +402,7 @@ function FolderTree(treeProps: TreeProps) {
 
         /**
          * handleOnDeleteConfirmation - handle the delete confirmation. My projects items go to the
-         * trash (spec 004, part 5) without asking.
+         * trash without asking.
          */
         const handleOnDeleteConfirmation = async () => {
             if (!moveToTrash) toggleDialog();

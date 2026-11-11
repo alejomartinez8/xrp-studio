@@ -75,7 +75,7 @@ export const ADVANCED_CATEGORY_IDS = [
 
 const ADVANCED_CATEGORY_ID = 'advanced';
 
-/** Categories gathered into the "Motors" group, in this order (spec 002). */
+/** Categories gathered into the "Motors" group, in this order. */
 export const MOTOR_CATEGORY_IDS = ['driveTrain', 'individualMotors', 'servos'];
 
 const MOTORS_CATEGORY_ID = 'motors';

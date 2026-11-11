@@ -2,7 +2,7 @@ import * as Blockly from 'blockly/core';
 import '@components/blockly/xrp_blocks';
 
 /**
- * Sentence templates for XRP blocks (spec 002). XRPWeb builds these blocks from separate labels in
+ * Sentence templates for XRP blocks. XRPWeb builds these blocks from separate labels in
  * a fixed order (label, number, label, number), so a language cannot say "Avanzar 20 cm". Here each
  * block can take a Blockly message template from the locale, such as `Avanzar %1 cm con fuerza %2`,
  * and each language places the inputs where its grammar needs them.

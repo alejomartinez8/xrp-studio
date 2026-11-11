@@ -672,3 +672,30 @@ The status bar and the Change Log, light and dark.
 ### Upstream
 
 Not for XRPWeb: the fork's own numbering and Change Log.
+
+## Part 12 — Comments describe the code, not the specs
+
+### Problem
+
+About 60 code comments (in the app, tests, server, scripts, workflows and configuration) said
+things like "spec 004, part 5". They pointed to documents the reader may not have, went stale when
+parts were renumbered, and added nothing to what the code does.
+
+### Solution
+
+The references are removed from the comments; each comment keeps what the module, class or
+function does and why. The specs are the ones that list the files of each part, not the other way
+round, and the Comments convention in `CLAUDE.md` now says so. Only comments and test names
+changed: no executable code.
+
+### Files
+
+All code comments that mentioned a spec or a part, and `CLAUDE.md` (Conventions).
+
+### How to test
+
+Nothing visible changes in the app.
+
+### Upstream
+
+Not applicable: it only concerns the fork's own comments.

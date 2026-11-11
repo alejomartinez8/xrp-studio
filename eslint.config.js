@@ -7,7 +7,7 @@ import tseslint from 'typescript-eslint'
 /**
  * ESLint 10 added `no-useless-assignment` and `preserve-caught-error` to the recommended rules and
  * the React hooks plugin 7 added React Compiler rules. They flag code inherited from XRPWeb, so
- * they stay off and the hooks plugin keeps its two classic rules (spec 006).
+ * they stay off and the hooks plugin keeps its two classic rules.
  */
 export default tseslint.config(
   { ignores: ['dist'] },

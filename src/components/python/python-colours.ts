@@ -1,7 +1,7 @@
 import { ExtensionHostKind, registerExtension } from '@codingame/monaco-vscode-api/extensions';
 
 /**
- * Extra colours for the Python editor (spec 006). The VS Code themes colour Python with the
+ * Extra colours for the Python editor. The VS Code themes colour Python with the
  * TextMate grammar plus Pylance's semantic highlighting; Pyright, which this editor uses, has no
  * semantic highlighting, so calls, attributes, constants and object names stayed plain text. The
  * colours below come from the scopes the Python grammar (MagicPython) really emits, checked with

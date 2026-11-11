@@ -13,7 +13,7 @@ export interface LocalDriveRecord {
     createdTime: string;
     modifiedTime: string;
     content?: string;
-    /** Id of the copy in the signed-in account's Drive, once uploaded (spec 005). */
+    /** Id of the copy in the signed-in account's Drive, once uploaded. */
     driveId?: string;
     /** Drive's modified time of that copy when this record last matched it. */
     syncedTime?: string;
@@ -23,13 +23,13 @@ export interface LocalDriveRecord {
     dirty?: boolean;
     /** Deleted for good in this browser; kept until sync deletes the copy in Drive. */
     deleted?: boolean;
-    /** In the trash (spec 004, part 5). Whatever is inside a trashed folder is hidden with it. */
+    /** In the trash. Whatever is inside a trashed folder is hidden with it. */
     trashed?: boolean;
     /** When it went to the trash. */
     trashedTime?: string;
     /** Whether the copy in Drive was in the trash when this record last matched it. */
     syncedTrashed?: boolean;
-    /** Archived: hidden from the tree without being deleted (spec 004, part 6). */
+    /** Archived: hidden from the tree without being deleted. */
     archived?: boolean;
     /** When it was archived. */
     archivedTime?: string;
@@ -159,7 +159,7 @@ export class MemoryDriveStore implements LocalDriveStore {
  * browser instead of Google Drive, so the existing "Google Drive" code paths (file tree, open,
  * save, autosave, run) work without an account or a network.
  *
- * Every change marks the record `dirty` and notifies {@link onChange}; Drive sync (spec 005)
+ * Every change marks the record `dirty` and notifies {@link onChange}; Drive sync
  * uploads it. A deleted record that has a copy in Drive stays as a hidden `deleted` record until
  * sync moves that copy to the Drive trash. {@link useStore} switches between the guest space and
  * a signed-in account's space.

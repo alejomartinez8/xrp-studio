@@ -79,7 +79,7 @@ function ArchivedPanel({
 }
 
 /**
- * Archived - the Archived row at the bottom of the Explorer for My projects (spec 004, part 6),
+ * Archived - the Archived row at the bottom of the Explorer for My projects,
  * shown while there are archived projects, with how many. It opens the archived projects dialog.
  * Archived projects are hidden from the tree without being deleted.
  */

@@ -3,7 +3,7 @@ import mitt from 'mitt';
 /**
  * Which editor a blocks file shows: its blocks, or the Python that comes from them (read-only).
  * The choice is kept per editor tab while the tab is open, like MakeCode's "Blocks | Python"
- * selector in the top bar (spec 003, part 6). Python files have no blocks, so they always show
+ * selector in the top bar. Python files have no blocks, so they always show
  * Python.
  */
 export type EditorView = 'blocks' | 'python';

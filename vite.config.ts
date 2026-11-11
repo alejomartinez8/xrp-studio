@@ -84,7 +84,7 @@ function manualChunks(id: string): string | undefined {
 }
 
 /**
- * Version facts injected into the app (spec 006, part 6): the version and the upstream base come
+ * Version facts injected into the app: the version and the upstream base come
  * from package.json, the commit from the host (Vercel or GitHub Actions) or from git, and the
  * preview flag is true on Vercel builds that are not production. Without git or host variables
  * the commit is empty and the app shows the version alone.

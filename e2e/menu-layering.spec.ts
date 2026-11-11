@@ -2,7 +2,7 @@ import { test, expect, type Locator } from '@playwright/test';
 import { openApp, setUpGoogle } from './support/app';
 
 /**
- * The top bar menus must be drawn above every editor surface (spec 003, part 7): on a phone the
+ * The top bar menus must be drawn above every editor surface: on a phone the
  * open menu was covered by the Blockly toolbox category strip.
  */
 

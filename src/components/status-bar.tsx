@@ -30,13 +30,13 @@ const SYNC_LABELS: Record<SyncStatus, string> = {
 export const STATUS_BAR_HEIGHT_PX = 28;
 
 /**
- * StatusBar - thin bar at the bottom of the screen (specs 004 and 005). It has one indicator: an
+ * StatusBar - thin bar at the bottom of the screen. It has one indicator: an
  * icon for where the projects are kept (a device when no account is signed in, a cloud with a
  * check when they are saved in the account, a spinner while changes are uploaded, a crossed cloud
  * without connection) and, after the first change, the automatic save text ("Saving…", "Saved",
  * or a warning when a save failed). The tooltip explains the icon in full. In the installed app
- * it also shows an Update button when a new version is stored (spec 001). On the right it shows the
- * app version, `0.1.0 · a1b2c3d` (spec 006, part 6), with the XRPWeb base in the tooltip.
+ * it also shows an Update button when a new version is stored. On the right it shows the
+ * app version, `0.1.0 · a1b2c3d`, with the XRPWeb base in the tooltip.
  */
 function StatusBar() {
     const { t } = useTranslation();

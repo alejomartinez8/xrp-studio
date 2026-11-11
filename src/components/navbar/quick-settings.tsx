@@ -17,8 +17,8 @@ type QuickSettingsProps = {
 /**
  * QuickSettings - language and theme rows at the top of the settings menu, each showing the
  * current choice and opening its picker, the "Keep me signed in" switch of this device when
- * accounts can sync (off by default: a shared device signs out and clears its projects, spec 005),
- * and Install app while the browser offers it (spec 001). The phone menu renders them a second
+ * accounts can sync (off by default: a shared device signs out and clears its projects),
+ * and Install app while the browser offers it. The phone menu renders them a second
  * time, so it passes an `idPrefix` to keep the element ids unique.
  */
 function QuickSettings({ onChooseLanguage, onChooseTheme, idPrefix = '' }: QuickSettingsProps) {

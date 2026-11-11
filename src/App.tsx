@@ -22,7 +22,7 @@ function App() {
     }, []);
 
     /**
-     * Download the Python editor in the background once the app is idle (spec 001).
+     * Download the Python editor in the background once the app is idle.
      */
     useEffect(() => prefetchPythonEditor(), []);
 

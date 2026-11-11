@@ -14,7 +14,7 @@ type changelogProps = {
     closeDialog: () => void;
     /**
      * Optional URL of the changelog file to fetch. Defaults to the fork's own Change Log in the
-     * current language (spec 006, part 6); XRPWeb's CHANGELOG.md stays in the site, unused.
+     * current language; XRPWeb's CHANGELOG.md stays in the site, unused.
      */
     changelogUrl?: string;
 };

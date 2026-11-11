@@ -614,8 +614,8 @@ function BlocklyEditor({ tabId, tabName }: BlocklyEditorProps) {
 
     /**
      * Builds the workspace and toolbox only after the new tab has been painted, so a file opens
-     * with its tab and a loading message at once instead of after the heavy Blockly set-up (spec
-     * 004). The timer covers pages whose animation frames are paused (hidden browser tab).
+     * with its tab and a loading message at once instead of after the heavy Blockly set-up.
+     * The timer covers pages whose animation frames are paused (hidden browser tab).
      */
     useEffect(() => {
         let done = false;

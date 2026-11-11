@@ -17,7 +17,7 @@ import { StorageKeys } from '@/utils/localstorage';
 import { isDriveSyncEnabled } from '@/utils/offline';
 
 /**
- * Accounts on this device (spec 005). Each one has its own space of projects (an IndexedDB
+ * Accounts on this device. Each one has its own space of projects (an IndexedDB
  * database); without an account the device's guest space is used.
  *
  * - The device setting "Keep me signed in" ({@link isKeepSignedIn}, off by default, in the

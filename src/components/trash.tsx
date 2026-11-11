@@ -151,7 +151,7 @@ function TrashPanel({
 }
 
 /**
- * Trash - the Trash row at the bottom of the Explorer for My projects (spec 004, part 5), with the
+ * Trash - the Trash row at the bottom of the Explorer for My projects, with the
  * number of items in it. It opens the trash dialog. Items deleted from the tree go there and can
  * be restored for {@link TRASH_DAYS} days.
  */

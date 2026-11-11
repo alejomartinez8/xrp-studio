@@ -12,8 +12,8 @@ type EditorSwitchProps = {
 };
 
 /**
- * EditorSwitch - the "Blocks | Python" selector in the middle of the top bar, as in MakeCode
- * (spec 003, part 6). For a blocks file it switches between the blocks and their Python
+ * EditorSwitch - the "Blocks | Python" selector in the middle of the top bar, as in MakeCode.
+ * For a blocks file it switches between the blocks and their Python
  * (read-only); a Python file has no blocks, so it only says "Python". On phones the options show
  * only their icons, so the selector fits between the logo and the connect button.
  */

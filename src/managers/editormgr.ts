@@ -532,7 +532,7 @@ export default class EditorMgr {
     }
 
     /**
-     * markSessionSaved - an autosave wrote the session's file (spec 004): clear the changed dot
+     * markSessionSaved - an autosave wrote the session's file: clear the changed dot
      * and the unsaved flag kept for a reload. Redraws the tab only when it is the active one, so a
      * background save does not switch tabs.
      */

@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { openApp, setUpGoogle } from './support/app';
 
-/** App version (spec 006, part 6): shown in the status bar and the Change Log opens on a new version. */
+/** App version: shown in the status bar and the Change Log opens on a new version. */
 
 test('the status bar shows the version and the XRPWeb base', async ({ page, context }) => {
     await setUpGoogle(context);

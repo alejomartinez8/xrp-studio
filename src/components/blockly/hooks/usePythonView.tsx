@@ -4,7 +4,7 @@ import { pythonGenerator } from 'blockly/python';
 import { getEditorView, onEditorViewChange } from '@/utils/editor-view';
 
 /**
- * Whether tab `tabId` shows its Python (chosen in the top bar, spec 003 part 6) instead of its
+ * Whether tab `tabId` shows its Python (chosen in the top bar) instead of its
  * blocks. The choice lives in `editor-view`, so it survives the editor being mounted again.
  */
 function useIsPythonView(tabId: string): boolean {
@@ -23,8 +23,7 @@ function useIsPythonView(tabId: string): boolean {
 }
 
 /**
- * The Python of the blocks in tab `tabId` while "Python" is chosen, or null while the blocks show
- * (spec 003, part 8).
+ * The Python of the blocks in tab `tabId` while "Python" is chosen, or null while the blocks show.
  *
  * Blocks load with Blockly events off, so nothing tells the workspace's listeners that they
  * arrived; the editor bumps `loadRevision` after each load and the Python is generated again.

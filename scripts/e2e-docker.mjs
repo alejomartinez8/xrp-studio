@@ -1,5 +1,5 @@
 /**
- * Runs the end-to-end tests inside the official Playwright Docker image (spec 007), so screenshots
+ * Runs the end-to-end tests inside the official Playwright Docker image, so screenshots
  * are taken with the same browser, fonts and rendering on every machine and in CI. The image
  * version follows the installed `@playwright/test`. Extra arguments go to `playwright test`, for
  * example `--project visual --update-snapshots` to approve new screenshots.

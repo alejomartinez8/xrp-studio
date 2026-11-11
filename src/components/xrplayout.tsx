@@ -439,7 +439,7 @@ function XRPLayout({ forwardedref }: XRPLayoutProps) {
 
     /**
      * onRenderTabSet - adds the Terminal toggle below the Explorer icon in the left side bar
-     * (XRP Studio, spec 003).
+     * (XRP Studio).
      */
     const onRenderTabSet = (node: TabSetNode | BorderNode, renderValues: ITabSetRenderValues) => {
         if (node instanceof BorderNode && node.getLocation().getName() === 'left') {

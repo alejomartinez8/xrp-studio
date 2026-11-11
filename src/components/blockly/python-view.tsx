@@ -21,7 +21,7 @@ type PythonViewProps = {
 
 /**
  * PythonView - the Python of a blocks file, read-only and coloured, shown in place of the blocks
- * when "Python" is chosen in the top bar (spec 003, part 6). A strip on top says where the code
+ * when "Python" is chosen in the top bar. A strip on top says where the code
  * comes from and offers an editable Python copy.
  */
 function PythonView({ tabId, code }: PythonViewProps) {

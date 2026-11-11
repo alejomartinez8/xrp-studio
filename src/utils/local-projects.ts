@@ -39,7 +39,7 @@ export function isMyProjectsActive(): boolean {
 
 /**
  * Open the My projects session: make sure the root folder exists and mark the session as signed
- * in. Opens the space of the account remembered on this device, if any (spec 005), else the guest
+ * in. Opens the space of the account remembered on this device, if any, else the guest
  * space. Returns the profile for the sign-in callback, which loads the project tree.
  */
 export async function startMyProjects(): Promise<UserProfile> {
