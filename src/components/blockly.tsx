@@ -16,7 +16,7 @@ import { activeBlockTheme } from '@/theme';
 import { kidFriendlyToolbox, registerToolboxUi } from '@components/blockly/toolbox-ui';
 import { isMaxMd, MAX_MD_QUERY } from '@/utils/breakpoints';
 import { extractBlocksJson, parseBlocksJson } from '@components/blockly/blocks-content';
-import { usePythonView } from '@components/blockly/use-python-view';
+import { usePythonCode } from '@components/blockly/python-code';
 import { scheduleAutosave } from '@/utils/autosave';
 import PythonView from '@components/blockly/python-view';
 
@@ -272,7 +272,7 @@ function BlocklyEditor({ tabId, tabName }: BlocklyEditorProps) {
     // blocked until they sign back in.
     const [editBlocked, setEditBlocked] = useState<boolean>(false);
     const [loadRevision, setLoadRevision] = useState(0);
-    const pythonCode = usePythonView(tabId, workspace, loadRevision);
+    const pythonCode = usePythonCode(tabId, workspace, loadRevision);
     const containerRef = useRef<HTMLDivElement>(null);
 
     const evaluateEditBlocked = useCallback(() => {

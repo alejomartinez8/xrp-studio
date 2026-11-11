@@ -7,7 +7,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import '@components/blockly/xrp_blocks';
 import '@components/blockly/xrp_blocks_python';
 import { extractBlocksJson, parseBlocksJson } from '@components/blockly/blocks-content';
-import { usePythonView } from '@components/blockly/use-python-view';
+import { usePythonCode } from '@components/blockly/python-code';
 import { forgetEditorView, setEditorView } from '@/utils/editor-view';
 import { EXAMPLES, exampleContent } from '@/utils/examples';
 
@@ -32,13 +32,13 @@ const FORMATS: Record<string, (json: string) => string> = {
         `print("old")\n\n\n## 2026-01-01 10:00\n##XRPBLOCKS ${json}`,
 };
 
-describe('usePythonView', () => {
+describe('usePythonCode', () => {
     Blockly.setLocale(En as unknown as Record<string, string>);
     afterEach(() => forgetEditorView(TAB));
 
     it('is null while the blocks show', () => {
         const ws = new Blockly.Workspace();
-        const { result } = renderHook(() => usePythonView(TAB, ws));
+        const { result } = renderHook(() => usePythonCode(TAB, ws));
         expect(result.current).toBeNull();
         ws.dispose();
     });
@@ -57,7 +57,7 @@ describe('usePythonView', () => {
 
             setEditorView(TAB, 'python');
             const { result, rerender } = renderHook(
-                ({ revision }) => usePythonView(TAB, ws, revision),
+                ({ revision }) => usePythonCode(TAB, ws, revision),
                 { initialProps: { revision: 0 } },
             );
             expect(result.current).toBe('');
@@ -72,7 +72,7 @@ describe('usePythonView', () => {
     it('generates the Python when Python is chosen after the blocks loaded', () => {
         const ws = new Blockly.Workspace();
         loadSaved(ws, followLine);
-        const { result } = renderHook(() => usePythonView(TAB, ws));
+        const { result } = renderHook(() => usePythonCode(TAB, ws));
         expect(result.current).toBeNull();
         act(() => setEditorView(TAB, 'python'));
         expect(result.current).toBe(pythonGenerator.workspaceToCode(ws));
@@ -84,9 +84,9 @@ describe('usePythonView', () => {
         const ws = new Blockly.Workspace();
         loadSaved(ws, followLine);
         setEditorView(TAB, 'python');
-        const first = renderHook(() => usePythonView(TAB, ws));
+        const first = renderHook(() => usePythonCode(TAB, ws));
         first.unmount();
-        const second = renderHook(() => usePythonView(TAB, ws));
+        const second = renderHook(() => usePythonCode(TAB, ws));
         expect(second.result.current).toBe(pythonGenerator.workspaceToCode(ws));
         ws.dispose();
     });
