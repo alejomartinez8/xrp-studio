@@ -137,15 +137,15 @@ function SelectionCard({ name, description, image, onClick, disabled }: Selectio
             type="button"
             onClick={onClick}
             disabled={disabled}
-            className="bg-white group flex w-full max-w-sm flex-col rounded-xl border border-mountain-mist-200 text-left shadow-sm transition hover:border-curious-blue-400 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-curious-blue-500 disabled:cursor-not-allowed disabled:opacity-50 dark:border-shark-700 dark:bg-shark-900 dark:hover:border-curious-blue-600"
+            className="bg-white group flex w-full max-w-sm flex-col rounded-xl border border-mountain-mist-200 text-left shadow-xs transition hover:border-curious-blue-400 hover:shadow-md focus:outline-hidden focus-visible:ring-2 focus-visible:ring-curious-blue-500 disabled:cursor-not-allowed disabled:opacity-50 dark:border-shark-700 dark:bg-shark-900 dark:hover:border-curious-blue-600"
         >
             <div className="flex h-56 w-full items-center justify-center overflow-hidden rounded-t-xl bg-mountain-mist-100 dark:bg-shark-800">
                 <img src={image} alt="" className="h-52 w-full object-contain p-2" />
             </div>
-            <div className="flex min-h-[3.5rem] items-center justify-center border-b border-mountain-mist-100 px-3 py-2 dark:border-shark-800">
+            <div className="flex min-h-14 items-center justify-center border-b border-mountain-mist-100 px-3 py-2 dark:border-shark-800">
                 <span className="text-center text-base font-semibold">{name}</span>
             </div>
-            <div className="flex min-h-[5rem] items-start justify-center px-3 py-3">
+            <div className="flex min-h-20 items-start justify-center px-3 py-3">
                 <p className="text-center text-sm leading-snug text-mountain-mist-600 dark:text-shark-400">
                     {description}
                 </p>
@@ -344,7 +344,7 @@ function FirmwareLoaderDlg({
                 : t('firmwareLoader')));
 
     return (
-        <div className="fixed inset-0 z-[1001] flex h-[100dvh] w-screen flex-col overflow-hidden bg-shark-50 text-mountain-mist-900 dark:bg-shark-950 dark:text-shark-100">
+        <div className="fixed inset-0 z-1001 flex h-dvh w-screen flex-col overflow-hidden bg-shark-50 text-mountain-mist-900 dark:bg-shark-950 dark:text-shark-100">
             <header className="flex shrink-0 items-center justify-between gap-4 border-b border-mountain-mist-200 bg-curious-blue-700 px-2 py-1 dark:border-shark-700 dark:bg-mountain-mist-950">
                 <div className="flex min-w-0 flex-1 flex-col justify-center gap-0.5">
                     <div className="flex items-center gap-2">

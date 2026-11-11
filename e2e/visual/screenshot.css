@@ -1,7 +1,15 @@
 /**
- * Applied only while a visual test takes a screenshot (spec 007, part 1): hides the development
+ * Applied only while a visual test takes a screenshot: hides the development
  * badge that names the current screen size, which is not part of the app.
  */
 .debug-screens::before {
     display: none !important;
+}
+
+/**
+ * The version text in the status bar carries the commit, which changes with every commit
+ * and would make every comparison fail; it stays out of the screenshots.
+ */
+[data-testid='app-version'] {
+    visibility: hidden !important;
 }

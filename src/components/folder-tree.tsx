@@ -1,8 +1,8 @@
 import { FolderItem } from '@/utils/types';
 import { Tree, NodeApi, NodeRendererProps } from 'react-arborist';
-import { useEffect, useRef, useState } from 'react';
+import { RefObject, useEffect, useRef, useState } from 'react';
 import AppMgr, { EventType, LoginStatus } from '@/managers/appmgr';
-import useResizeObserver from 'use-resize-observer';
+import { useResizeObserver } from 'usehooks-ts';
 import { FaFileAlt } from 'react-icons/fa';
 import BlocklyIcon from '@/components/icons/blockly-icon';
 import MicropythonIcon from '@/components/icons/micropython-icon';
@@ -61,7 +61,8 @@ function FolderTree(treeProps: TreeProps) {
     const [isRunning, setIsRunning] = useState<boolean>(false);
     const appMgrRef = useRef<AppMgr>(undefined);
     const treeRef = useRef(null);
-    const { ref, width, height } = useResizeObserver();
+    const ref = useRef<HTMLDivElement>(null) as RefObject<HTMLDivElement>;
+    const { width, height } = useResizeObserver({ ref });
     const folderLogger = logger.child({ module: 'folder-tree' });
     const [dialogContent, setDialogContent] = useState<React.ReactNode>(null);
     const dialogRef = useRef<HTMLDialogElement>(null);
@@ -311,7 +312,7 @@ function FolderTree(treeProps: TreeProps) {
                         className={`${node.isSelected ? 'visible' : 'invisible group-hover:visible'} flex flex-row items-center gap-0.5 px-1`}
                     >
                         <button
-                            className={`hover:bg-black/10 dark:hover:bg-white/15 dark:hover:text-white flex h-5 w-5 items-center justify-center rounded text-mountain-mist-600 hover:text-mountain-mist-900 dark:text-mountain-mist-400 ${isRunning ? 'pointer-events-none opacity-50' : 'pointer-events-auto opacity-100'}`}
+                            className={`hover:bg-black/10 dark:hover:bg-white/15 dark:hover:text-white flex h-5 w-5 items-center justify-center rounded-sm text-mountain-mist-600 hover:text-mountain-mist-900 dark:text-mountain-mist-400 ${isRunning ? 'pointer-events-none opacity-50' : 'pointer-events-auto opacity-100'}`}
                             onClick={() => node.edit()}
                             title={t('rename')}
                             aria-label={t('rename')}
@@ -319,7 +320,7 @@ function FolderTree(treeProps: TreeProps) {
                             <VscEdit size={14} />
                         </button>
                         <button
-                            className={`flex h-5 w-5 items-center justify-center rounded text-mountain-mist-600 hover:bg-red-500/15 hover:text-red-600 dark:text-mountain-mist-400 dark:hover:text-red-400 ${isRunning ? 'pointer-events-none opacity-50' : 'pointer-events-auto opacity-100'}`}
+                            className={`flex h-5 w-5 items-center justify-center rounded-sm text-mountain-mist-600 hover:bg-red-500/15 hover:text-red-600 dark:text-mountain-mist-400 dark:hover:text-red-400 ${isRunning ? 'pointer-events-none opacity-50' : 'pointer-events-auto opacity-100'}`}
                             onClick={() => {
                                 tree.delete(node.id);
                             }}
@@ -330,7 +331,7 @@ function FolderTree(treeProps: TreeProps) {
                         </button>
                         {isLogin && isLocalProjectsEnabled && node.level === 1 && (
                             <button
-                                className={`hover:bg-black/10 dark:hover:bg-white/15 dark:hover:text-white flex h-5 w-5 items-center justify-center rounded text-mountain-mist-600 hover:text-mountain-mist-900 dark:text-mountain-mist-400 ${isRunning ? 'pointer-events-none opacity-50' : 'pointer-events-auto opacity-100'}`}
+                                className={`hover:bg-black/10 dark:hover:bg-white/15 dark:hover:text-white flex h-5 w-5 items-center justify-center rounded-sm text-mountain-mist-600 hover:text-mountain-mist-900 dark:text-mountain-mist-400 ${isRunning ? 'pointer-events-none opacity-50' : 'pointer-events-auto opacity-100'}`}
                                 onClick={() => void archiveNode(node.data)}
                                 title={t('archived.archive')}
                                 aria-label={t('archived.archive')}
@@ -369,7 +370,7 @@ function FolderTree(treeProps: TreeProps) {
     };
 
     /**
-     * archiveNode - archive a project in My projects (spec 004, part 6): it leaves the tree without
+     * archiveNode - archive a project in My projects: it leaves the tree without
      * being deleted, and its editor tab closes.
      */
     const archiveNode = async (item: FolderItem) => {
@@ -401,7 +402,7 @@ function FolderTree(treeProps: TreeProps) {
 
         /**
          * handleOnDeleteConfirmation - handle the delete confirmation. My projects items go to the
-         * trash (spec 004, part 5) without asking.
+         * trash without asking.
          */
         const handleOnDeleteConfirmation = async () => {
             if (!moveToTrash) toggleDialog();

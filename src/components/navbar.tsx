@@ -193,7 +193,7 @@ function NavBar({ layoutref }: NavBarProps) {
     const [activeTab, setActiveTab] = useLocalStorage(StorageKeys.ACTIVETAB, '');
     /**
      * Whether a top-bar menu has no entry to show for the active tab, like View for a blocks file
-     * now that its Python entries moved to the editor switch (spec 003, part 6).
+     * now that its Python entries moved to the editor switch.
      */
     const menuIsEmpty = (item: MenuDataItem) =>
         !!item.children &&
@@ -1760,7 +1760,7 @@ function NavBar({ layoutref }: NavBarProps) {
                             )}
                         </p>
                         {item.children && (
-                            <div className="absolute left-2 top-[52] z-[100] mx-auto hidden flex-col bg-curious-blue-700 py-3 shadow-md transition-all group-hover:flex dark:bg-mountain-mist-950 dark:group-hover:bg-mountain-mist-950">
+                            <div className="absolute left-2 top-[52] z-100 mx-auto hidden flex-col bg-curious-blue-700 py-3 shadow-md transition-all group-hover:flex dark:bg-mountain-mist-950 dark:group-hover:bg-mountain-mist-950">
                                 <ul id="pythonId" className="flex cursor-pointer flex-col">
                                     {item.children
                                         .filter((child) => child.showif ?? true)
@@ -1814,7 +1814,7 @@ function NavBar({ layoutref }: NavBarProps) {
                 />
             </div>
             {editorTabId && (
-                <div className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 md:static md:mx-4 md:transform-none">
+                <div className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 md:static md:mx-4 md:translate-none">
                     <EditorSwitch tabId={editorTabId} isBlocks={isBlockly} />
                 </div>
             )}
@@ -1965,7 +1965,7 @@ function NavBar({ layoutref }: NavBarProps) {
                         <TbSettings size={26} />
                     </button>
                     {isMoreMenuOpen && (
-                        <div className="absolute right-0 top-12 z-[100] mx-auto flex w-max min-w-56 flex-col bg-curious-blue-700 py-3 shadow-md transition-all dark:bg-mountain-mist-950 dark:group-hover:bg-mountain-mist-950">
+                        <div className="absolute right-0 top-12 z-100 mx-auto flex w-max min-w-56 flex-col bg-curious-blue-700 py-3 shadow-md transition-all dark:bg-mountain-mist-950 dark:group-hover:bg-mountain-mist-950">
                             <QuickSettings
                                 onChooseLanguage={onChooseLanguage}
                                 onChooseTheme={onChooseTheme}

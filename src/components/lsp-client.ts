@@ -1,12 +1,12 @@
 // lsp-client.ts
 import * as vscode from 'vscode';
-import { CloseAction, ErrorAction, MessageTransports } from 'vscode-languageclient/browser.js';
+import { CloseAction, ErrorAction, MessageTransports } from 'vscode-languageclient/browser';
 import { MonacoLanguageClient } from 'monaco-languageclient';
 import { whenReady } from '@codingame/monaco-vscode-python-default-extension';
 import {
     BrowserMessageReader,
     BrowserMessageWriter,
-} from 'vscode-languageserver-protocol/browser.js';
+} from 'vscode-languageserver-protocol/browser';
 import { Uri } from 'vscode';
 import * as JSZip from 'jszip';
 

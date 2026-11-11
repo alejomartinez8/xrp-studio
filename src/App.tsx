@@ -4,7 +4,7 @@ import Navbar from '@components/navbar';
 import XRPLayout from '@components/xrplayout';
 import AppMgr from '@/managers/appmgr';
 import { prefetchPythonEditor } from '@components/python/prefetch-python-editor';
-import StatusBar from '@components/status-bar';
+import StatusBar from '@components/status-bar/status-bar';
 import AskDialog from '@components/ask-dialog';
 
 function App() {
@@ -22,13 +22,13 @@ function App() {
     }, []);
 
     /**
-     * Download the Python editor in the background once the app is idle (spec 001).
+     * Download the Python editor in the background once the app is idle.
      */
     useEffect(() => prefetchPythonEditor(), []);
 
     return (
         <>
-            <header className="sticky top-0 z-50 bg-curious-blue-700 dark:bg-[var(--app-frame)]">
+            <header className="sticky top-0 z-100 bg-curious-blue-700 dark:bg-(--app-frame)">
                 <Navbar layoutref={xrpLayoutRef} />
             </header>
             <main className="app-main relative">

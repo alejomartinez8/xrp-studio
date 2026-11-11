@@ -12,8 +12,8 @@ type EditorSwitchProps = {
 };
 
 /**
- * EditorSwitch - the "Blocks | Python" selector in the middle of the top bar, as in MakeCode
- * (spec 003, part 6). For a blocks file it switches between the blocks and their Python
+ * EditorSwitch - the "Blocks | Python" selector in the middle of the top bar, as in MakeCode.
+ * For a blocks file it switches between the blocks and their Python
  * (read-only); a Python file has no blocks, so it only says "Python". On phones the options show
  * only their icons, so the selector fits between the logo and the connect button.
  */
@@ -53,7 +53,7 @@ function EditorSwitch({ tabId, isBlocks }: EditorSwitchProps) {
                 title={label}
                 className={`flex items-center gap-2 rounded-full px-3 py-1 font-semibold transition-colors md:px-4 ${
                     selected
-                        ? 'bg-mountain-mist-50 text-shark-900 shadow-sm'
+                        ? 'bg-mountain-mist-50 text-shark-900 shadow-xs'
                         : 'text-mountain-mist-100 hover:bg-matisse-500'
                 }`}
                 onClick={() => setEditorView(tabId, value)}

@@ -1,5 +1,5 @@
 /**
- * A tiny Python highlighter for the read-only Python view of a blocks file (spec 003, part 6).
+ * A tiny Python highlighter for the read-only Python view of a blocks file.
  * The full Python editor (Monaco) is about 13 MB and edits files; showing generated code only
  * needs colours for keywords, strings, numbers and comments, so the view stays light and opens at
  * once, also offline.

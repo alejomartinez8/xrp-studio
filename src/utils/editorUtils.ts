@@ -1,4 +1,4 @@
-import { IJsonTabNode, Layout } from "flexlayout-react";
+import { IJsonTabNode, ILayoutApi } from "flexlayout-react";
 import { EditorType, FileType, NewFileData } from "./types";
 import AppMgr, { EventType } from "@/managers/appmgr";
 import { Constants } from "./constants";
@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
  * @param data - file data
  * @param layoutref - reference to the layout
  */
-export function CreateEditorTab(data: NewFileData, layoutref: React.RefObject<Layout | null>) : string {
+export function CreateEditorTab(data: NewFileData, layoutref: React.RefObject<ILayoutApi | null>) : string {
     switch (data.filetype) {
         case FileType.BLOCKLY:
             {

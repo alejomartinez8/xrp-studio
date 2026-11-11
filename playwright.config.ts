@@ -1,14 +1,14 @@
 import { defineConfig, devices } from '@playwright/test';
 
 /**
- * End-to-end tests (spec 007). The app runs as a development server with `GOOGLE_AUTH_URL=/api`,
+ * End-to-end tests. The app runs as a development server with `GOOGLE_AUTH_URL=/api`,
  * so the account features are on; the tests answer every Google request themselves (see
  * `e2e/support/google-mock.ts`), so no credentials or internet are needed.
  *
  * Two projects:
- * - `accounts`: accounts and sync (spec 005, part 3); runs in any Chromium.
- * - `visual`: screenshots compared with the approved ones in `e2e/visual/__screenshots__`
- *   (spec 007, part 1). Fonts and rendering differ between machines, so it only runs inside the
+ * - `accounts`: accounts and sync; runs in any Chromium.
+ * - `visual`: screenshots compared with the approved ones in `e2e/visual/__screenshots__`.
+ *   Fonts and rendering differ between machines, so it only runs inside the
  *   official Playwright Docker image (`scripts/e2e-docker.mjs`, which sets `E2E_DOCKER`), the same
  *   one CI uses, and is left out of plain local runs.
  */

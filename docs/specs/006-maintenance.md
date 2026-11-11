@@ -1,6 +1,8 @@
 # 006 — Maintenance
 
-Dependency, lockfile and build upkeep. Pending upgrades and the backlog are in [pending-upgrades.md](pending-upgrades.md). Three parts: lockfile and minor updates, faster builds, and the build and test tools.
+Dependency, lockfile and build upkeep. Pending upgrades and the backlog are in [pending-upgrades.md](pending-upgrades.md). Ten parts: lockfile and minor updates, faster builds, the build and test tools, React 19, unused and replaceable dependencies, the tab layout, Blockly 13, dashboard charts, Tailwind CSS 4, and the Python editor.
+
+Dependency, lockfile and build upkeep. Pending upgrades and the backlog are in [pending-upgrades.md](pending-upgrades.md). Seven parts: lockfile and minor updates, faster builds, the build and test tools, React 19, unused dependencies, the tab layout, and the Python editor.
 
 ## Part 1 — Lockfile, Tailwind config and minor updates
 
@@ -194,3 +196,557 @@ security fixes.
 
 Possible: dependency upgrades, independent of the fork's UI. The ref type fixes are in upstream
 files and are needed by any React 19 upgrade.
+
+## Part 5 — Unused and replaceable dependencies
+
+### Problem
+
+Some packages were installed but not needed: `remark`, `remark-html`, `remark-rehype`,
+`rehype-raw`, `rehype-sanitize` and `rehype-stringify` are imported nowhere (Markdown is rendered
+with `markdown-it`); `moment` (plus `@types/moment`) formatted one date; and `use-resize-observer`
+measured two elements, which `usehooks-ts`, already a dependency, also does (and it needed an
+`overrides` entry to run on React 19, part 4).
+
+### Solution
+
+- The six `remark`/`rehype` packages are removed.
+- `moment` is replaced by `formatBlocksDate` (`src/utils/blocks-date.ts`), which writes the date
+  line above `##XRPBLOCKS` in a blocks file with the native `Date`. It keeps upstream's string
+  exactly, quirks included: the pattern `YYYY-MM-DD HH:MM:SS` means year, month, day, hour, month
+  again and hundredths of a second, so 9 November 2026 at 14:07:23.456 is written as
+  `2026-11-09 14:11:45`. Nothing reads that line back, so it is left as it was.
+- The folder tree and the busy dialog measure their containers with `useResizeObserver` from
+  `usehooks-ts` instead of `use-resize-observer`. Same sizes (content box); the only difference is
+  that sizes are no longer rounded to whole pixels, which the tree and the dialog do not need.
+  Its `overrides` entry in `package.json` is removed; only `react-blockly` keeps one.
+- `usehooks-ts` 3 types its `ref` option for React 18, so the two refs are typed as
+  `RefObject<HTMLDivElement>` for it (with React 19 `useRef(null)` also allows `null`).
+- Result: 80 fewer packages in `node_modules` (1103 → 1023) and a smaller app: the build's
+  JavaScript goes from 19,600,296 to 19,535,490 bytes (−65 KB; −21 KB gzipped, 5,263,313 →
+  5,242,722). No visible change.
+
+### Files
+
+- `package.json`, `package-lock.json`, `docs/specs/pending-upgrades.md`.
+- `src/utils/blocks-date.ts` (new), `src/components/blockly.tsx`.
+- `src/components/folder-tree.tsx`, `src/components/dialogs/busydlg.tsx`.
+- Unit tests: `src/utils/blocks-date.spec.ts` (the strings moment gave for a set of dates).
+
+### How to test
+
+1. Open My projects: the folder tree fills the side panel and follows its size when the panel or
+   the window is resized; long lists scroll.
+2. Open a blocks project, change it and look at the saved file (for example with Run, on the
+   robot): the line above `##XRPBLOCKS` has the same date format as before.
+3. Connect a robot and do something that shows the busy dialog (for example installing the
+   library): the animated logo is shown, larger on wide screens.
+
+### Upstream
+
+Possible: these packages come from XRPWeb and the change does not depend on the fork's UI.
+
+## Part 6 — Tab layout: flexlayout-react 0.11
+
+### Problem
+
+The tab layout (side bar, editor tabs, terminal) used `flexlayout-react` 0.8.4, a year and three
+minor versions behind. Versions 0.9 to 0.11 rewrote parts of the library, so the upgrade was left
+for its own change.
+
+### Solution
+
+`flexlayout-react` 0.11.1, with the screens kept exactly as they were. What changed in the library
+and how the app follows:
+
+- **Theme variables are renamed.** The colours, font and sizes are now set through
+  `--flexlayout-*` variables (for example `--flexlayout-color-text`, `--flexlayout-font-family`)
+  instead of `--color-*` and `--font-family`. The GitHub theme (`src/theme/github/app.css`) sets the
+  new names; without them the layout fell back to the library's own colours and font.
+- **The splitter size moved from the layout settings to CSS** (`--flexlayout-splitter-size: 6px`).
+- **Tab bars have a minimum height** (1.5 lines). The editor tab bar with no tabs (welcome screen)
+  keeps its former, slightly lower height, so the welcome screen does not move.
+- **The side bar's own buttons are drawn outside the rotated tabs.** The Terminal toggle was
+  centred in the side bar and drawn sideways; it is placed right below the Explorer icon again, is
+  no longer turned, and its "on" mark is on the left edge like the Explorer's.
+- **`Layout` is a function component.** Code that keeps a reference to the layout uses the new
+  `ILayoutApi` type (`RefObject<ILayoutApi | null>` instead of the `RefObject<Layout | null>` of
+  part 4; adding tabs works as before). The unused upstream `EditorChooser` read the
+  model from the layout's props, which no longer exist; it reads it from the editor manager.
+- The `Model` constructor is public again in 0.11, so the editor manager tests did not need to
+  change.
+
+The automated screenshots of every main screen (desktop, tablet and phone, light and dark) match
+the ones taken before the upgrade, pixel for pixel, so no image changed.
+
+### Files
+
+- `package.json`, `package-lock.json`
+- `src/theme/github/app.css`, `src/components/side-bar-icon.tsx`, `src/components/xrplayout.tsx`,
+  `src/utils/editorUtils.ts`, `src/components/editor-chooser.tsx`
+
+### How to test
+
+1. Open the app on a computer: the Explorer is open on the left, the welcome screen shows on the
+   right, and the side bar shows the Explorer icon with the Terminal icon right below it.
+2. Click the Terminal icon: the terminal opens under the editor and the icon gets a coloured mark
+   on its left edge; click it again: the terminal hides.
+3. Open an example: the block editor tab shows with its name; open the Dashboard from the
+   settings menu: it opens as a second tab. Drag the splitter between the editor and the terminal.
+4. Switch to the dark theme: the panels, tabs and side bar use the dark colours.
+5. Open the app on a phone: the Explorer starts closed; tap its icon to open it.
+
+### Upstream
+
+Possible: a dependency upgrade. XRPWeb would need the same theme variable renames in its own CSS.
+
+## Part 7 — Blockly 13
+
+### Problem
+
+The block editor used Blockly 12 (12.5, which came in through `react-blockly`) and
+`@blockly/field-colour` 6. Blockly 13 is the maintained line and its plugins (`@blockly/*` 13.x)
+only support it. Blockly 13 also turns on keyboard navigation and its own focus handling by
+default, which changes how the toolbox reacts to clicks and keys. The block search field of the
+toolbox is our own copy of `@blockly/toolbox-search` (spec 004), so it did not get the plugin's
+fixes for that.
+
+### Solution
+
+- **Blockly 13.4** is now a direct dependency (it was only installed through `react-blockly`), with
+  `@blockly/field-colour` 13.4. Blockly 13 asks for jsdom 27.4 or newer, which only the unit tests
+  use, so jsdom goes from 26 to 30. jsdom 30 and Blockly 13 need Node 22 to run the unit tests;
+  the app itself is unchanged for the browser.
+- **The Python sent to the robot is the same.** A new unit test keeps the Python generated for
+  every welcome example, every toolbox block and a program with a variable and a function. It was
+  recorded with Blockly 12 and passes unchanged with Blockly 13.
+- **Block search follows the plugin's 13.4 version**: the results update on every change of the
+  text (not only on key release), the arrow keys leave the field for the toolbox or the block list
+  when the caret is at the start or end of the text, Escape clears the text, and the hint shows
+  once the toolbox has finished drawing. The shared index and the translated texts stay.
+- **A second tap in the search field keeps the typing.** In Blockly 13 a click on the selected
+  toolbox row closes it and moves the focus to the toolbox, so after tapping the field again the
+  next letters were lost. A tap in the field while it is open now only moves the caret.
+- **Small drawing changes.** The app already chose the `zelos` renderer and its own media folder,
+  so the new default renderer and media location of Blockly 13 do not apply. The blocks look the
+  same, with differences of one or two pixels: block edges are drawn a little sharper, the round
+  number fields are slightly wider, and the toolbox scrolls a few pixels differently when a group
+  is opened.
+
+Editor with an example, light and dark:
+
+![Blocks editor, light](images/006-blockly-13-editor-light.png)
+![Blocks editor, dark](images/006-blockly-13-editor-dark.png)
+
+Search for "effort", light and dark:
+
+![Block search, light](images/006-blockly-13-search-light.png)
+![Block search, dark](images/006-blockly-13-search-dark.png)
+
+Found while testing, not changed here: the generator of the "reset encoders" block (inherited from
+XRPWeb) reads an input that block does not have, so a program with that block fails to generate
+Python. It fails the same way with Blockly 12; it is listed under known issues in
+[pending-upgrades.md](pending-upgrades.md).
+
+### Files
+
+- `package.json`, `package-lock.json`.
+- `src/components/blockly/toolbox-search-category.ts`.
+- Tests: `src/components/blockly/python-generator.spec.ts` (new, with its snapshot),
+  `e2e/block-search.spec.ts` (new, typing in the search field), `e2e/visual/screens.spec.ts`
+  (the search screenshot now searches for "effort", which shows blocks) and the approved
+  screenshots in `e2e/visual/__screenshots__`.
+
+### How to test
+
+1. Open an example in the block editor: the blocks look as before; zoom in, zoom out and reset
+   with the buttons; drag a block from the toolbox; undo.
+2. Tap the search field and type "effort": the matching blocks show while typing. Tap the field
+   again and keep typing: no letter is lost. Press Escape: the text is cleared.
+3. Switch to the Python view: the code is the same as before the upgrade.
+4. Open the toolbox groups (Sensors, Advanced) and every category: the blocks show and can be
+   dragged. Repeat in Spanish and in dark mode.
+5. On a phone-sized window, the toolbox is a column of icons and the blocks open in their panel.
+
+### Upstream
+
+Possible: XRPWeb uses Blockly 12 and the same search plugin, so the upgrade and the search fix
+apply there too.
+
+## Part 8 — Dashboard charts: recharts 3
+
+### Problem
+
+The dashboard's sensor graphs use recharts 2, which is no longer maintained.
+
+### Solution
+
+- **recharts 3.10**. The sensor widget (`SensorWidget.tsx`) uses only `LineChart`, `Line`,
+  `XAxis`, `YAxis`, `Tooltip` and `ResponsiveContainer`, whose props did not change, so the
+  component works as it is: same colours, one line per channel, the last 50 readings, the time in
+  the tooltip, and live updates as readings arrive.
+- recharts 3 keeps its chart state in Redux Toolkit, which it brings as its own dependencies, and
+  asks the app to install `react-is` matching its React version: `react-is` 19 is now a direct
+  dependency (before, recharts used an older copy brought in by the test tools).
+- A unit test feeds the accelerometer widget fake robot readings through the same event the robot
+  connection uses, so the charts are checked without a robot: the data view shows the values,
+  the graph draws one line per channel and redraws with every new reading, and the settings menu
+  switches from data to graph.
+- A visual test of the dashboard (spec 007, part 1) does the same in the browser: it opens the
+  dashboard, adds two accelerometer widgets and a gyroscope widget, enlarges and switches two of
+  them to Graph, and sends 40 fake readings through that event, so the charts can be compared
+  without a robot. The same test run before the upgrade gives the before and after below.
+- The charts look the same: colours, axes, lines and values. The only difference is the size of
+  the drawing area: recharts 3 no longer lets the chart push its box beyond the space it has, so
+  the plot is about 16 pixels shorter and stays centred in the widget.
+
+Before (recharts 2), light and dark:
+
+![Dashboard with recharts 2, light](images/006-dashboard-before-light.png)
+![Dashboard with recharts 2, dark](images/006-dashboard-before-dark.png)
+
+After (recharts 3), light and dark:
+
+![Dashboard with recharts 3, light](images/006-dashboard-after-light.png)
+![Dashboard with recharts 3, dark](images/006-dashboard-after-dark.png)
+
+### Files
+
+- `package.json`, `package-lock.json`.
+- Unit tests: `src/components/dashboard/sensors/sensor-widget-chart.spec.tsx` (new).
+- Visual test: `e2e/visual/screens.spec.ts` (dashboard charts), `e2e/support/dashboard.ts` (new:
+  opens the dashboard, adds and resizes widgets, sends fake readings),
+  `e2e/visual/__screenshots__/dashboard-{light,dark}.png`.
+- Images: `docs/specs/images/006-dashboard-{before,after}-{light,dark}.png`.
+
+### How to test
+
+1. Connect a robot and open the dashboard. Add the accelerometer and the gyroscope widgets.
+2. In each widget, open the settings menu and choose Graph: one coloured line per axis, moving as
+   the robot moves; the count of readings stored grows. Hover the graph: the tooltip shows the
+   time and the values with two decimals.
+3. Choose Data: the numbers update live. Resize and move the widgets: the graph fills the widget.
+4. Check in light and dark themes.
+
+### Upstream
+
+Possible: dependency upgrade, independent of the fork's UI.
+
+## Part 9 — Tailwind CSS 4
+
+### Problem
+
+Tailwind CSS 3.4 was a major version behind. Tailwind 4 has a new configuration format (in CSS),
+renames several utilities and changes some defaults, so the app's palette approach needed a
+review. The old approach also fixed the colours at build time, while a second theme (Dracula, in
+the backlog) needs colours that can change while the app runs.
+
+### Solution
+
+- **Tailwind 4.3** through its Vite plugin (`@tailwindcss/vite`); the PostCSS config and
+  `autoprefixer` are gone (Tailwind 4 adds browser prefixes itself).
+- **Palette as CSS theme variables.** The GitHub palette and the 6px corners moved from
+  `src/theme/github/tailwind.ts` (and `withGitHubTheme()`) to `src/theme/github/tailwind.css`, an
+  `@theme` block imported by `src/index.css`. Every colour keeps its value: `shark`,
+  `mountain-mist`, `curious-blue`, `matisse`, `chateau-green` and `cinnabar` with GitHub's values
+  and `ecstasy` with XRPWeb's. XRPWeb's own values for the other palettes, which the GitHub theme
+  always replaced, were removed from `tailwind.config.ts`. As in Tailwind 3, Tailwind's default
+  palette is left out (`--color-*: initial`), so classes such as `bg-white` still give no style;
+  Flowbite adds its own palettes (gray, red, blue, ...) as before.
+- **Ready for a runtime theme.** Tailwind 4 writes each theme value as a variable on `:root`
+  (`--color-shark-50`, ...) and the classes read the variable. A second theme (Dracula) can set
+  the same variables under a selector, for example `[data-theme="dracula"]`, and the whole app
+  changes colour without a rebuild.
+- **Same look.** Tailwind's upgrade tool renamed the utilities whose meaning moved (`rounded` to
+  `rounded-sm`, `rounded-sm` to `rounded-xs`, `shadow-sm` to `shadow-xs`, `shadow` to `shadow-sm`,
+  `outline-none` to `outline-hidden`, `flex-grow` to `grow`, arbitrary values to their new
+  names). `src/index.css` keeps the Tailwind 3 defaults that changed: borders default to gray-200,
+  placeholders are gray-400, buttons show the hand cursor, dialogs stay centred (Tailwind 4 sets
+  every margin to 0, which moved the Change Log and other dialogs to the top left corner) and a
+  ring without a colour is blue at half opacity. The Blocks | Python selector reset its centring with `transform-none`, which no
+  longer resets a translation in Tailwind 4, so it uses `translate-none`.
+- **Flowbite React** 0.12 supports Tailwind 4: its config (`.flowbite-react/config.json`) says
+  version 4, its CSS (`flowbite-react/plugin/tailwindcss`) is imported by `src/index.css`, and its
+  class list (`.flowbite-react/class-list.json`) was regenerated with the Tailwind 4 names.
+- `tailwind.config.ts` keeps only the typography (Help and AI chat) styles, loaded with
+  `@config`. The dark mode stays class based (`@custom-variant dark`).
+- `tailwindcss-debug-screens` does not support Tailwind 4; `src/debug-screens.css` shows the same
+  breakpoint label in debug mode.
+- One visible difference by design: Tailwind 4 applies `hover:` styles only on devices that can
+  hover, so on a tablet a tapped button no longer stays highlighted.
+- **Focus.** Tailwind 4 changed the focus defaults (`ring` is 1px in the text colour instead of
+  3px blue, `outline-none` now really removes the outline). The upgrade tool moved
+  `outline-none` to `outline-hidden` (the old behaviour) and `src/index.css` keeps the old ring
+  colour, so focus looks as before: the keyboard focus (Tab) of the top bar, the Blocks | Python
+  selector, My projects | Robot memory, the file tree, the toolbox and its search, the welcome
+  cards and the New file dialog was compared between the Tailwind 3 and Tailwind 4 builds, light
+  and dark, with no difference. A focused welcome card (identical before and after):
+
+  ![Focused card, light](images/tailwind4-focus-light.png)
+  ![Focused card, dark](images/tailwind4-focus-dark.png)
+
+### Files
+
+- `package.json`, `package-lock.json`, `vite.config.ts`, `tailwind.config.ts`, `tsconfig.node.json`,
+  `src/index.css`, `src/theme/github/tailwind.css` (new, replaces `tailwind.ts`),
+  `src/debug-screens.css` (new), `.flowbite-react/` (config, init, class list); removed
+  `postcss.config.js` and `tailwind-plugins.d.ts`.
+- Class renames from the upgrade tool in the components (`src/components/`, `src/widgets/`,
+  `src/App.tsx`, `src/utils/constants.ts`); `src/components/navbar.tsx` (`translate-none`).
+- Visual tests (spec 007, part 1) pass with the approved images unchanged. Screens they do not
+  cover (Change Log, File menu, New file dialog, Trash, Connect menu) were compared pixel by pixel
+  between the Tailwind 3 and Tailwind 4 builds, light and dark: no difference.
+
+### How to test
+
+1. Open the app in light and dark: header, side bar, folder tree, tabs, status bar and menus look
+   as before (same colours, same 6px corners).
+2. Open a blocks file: the Blocks | Python selector is centred in the top bar on a phone and sits
+   between the menus and the Connect button on a tablet or desktop.
+3. Open File > New file, the Help menu and the Trash: dialogs and lists look as before.
+4. Open Help > Changelog (typography styles): headings, code and tables keep their colours.
+5. Press Tab through the top bar, the folder tree, the toolbox and a dialog: each control shows the
+   same focus ring as before.
+
+### Upstream
+
+Possible: dependency upgrade. XRPWeb still uses Tailwind 3 and its own palette in
+`tailwind.config.ts`; sending this upstream would move that palette to an `@theme` block too.
+
+## Part 10 — Python editor: monaco-vscode-api 37, monaco-languageclient 11
+
+### Problem
+
+The Python editor (Monaco with VS Code services and Pyright as the language server) was built on
+`@codingame/monaco-vscode-*` 11 (with some 14.x `*-common` packages pulled in), `monaco-languageclient`
+9.4.1 and `vscode-ws-jsonrpc` 3.4.0. npm reported the 14.x packages as no longer supported, and
+the pieces could not be updated one by one: each one depends on an exact version of the others, so
+updating a single package installed a second, incompatible copy of the VS Code services.
+
+### Solution
+
+The whole stack moves together to the latest compatible set:
+
+- `@codingame/monaco-vscode-*` 37.6.1 (one copy of every package), including the `monaco-editor`
+  and `vscode` aliases. `vscode` now points to `@codingame/monaco-vscode-extension-api` (the VS Code
+  extension API); the services and extension registration come from `@codingame/monaco-vscode-api`,
+  now a direct dependency.
+- `monaco-languageclient` 11.0.3, `vscode-ws-jsonrpc` 4.0.3, and `vscode-languageclient` 10.1.2 with
+  `vscode-languageserver-protocol` 3.18.4 as direct dependencies (the app imports them, and listing
+  them keeps a single copy of the protocol). The target in the pending list was "2x / 10+": the 10.x
+  releases still use `vscode-ws-jsonrpc` 3.5, so 11 is the first that brings all three up together.
+  Pyright itself (`@typefox/pyright-browser`) is unchanged and still runs in a web worker, offline.
+- `@codingame/esbuild-import-meta-url-plugin` is removed. Vite 8 handles worker URLs on its own, and
+  the plugin broke the development server with the new packages (it read a relative worker path in
+  `@vscode/diff` as a package name). `monaco-languageclient` dropped it for the same reason.
+- The build no longer uses esbuild, which the removed plugin used to bring in: a clean install does
+  not have it, and the build failed while bundling the `@vscode/diff` worker. The code is minified
+  with Oxc, Vite 8's own minifier, and the esbuild settings Vite 8 already ignored are gone from
+  `vite.config.ts` (`esbuild` and `optimizeDeps.esbuildOptions`).
+- Small code changes: the services are initialized from `@codingame/monaco-vscode-api/services`,
+  the language client and protocol are imported by package entry (`/browser`), and the editor's own
+  worker is registered under its new name (`editorWorkerService`). With the old name the editor
+  worker was not found and its work ran on the page instead.
+- Theme: the editor now changes theme through the VS Code setting `workbench.colorTheme` with the
+  theme ids `Light Modern` and `Dark Modern`. With the new packages `monaco.editor.setTheme` no
+  longer switched the theme while the editor was open, and the old light value (`vs`) was not a
+  theme name, so it fell back to VS Code's newer default light theme. The editor looks exactly as
+  before in both themes (the approved screenshots did not change).
+- Richer Python colours. Function calls, attributes, constants and object names were plain text in
+  both themes, so the light theme in particular looked like a plain notepad. In VS Code these
+  colours come from Pylance's semantic highlighting, which Pyright does not provide. The editor now
+  colours what the Python grammar marks, with each theme's own palette:
+  - function and method calls (`differentialDrive.straight(...)`, `print(...)`): function colour;
+  - attributes after a dot (`self.speed`, `math.pi`): variable colour, as VS Code shows properties;
+  - UPPER_CASE constants (`MAX_SPEED`): constant colour;
+  - the name before a dot (`board.`, `differentialDrive.`, `math.`): type colour. The grammar does
+    not mark these names, so a small extra grammar adds them (except `self` and `cls`, which
+    already have their own colour).
+
+  Function parameters already had the variable colour in `def` lines; the grammar does not mark
+  them where they are used, so those uses stay plain.
+- The Python editor still loads on demand and is still stored for offline use.
+
+Before and after, light and dark:
+
+| | Before | After |
+| --- | --- | --- |
+| Light | ![Python editor before, light](images/python-colours-before-light.png) | ![Python editor after, light](images/python-colours-after-light.png) |
+| Dark | ![Python editor before, dark](images/python-colours-before-dark.png) | ![Python editor after, dark](images/python-colours-after-dark.png) |
+
+Measured on the same machine with the same method, before (the fork's main branch) and after
+(production build served locally, new Python project, average of five runs):
+
+| | Before | After |
+| --- | --- | --- |
+| Python editor download (main Monaco file) | 12.9 MB | 8.8 MB |
+| All built files (`assets`) | 21.4 MB | 17.9 MB |
+| Stored for offline use (service worker) | 34.1 MB | 30.7 MB |
+| Opening the app to the Python editor ready, first visit | 2.1 s | 1.8 s |
+| Pyright's first error underline after typing | 3.7 s | 3.6 s |
+
+### Files
+
+- `package.json`, `package-lock.json`, `vite.config.ts`, `src/components/MonacoEditor.tsx`,
+  `src/components/lsp-client.ts`, `src/components/python/python-colours.ts` (new: the colours and
+  the extra grammar), `docs/specs/images/python-colours-*.png`.
+
+### How to test
+
+1. Open the app and create a Python project: the editor opens, keywords and strings are coloured.
+2. Type `import math` and, on a new line, `x: int = "a"`: Pyright underlines `"a"`. Type `math.`:
+   the list of `math` functions appears. Write `MAX_SPEED = 50` and `board.led_on()`: `MAX_SPEED`,
+   `board` and `led_on` each take their own colour, in light and in dark.
+3. With a Python file open, switch the system between light and dark: the editor follows both
+   ways, and the zoom level is kept.
+4. Use the round + and − buttons: the code gets bigger and smaller.
+5. Wait a moment after typing: the status bar shows Saved; reload and the text is still there.
+6. Open the app once, go offline and reload: the Python editor still opens with colours,
+   suggestions and underlines.
+7. In the block editor, open the Python view of a program: the code shows read-only.
+
+### Upstream
+
+Possible: dependency upgrade independent of the fork's UI. XRPWeb has the same stack.
+
+## Part 11 — App version and releases
+
+### Problem
+
+The app showed its version nowhere. `package.json` said 2.0.36 (inherited and unused), a
+hand-written number decided when the XRPWeb Change Log opened, and the tags and releases were
+XRPWeb's. Nobody could tell which build a tablet or a bug report was running, and the Change Log
+told the story of XRPWeb, not of the fork.
+
+### Solution
+
+- One number: the `version` in `package.json`, injected at build time. The fork has its own
+  version, separate from XRPWeb's, starting at 0.1.0. The XRPWeb version it is based on (2.1.0) is
+  recorded once, in `package.json` as `xrpwebBase`.
+- The status bar shows the version at the right, as `0.1.0 · a1b2c3d` (short commit). Hovering it
+  says "Based on XRPWeb 2.1.0". Builds that are not production on the host (preview deployments)
+  add `· preview`. Without a commit (no git, no host information) the version shows alone. The
+  Update button of the installed app is unchanged and sits next to it.
+- The fork's own Change Log (English and Spanish, short and for users) replaces XRPWeb's in the
+  "what's new" window. It opens the first time and whenever the version changes, and stays in the
+  Help menu. The window also shows the version and the XRPWeb base. XRPWeb's `CHANGELOG.md` stays
+  in the site, untouched and unused.
+- Releases: a release is a pull request that bumps the version in `package.json` (and adds an
+  entry to both Change Logs); once merged, the tag `vX.Y.Z` is pushed on `main`. The tag creates
+  the GitHub Release with notes built from the titles of the pull requests merged since the
+  previous tag, and attaches the build. The release stops if the tag does not match
+  `package.json`. The build and its tests run on Node 22, like the deployment and the browser
+  tests; Node 20 cannot run the unit tests. The attached build is a real zip file. If a release
+  fails, fix the cause, delete the tag (and the half-made release, if any) and push the tag
+  again. The release workflow still fits the fork: it takes the firmware loader content
+  from XRPWeb's firmware repository, as the deployment does.
+
+The status bar and the Change Log, light and dark.
+
+| | Status bar | Change Log |
+| --- | --- | --- |
+| Light | ![Version, light](images/versioning-statusbar-light.png) | ![Change Log, light](images/versioning-changelog-light.png) |
+| Dark | ![Version, dark](images/versioning-statusbar-dark.png) | ![Change Log, dark](images/versioning-changelog-dark.png) |
+
+### Files
+
+- `package.json` (`version`, `xrpwebBase`), `package-lock.json`, `vite.config.ts` (injected
+  values), `src/vite-env.d.ts`, `src/utils/version.ts` (text and Change Log file),
+  `src/utils/constants.ts`, `src/components/status-bar/status-bar.tsx`,
+  `src/components/dialogs/changelog.tsx`, `public/changelog/{en,es}.md`,
+  `src/utils/i18n/locales/{en,es}`, `.github/workflows/release.yml`.
+- Tests: `src/utils/version.spec.ts`, `e2e/version.spec.ts`. The visual tests hide the
+  version text, because the commit changes every time.
+
+### How to test
+
+1. Open the app: the Change Log opens with "What's new in XRP Studio", the version and "Based on
+   XRPWeb 2.1.0". Close it and reload: it does not open again.
+2. The status bar shows `0.1.0 · <commit>` at the right; hover it for the XRPWeb base.
+3. Change the language to Spanish: the Change Log (Help menu) and the tooltip are in Spanish.
+4. In a preview deployment the version ends with `· preview`; in production it does not.
+5. In the installed app, with a new version waiting, the Update button shows left of the version
+   and still updates the app.
+6. Release: bump the version, merge, push the tag `v0.1.0`; the GitHub Release lists the merged
+   pull request titles.
+
+### Upstream
+
+Not for XRPWeb: the fork's own numbering and Change Log.
+
+## Part 12 — Comments describe the code, not the specs
+
+### Problem
+
+About 60 code comments (in the app, tests, server, scripts, workflows and configuration) said
+things like "spec 004, part 5". They pointed to documents the reader may not have, went stale when
+parts were renumbered, and added nothing to what the code does.
+
+### Solution
+
+The references are removed from the comments; each comment keeps what the module, class or
+function does and why. The specs are the ones that list the files of each part, not the other way
+round, and the Comments convention in `CLAUDE.md` now says so. Only comments and test names
+changed: no executable code.
+
+### Files
+
+All code comments that mentioned a spec or a part, and `CLAUDE.md` (Conventions).
+
+### How to test
+
+Nothing visible changes in the app.
+
+### Upstream
+
+Not applicable: it only concerns the fork's own comments.
+
+## Part 13 — Structure: tests next to the code, a folder per feature, kebab-case names
+
+### Problem
+
+Tests lived in a `tests/` folder beside each source folder, so a change to a component touched
+two distant places. Feature code was spread by type, one hook sat alone in a `hooks/` folder, and
+one hook file was named in camelCase (`usePythonView.tsx`) while the rest of the fork's files use
+kebab-case.
+
+### Solution
+
+Rules for the files the fork created:
+
+- File names are kebab-case: components (`status-bar.tsx`), hooks (`use-python-view.tsx`) and
+  tests (`status-bar.spec.tsx`). Names inside the code do not change. A lint rule enforces it.
+- A test sits next to the code it tests (`foo.tsx` and `foo.spec.tsx`; snapshots in
+  `__snapshots__` beside the spec). Browser tests stay in `e2e/`. Helpers that are not tests go to
+  `src/test-utils/`.
+- A feature with more than one source file gets its own folder (the status bar is now
+  `src/components/status-bar/`); a single component with only its test stays flat.
+- No `index.ts` barrel files: imports name the file.
+- Hooks shared by several features go in `src/hooks/` (new alias `@hooks/*`); a hook used by one
+  feature lives in that feature's folder. `usePythonView` moved to
+  `src/components/blockly/use-python-view.tsx` because only the block editor uses it.
+
+Files that come from XRPWeb are not moved or renamed, so that merging upstream stays clean. That
+includes the dashboard hooks, the upstream tests (`src/components/tests/`, `src/managers/tests/`,
+`src/utils/tests/rememberedxrp.spec.ts`, `src/widgets/tests/`) and the camelCase components. The
+lint rule lists them as exceptions. The server tests in `server/google-auth/tests/` also stay: they
+skip the `tests` folder when checking imports. Only two import lines in upstream files changed
+(`App.tsx`, `blockly.tsx`) to follow the moved files.
+
+### Files
+
+- Moved with `git mv` (history follows): every test of the fork from `tests/` folders to its
+  code, `src/components/status-bar.tsx` to `src/components/status-bar/status-bar.tsx`,
+  `blockly/hooks/usePythonView.tsx` to `blockly/use-python-view.tsx`, and
+  `src/utils/tests/stubs/pwa-register.ts` to `src/test-utils/pwa-register.ts`.
+- Config: `eslint.config.js` (filename rule and upstream exceptions), `tsconfig*.json`,
+  `vite.config.ts` and `vitest.config.ts` (alias `@hooks`, the stub path).
+- Paths in the other specs and in `CLAUDE.md`.
+
+### How to test
+
+Nothing visible changes in the app. Run the unit tests, the lint and the build: all pass as before,
+and the visual comparison images do not change.
+
+### Upstream
+
+Not applicable: it only concerns files created by the fork.

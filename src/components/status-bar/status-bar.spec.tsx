@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { act, render, screen } from '@testing-library/react';
 import '@/utils/i18n';
-import StatusBar from '@components/status-bar';
+import StatusBar from '@components/status-bar/status-bar';
 import type DriveApi from '@/services/drive-api';
 import { startSync, stopSync, syncNow } from '@/services/drive-sync';
 import LocalDriveService, { MemoryDriveStore } from '@/services/local-drive';

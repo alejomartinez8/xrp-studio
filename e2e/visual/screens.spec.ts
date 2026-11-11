@@ -1,8 +1,16 @@
 import { test, expect, type BrowserContext, type Page } from '@playwright/test';
 import { openApp, setUpGoogle } from '../support/app';
+import {
+    addSensorWidget,
+    fakeReadings,
+    feedDashboard,
+    openDashboard,
+    resizeWidget,
+    showGraph,
+} from '../support/dashboard';
 
 /**
- * Visual regression (spec 007, part 1): key screens compared with the approved screenshots in
+ * Visual regression: key screens compared with the approved screenshots in
  * `__screenshots__`, in light and dark, at desktop, tablet and phone sizes. A difference fails the
  * test and the report shows the expected image, the new one and the difference. Run inside the
  * Playwright Docker image only (see `playwright.config.ts`).
@@ -163,7 +171,7 @@ for (const theme of THEMES) {
         test('toolbox search', async ({ page, context }) => {
             await openWelcome(page, context, theme);
             await openBlocksExample(page);
-            await page.locator('.blocklyToolbox input').fill('drive');
+            await page.locator('.blocklyToolbox input').fill('effort');
             await settle(page);
             await expect(flyout(page)).toHaveScreenshot(`toolbox-search-${theme}.png`);
         });
@@ -191,6 +199,25 @@ for (const theme of THEMES) {
             await expect(page).toHaveScreenshot(`python-${theme}.png`);
         });
 
+        test('dashboard charts', async ({ page, context }) => {
+            await page.clock.setFixedTime(new Date('2026-01-05T10:30:00'));
+            await openWelcome(page, context, theme);
+            await openDashboard(page);
+            await addSensorWidget(page, 'Accelerometer');
+            await addSensorWidget(page, 'Gyroscope');
+            await addSensorWidget(page, 'Accelerometer');
+            await resizeWidget(page, 'Gyroscope', 0, 180);
+            await resizeWidget(page, 'Accelerometer', 0, 180);
+            await showGraph(page, 'Accelerometer');
+            await showGraph(page, 'Gyroscope');
+            await page.mouse.move(900, 700);
+            await feedDashboard(page, fakeReadings());
+            await expect(page.getByText('40 readings stored')).toHaveCount(2);
+            await expect(page.locator('.recharts-line-curve')).toHaveCount(6);
+            await settle(page);
+            await expect(page).toHaveScreenshot(`dashboard-${theme}.png`);
+        });
+
         test('settings menu', async ({ page, context }) => {
             await openWelcome(page, context, theme);
             await page.getByRole('button', { name: 'Settings' }).click();
@@ -213,6 +240,15 @@ for (const theme of THEMES) {
             await keepSignedIn.scrollIntoViewIfNeeded();
             await settle(page);
             await expect(page).toHaveScreenshot(`phone-menu-settings-${theme}.png`);
+        });
+
+        test('phone menu over the blocks editor', async ({ page, context }) => {
+            await openWelcome(page, context, theme);
+            await openBlocksExample(page);
+            await page.getByRole('button', { name: 'Menu' }).click();
+            await expect(page.locator('#mobile-keepSignedInBtn')).toBeAttached();
+            await settle(page);
+            await expect(page).toHaveScreenshot(`phone-menu-blocks-${theme}.png`);
         });
     });
 }

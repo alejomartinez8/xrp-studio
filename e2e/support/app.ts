@@ -1,8 +1,9 @@
 import { expect, type BrowserContext, type Page } from '@playwright/test';
+import { readFileSync } from 'fs';
 import { MockGoogle } from './google-mock';
 
 /** App version stored by the app once the change log was shown (`Constants.APP_VERSION`). */
-const SEEN_VERSION = '2.1.0';
+const SEEN_VERSION: string = JSON.parse(readFileSync('package.json', 'utf8')).version;
 
 /** What a test gets: a context with the fake Google installed. */
 export type Setup = { mock: MockGoogle; context: BrowserContext };
@@ -70,7 +71,7 @@ export async function shortenIdleSignOut(context: BrowserContext): Promise<void>
 
 /** Open the Explorer panel when it is closed, and return the folder tree. */
 export async function showTree(page: Page) {
-    const tree = page.getByRole('tree');
+    const tree = page.getByRole('tabpanel', { name: 'folders' }).getByRole('tree');
     if (!(await tree.isVisible())) {
         await page.getByTitle('Explorer').first().click();
     }

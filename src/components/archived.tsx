@@ -35,7 +35,7 @@ function ArchivedPanel({
     return (
         <div
             data-testid="archived-panel"
-            className="flex w-[28rem] max-w-full flex-col gap-3 p-6 text-mountain-mist-900 dark:text-mountain-mist-200"
+            className="flex w-md max-w-full flex-col gap-3 p-6 text-mountain-mist-900 dark:text-mountain-mist-200"
         >
             <div className="flex flex-col gap-1 pr-10">
                 <h1 className="flex items-center gap-2 text-lg font-bold text-mountain-mist-700 dark:text-mountain-mist-300">
@@ -79,7 +79,7 @@ function ArchivedPanel({
 }
 
 /**
- * Archived - the Archived row at the bottom of the Explorer for My projects (spec 004, part 6),
+ * Archived - the Archived row at the bottom of the Explorer for My projects,
  * shown while there are archived projects, with how many. It opens the archived projects dialog.
  * Archived projects are hidden from the tree without being deleted.
  */

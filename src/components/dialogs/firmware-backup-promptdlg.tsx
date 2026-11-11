@@ -33,7 +33,7 @@ function FirmwareBackupPromptDlg({
     useDialogClose(onCancel);
 
     return (
-        <div className="flex h-auto w-[34rem] max-w-[95vw] flex-col gap-3 rounded-md border border-mountain-mist-700 p-8 shadow-md transition-all dark:border-shark-500 dark:bg-shark-950">
+        <div className="flex h-auto w-136 max-w-[95vw] flex-col gap-3 rounded-md border border-mountain-mist-700 p-8 shadow-md transition-all dark:border-shark-500 dark:bg-shark-950">
             <div className="flex flex-row items-center gap-2">
                 <IoWarning className="text-amber-500" size={28} />
                 <h1 className="text-lg font-bold text-mountain-mist-700 dark:text-mountain-mist-300">

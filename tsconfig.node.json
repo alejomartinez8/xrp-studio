@@ -3,6 +3,7 @@
     "paths": {
       "@/*": ["./src/*"],
       "@components/*": ["./src/components/*"],
+      "@hooks/*": ["./src/hooks/*"],
       "@managers/*": ["./src/managers/*"],
       "@connections/*": ["./src/connections/*"],
       "@utils/*": ["./src/utils/*"],
@@ -28,5 +29,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["vite.config.ts", "pwa-plugin.ts", "tailwind.config.ts", "tailwind-plugins.d.ts", "api", "server", "playwright.config.ts", "e2e"]
+  "include": ["vite.config.ts", "pwa-plugin.ts", "tailwind.config.ts", "api", "server", "playwright.config.ts", "e2e"]
 }

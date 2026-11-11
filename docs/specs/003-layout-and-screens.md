@@ -58,8 +58,8 @@ One friendly top bar for everyone (no separate "kids mode"):
 4. File → New File works (the local session signs in from the top bar).
 5. At 1024 px the bar fits on one line.
 
-Automated: `src/widgets/tests/compact-account.spec.tsx` (sign-in button, avatar menu, sign out),
-`src/components/tests/language-dlg.spec.tsx`, `src/components/tests/theme-dlg.spec.tsx` and `src/utils/tests/theme.spec.ts`. The real Google sign-in needs the auth backend and was not run.
+Automated: `src/widgets/compact-account.spec.tsx` (sign-in button, avatar menu, sign out),
+`src/components/dialogs/language-dlg.spec.tsx`, `src/components/dialogs/theme-dlg.spec.tsx` and `src/utils/theme.spec.ts`. The real Google sign-in needs the auth backend and was not run.
 
 ### Screenshots
 
@@ -122,7 +122,7 @@ which children often use alongside other platforms, always offers something to c
 #### Files
 
 - New: `src/components/welcome/welcome-screen.tsx`, `src/utils/new-project.ts`, tests in
-  `src/components/welcome/tests/` and `src/utils/tests/new-project.spec.ts`.
+  `src/components/welcome/welcome-screen.spec.tsx` and `src/utils/new-project.spec.ts`.
 - Hooks: `src/components/xrplayout.tsx` (`onTabSetPlaceHolder`), `src/components/navbar.tsx`
   (`createNewFile`, `EVENT_NEW_PROJECT`), `src/managers/appmgr.ts` (`EVENT_NEW_PROJECT`,
   `getFolderData`), `src/utils/i18n/locales/{en,es}/{en,es}.json` (`welcome.*`).
@@ -169,7 +169,7 @@ had to find it in the Explorer, among many files and folders.
 
 #### Files
 
-- New: `src/utils/recent-projects.ts`, `src/utils/tests/recent-projects.spec.ts`.
+- New: `src/utils/recent-projects.ts`, `src/utils/recent-projects.spec.ts`.
 - Changed: `src/components/welcome/welcome-screen.tsx` and its tests, `src/managers/appmgr.ts`
   (`removeHandler`), `src/utils/i18n/locales/{en,es}/{en,es}.json` (`welcome.recentTitle`,
   `welcome.justNow`, `welcome.moreHint`).
@@ -215,7 +215,7 @@ blocks make it move. Working programs to start from and change are the quickest 
 
 #### Files
 
-- New: `src/utils/examples.ts`, `src/utils/tests/examples.spec.ts`.
+- New: `src/utils/examples.ts`, `src/utils/examples.spec.ts`.
 - Changed: `src/components/welcome/welcome-screen.tsx` and its tests, `src/components/navbar.tsx`
   (`createNewFile` uses `data.content`), `src/utils/i18n/locales/{en,es}/{en,es}.json`
   (`welcome.examplesTitle`, `welcome.examples.*`).
@@ -257,7 +257,7 @@ child it is an empty black box with no purpose.
 
 #### Files
 
-- New: `src/utils/shell-visibility.ts`, `src/utils/tests/shell-visibility.spec.ts`.
+- New: `src/utils/shell-visibility.ts`, `src/utils/shell-visibility.spec.ts`.
 - Changed: `src/components/xrplayout.tsx` (3 lines).
 
 #### How to test
@@ -313,7 +313,7 @@ example in the power switch and battery dialogs).
 
 ### Files
 
-- New: `src/components/dialogs/dialog-close.ts`, `src/components/tests/dialog-close.spec.tsx`.
+- New: `src/components/dialogs/dialog-close.ts`, `src/components/dialogs/dialog-close.spec.tsx`.
 - Changed: `dialog.tsx`, `dialog-footer.tsx`, `ble-reconnect-faileddlg.tsx`,
   `backup-restoredlg.tsx`, `backupdlg.tsx`, `restoredlg.tsx`, `firmware-backup-promptdlg.tsx`,
   `connectiondlg.tsx` (one line each, plus the import).
@@ -437,15 +437,15 @@ page also drew at desktop width, because the viewport tag was commented out in `
   one colour per card.
 - `src/components/folder-header.tsx`: new file and new folder icons.
 - `src/components/xrpshell.tsx`: the terminal uses the card colour.
-- `src/components/status-bar.tsx`, `src/App.tsx`: the status bar (and the dark top bar) use the
+- `src/components/status-bar/status-bar.tsx`, `src/App.tsx`: the status bar (and the dark top bar) use the
   frame colour; no line above the status bar.
 - `src/components/blockly/toolbox-ui.css`: no lines between toolbox rows or at separators.
 - `src/utils/i18n/locales/{en,es}/*.json`: `explorer`, `terminal`; the Shell tab is "Terminal";
   the panel header is "Explorer" ("Explorador").
 - `src/components/navbar/mobile-menu.tsx` (new), `src/components/navbar.tsx`, `src/App.tsx`,
   `index.html`: the narrow-screen menu, the fixed bar, the viewport tag. i18n: `menu`.
-- Tests: `src/utils/tests/shell-visibility.spec.ts`,
-  `src/components/tests/side-bar-icon.spec.tsx`, `src/components/tests/mobile-menu.spec.tsx`.
+- Tests: `src/utils/shell-visibility.spec.ts`,
+  `src/components/side-bar-icon.spec.tsx`, `src/components/navbar/mobile-menu.spec.tsx`.
 
 ### How to test
 
@@ -559,7 +559,7 @@ the middle of its top bar.
 - The Python view uses a small built-in highlighter instead of the full Python editor, so it opens
   at once, also offline, without downloading the Python editor.
 
-Later: a toolbox of code snippets with explanations in Python files (part 7) and, in the backlog,
+Later: a toolbox of code snippets with explanations in Python files (part 9) and, in the backlog,
 an editable Python mirror of the blocks, as MakeCode's Python editor has.
 
 | | Light | Dark |
@@ -580,8 +580,8 @@ an editable Python mirror of the blocks, as MakeCode's Python editor has.
   (Explorer open at start on wider screens), en/es texts (`zoomIn`, `zoomOut`).
 - Unchanged and still there: `src/components/dialogs/view-pythondlg.tsx` and the conversion code
   in `navbar.tsx`.
-- Unit tests: `src/utils/tests/editor-view.spec.ts`, `src/utils/tests/python-highlight.spec.ts`,
-  `src/components/tests/editor-switch.spec.tsx`, `src/components/tests/zoom-controls.spec.tsx`.
+- Unit tests: `src/utils/editor-view.spec.ts`, `src/utils/python-highlight.spec.ts`,
+  `src/components/editor-switch.spec.tsx`, `src/components/python/zoom-controls.spec.tsx`.
 
 ### How to test
 
@@ -607,7 +607,107 @@ an editable Python mirror of the blocks, as MakeCode's Python editor has.
 Fork-only (kids UI). XRPWeb keeps its View menu entries; the selector could be offered to XRPWeb
 later.
 
-## Part 7 — Code snippets in the Python editor
+## Part 7 — Menus above the editor
+
+### Problem
+
+On a phone, in Blocks mode, the menu of the top bar (File, Help and Settings entries) was drawn
+under the coloured strip of block categories: the strip covered the start of the icons and texts
+of every entry. The top bar sat below the block editor's own layers, so any menu opened from it
+could be hidden by the toolbox.
+
+### Solution
+
+The top bar is now above every editor surface (toolbox, block lists, workspace, drag layer), so all
+its menus are on top: the phone menu, the Help and Settings menus on tablet and desktop, and the
+language and theme sub-menus. Dialogs still open above the top bar.
+
+Before (phone, Blocks mode, menu open):
+
+| Light | Dark |
+| --- | --- |
+| ![before light](images/003-menu-over-toolbox-before-light.png) | ![before dark](images/003-menu-over-toolbox-before-dark.png) |
+
+After:
+
+| Light | Dark |
+| --- | --- |
+| ![after light](images/003-menu-over-toolbox-after-light.png) | ![after dark](images/003-menu-over-toolbox-after-dark.png) |
+
+### Files
+
+- `src/App.tsx`: the top bar's stacking level.
+- `e2e/menu-layering.spec.ts`: on a phone the open menu is the topmost element over the toolbox; on
+  desktop the Settings menu is topmost.
+- `e2e/visual/screens.spec.ts`: `phone-menu-blocks-{light,dark}` screenshots.
+
+### How to test
+
+1. Open a Blocks project on an Android phone (portrait) and tap the menu button: every entry is
+   fully visible, nothing is drawn over it.
+2. On desktop and tablet open Help and Settings in Blocks mode: the menus cover the toolbox.
+3. Open a dialog (for example Backup/Restore): it is still above the top bar.
+
+### Upstream
+
+Fork-only (the phone menu belongs to the kids UI).
+
+## Part 8 — The Python view of older blocks files
+
+### Problem
+
+With "Python" chosen in the top bar, blocks files created before the selector (for example
+"Follow a line.blocks" or "Drive and turn.blocks" in My projects) could show an empty Python view,
+or the selector said "Python" while the blocks canvas still showed.
+
+Two causes:
+
+- The blocks of a file arrive a moment after its tab opens, and they are loaded without telling the
+  workspace's listeners. The Python was generated when Python was chosen (or when the workspace
+  was created) and never again, so it stayed empty for a file whose blocks came later.
+- The tab forgot its choice when the editor component was taken down (the layout can rebuild a
+  hidden tab), while the selector kept saying "Python".
+
+Files saved by older versions only hold the blocks JSON (a project created from an example and not
+edited yet is stored the same way), with or without the `##XRPBLOCKS` line and the date line. The
+Python and the date in a saved file are never read: the Python always comes from the blocks.
+
+### Solution
+
+- The Python view is generated again every time the blocks of the tab are loaded, so it matches the
+  blocks whenever Python is chosen: before the file finishes opening, after it, after switching tabs,
+  and after reopening the file.
+- The tab keeps its choice until the tab is closed.
+- The Python is the same text the generator gives for the file's blocks, so Run and the upload to
+  the robot send the same program for an old file as for a new one.
+- The screen looks as before (no new screenshots).
+
+### Files
+
+- New: `src/components/blockly/use-python-view.tsx` (the view hook, with the reload after each load),
+  `e2e/python-view-old-files.spec.ts`, `src/components/blockly/use-python-view.spec.tsx`.
+- Changed: `src/components/blockly.tsx` (tells the hook when blocks were loaded; reads the blocks
+  with `extractBlocksJson`), `src/components/blockly/blocks-content.ts` (`extractBlocksJson`),
+  `src/managers/editormgr.ts` (forgets the choice when the tab closes), `e2e/support/app.ts`
+  (the folder tree is found when a blocks tab is open too),
+  `src/components/blockly/blocks-content.spec.ts`.
+
+### How to test
+
+1. In My projects create a blocks project from an example ("Follow a line") and close it. Open it
+   again and choose Python in the top bar: the Python of the blocks shows, never an empty view.
+2. Open a blocks file, choose Python right away while it is still opening: the Python appears when
+   the blocks have loaded.
+3. Choose Python, switch to another tab and back, or reopen the file: Python is still chosen and
+   shows the code.
+4. Choose Blocks: the canvas is back where it was. Run the file: the robot gets the same program as
+   before.
+
+### Upstream
+
+Fork-only (the Python selector belongs to the fork).
+
+## Part 9 — Code snippets in the Python editor
 
 ### Problem
 
@@ -686,9 +786,9 @@ part.
   the cursor while dragging), `src/components/blockly/toolbox-ui.ts` (shares the category icons),
   `src/utils/python-highlight.ts` (shares the code colours of the Python view), en/es texts
   (`pythonSnippets`).
-- Unit tests: `src/components/python/tests/snippets.spec.ts`,
-  `src/components/python/tests/snippet-insert.spec.ts`,
-  `src/components/python/tests/snippet-toolbox.spec.tsx`; browser test
+- Unit tests: `src/components/python/snippets.spec.ts`,
+  `src/components/python/snippet-insert.spec.ts`,
+  `src/components/python/snippet-toolbox.spec.tsx`; browser test
   `e2e/python-snippets.spec.ts`.
 
 ### How to test

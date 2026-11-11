@@ -43,7 +43,7 @@ tolerance (0.1% of the pixels) fails the check, and the report shows the expecte
 one and the difference, side by side or overlaid. When a change is meant to alter the look, its
 author takes the screenshots again and the reviewer looks at the new images in the same change.
 
-62 reference images, all in light and dark, English UI:
+66 reference images, all in light and dark, English UI:
 
 | Screen | Sizes |
 | --- | --- |
@@ -53,6 +53,7 @@ author takes the screenshots again and the reviewer looks at the new images in t
 | Blocks of each of the 18 toolbox categories (the open category panel) | desktop |
 | Toolbox search for "drive" | desktop |
 | Python editor with a short program, after it is saved | desktop |
+| Dashboard with sensor graphs fed with fake readings (no robot) | desktop |
 | Settings menu | desktop |
 | Phone menu, top and scrolled to its settings | phone |
 

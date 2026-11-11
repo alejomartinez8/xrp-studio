@@ -1,6 +1,6 @@
 # 002 — Language and theme
 
-Spanish first, and a friendly look in light and dark. Five parts: Spanish translation fixes, the friendly theme and block editor, theme switch fixes, plain Spanish for the blocks, and the toolbox on tablets and phones.
+Language support (English by default, several languages) and a friendly look in light and dark. The first language added besides English was Spanish. Six parts: Spanish translation fixes, the friendly theme and block editor, theme switch fixes, plain Spanish for the blocks, the toolbox on tablets and phones, and how the initial language is chosen.
 
 
 ## Part 1 — Spanish translation fixes
@@ -34,7 +34,7 @@ Spanish first, and a friendly look in light and dark. Five parts: Spanish transl
 2. Settings shows Spanish selected; blocks read "Motor: Izquierdo Esfuerzo" instead of
    "Motor: Left Effort".
 
-Automated: `src/utils/tests/i18n-locales.spec.ts` (English/Spanish key parity, regional locales,
+Automated: `src/utils/i18n/i18n-locales.spec.ts` (English/Spanish key parity, regional locales,
 fallback for unsupported languages).
 
 ### Upstream
@@ -87,7 +87,8 @@ The rest of the app looks like an IDE for adults.
 
 A theme lives in `src/theme/<name>/`:
 
-- `tailwind.ts` — app palette, applied with `withGitHubTheme()` in `tailwind.config.ts`.
+- `tailwind.css` — app palette as a Tailwind `@theme` block (CSS variables), imported by
+  `src/index.css` (was `tailwind.ts` with `withGitHubTheme()` before Tailwind 4, spec 006 part 9).
 - `app.css` — font and layout tabs.
 - `blocks.ts` — one colour per toolbox category and the editor surfaces (light and dark), typed by
   `src/theme/types.ts`.
@@ -116,8 +117,8 @@ later; `src/components/blockly/block-theme.ts` applies any block theme to Blockl
    (or use the + / - buttons): the blocks zoom in and out; the toolbox and the block list do not
    change size. Open "Motores Individuales" in Spanish: every block shows whole.
 
-Automated: `src/components/tests/block-theme.spec.ts` (category and subcategory colours, block
-colouring, built-in styles) and `src/components/tests/toolbox-ui.spec.ts` (Advanced grouping,
+Automated: `src/components/blockly/block-theme.spec.ts` (category and subcategory colours, block
+colouring, built-in styles) and `src/components/blockly/toolbox-ui.spec.ts` (Advanced grouping,
 search entry).
 
 ### Screenshots
@@ -169,7 +170,7 @@ Two bugs when switching between light and dark:
 
 ### Files
 
-- New: `src/utils/swap-stylesheet.ts`, `src/utils/tests/swap-stylesheet.spec.ts`.
+- New: `src/utils/swap-stylesheet.ts`, `src/utils/swap-stylesheet.spec.ts`.
 - Hooks: `src/components/xrplayout.tsx` (`changeTheme`), `src/managers/editormgr.ts`
   (`RemoveEditor`).
 
@@ -256,7 +257,7 @@ simpler measures for kids are a separate change.
 ### Files
 
 - New: `src/components/blockly/block-messages.ts` (sentence templates),
-  `src/components/blockly/tests/block-messages.spec.ts`.
+  `src/components/blockly/block-messages.spec.ts`.
 - Changed: `src/components/blockly/toolbox-ui.ts` (registers the templates at startup),
   `src/utils/i18n/locales/{en,es}/blockly.json` (templates; Spanish texts, help texts and
   categories), `src/utils/i18n/locales/es/es.json` (View menu: Depurar).
@@ -352,7 +353,7 @@ agree with them. The Motors group, search and Advanced group stay in the fork.
   `src/theme/github/blocks.ts` (group colour), `src/utils/i18n/locales/{en,es}/blockly.json`
   (group name), `src/index.css` (app box sized by the visible area, clear of the system bars),
   `index.html` (`viewport-fit=cover`), `pwa-plugin.ts` (full screen).
-- Tests: `src/components/tests/toolbox-ui.spec.ts`; the visual tests' toolbox and block editor
+- Tests: `src/components/blockly/toolbox-ui.spec.ts`; the visual tests' toolbox and block editor
   images (spec 007, part 1) show the new group and the phone icon column.
 - Images: `docs/specs/images/002-phone-panel-{before,after}-{light,dark}.png`.
 
@@ -379,3 +380,37 @@ agree with them. The Motors group, search and Advanced group stay in the fork.
 
 The grouping, the phone toolbox and the full screen app are fork-specific (kids UI). The tablet fix is in fork CSS, but XRPWeb's own
 `100vh` has the same problem on Android tablets and could take the same idea.
+
+## Part 6 — How the initial language is chosen
+
+### Problem
+
+The fork is global and multilingual: English is the default and no language is singled out. The
+rule for the first language had not been written down.
+
+### Solution
+
+No behaviour change; this documents what the app does:
+
+- The app opens in English by default.
+- If the browser language is one of the supported languages (English and Spanish today, with
+  regional variants such as `es-419` counting as `es`), the app opens in that language.
+- Any other browser language falls back to English.
+- The language can be changed at any time in Settings; the choice is remembered on the device and
+  wins over the browser language from then on.
+
+### Files
+
+- `src/utils/i18n/index.ts` (detector, `fallbackLng: 'en'`, `supportedLngs`)
+- `src/utils/i18n/languages.ts` (languages offered in Settings)
+
+### How to test
+
+1. Set the browser language to a language the app does not have (for example French) and open the
+   app with fresh site data: it is in English.
+2. Set it to Spanish (or `es-419`) with fresh site data: it is in Spanish.
+3. In Settings, choose English, reload: it stays in English whatever the browser language.
+
+### Upstream
+
+Same detection as XRPWeb; nothing to send.

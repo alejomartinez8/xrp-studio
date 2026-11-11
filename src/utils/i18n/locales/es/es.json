@@ -351,6 +351,9 @@
             }
         }
     },
+    "version": {
+        "basedOn": "Basado en XRPWeb {{version}}"
+    },
     "pwa": {
         "install": "Instalar app",
         "update": "Nueva versión · Actualizar",

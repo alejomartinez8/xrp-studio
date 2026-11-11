@@ -4,7 +4,7 @@ import { pythonGenerator } from 'blockly/python';
 import { getLocalizedToolboxJson } from '@components/blockly/xrp_blockly_configs';
 
 /**
- * Code snippets for the Python editor's snippet panel (spec 003, part 7). The robot snippets are
+ * Code snippets for the Python editor's toolbox. The robot snippets are
  * made from the blocks of the toolbox, with their default values, by the Python generator of the
  * blocks, so each one is exactly what the matching block writes, imports and setup included. The
  * plain Python ones (if, loops, print, variables, functions) are written here.

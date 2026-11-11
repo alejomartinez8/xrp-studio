@@ -185,8 +185,8 @@ function WelcomeScreen() {
     };
 
     const card =
-        'flex w-56 flex-col items-center gap-3 rounded-2xl border-2 p-6 text-center shadow-sm transition ' +
-        'hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus-visible:ring-4 ' +
+        'flex w-56 flex-col items-center gap-3 rounded-2xl border-2 p-6 text-center shadow-xs transition ' +
+        'hover:-translate-y-0.5 hover:shadow-md focus:outline-hidden focus-visible:ring-4 ' +
         'focus-visible:ring-curious-blue-400 disabled:cursor-wait disabled:opacity-60';
     const title = 'text-center text-2xl font-bold text-shark-800 dark:text-mountain-mist-100';
     const hint = 'text-center text-sm text-shark-600 dark:text-mountain-mist-300';
@@ -218,7 +218,7 @@ function WelcomeScreen() {
                             placeholder={t('welcome.namePlaceholder')}
                             aria-invalid={problem !== null}
                             aria-describedby="welcome-project-name-hint"
-                            className="min-w-0 flex-1 border-0 bg-shark-50 p-0 text-lg text-shark-800 outline-none focus:ring-0 dark:bg-shark-800 dark:text-mountain-mist-100"
+                            className="min-w-0 flex-1 border-0 bg-shark-50 p-0 text-lg text-shark-800 outline-hidden focus:ring-0 dark:bg-shark-800 dark:text-mountain-mist-100"
                         />
                         <span className="text-lg text-shark-500 dark:text-mountain-mist-400">
                             {extension}
@@ -297,7 +297,7 @@ function WelcomeScreen() {
                                     <button
                                         type="button"
                                         onClick={() => openRecent(project)}
-                                        className="flex w-full items-center gap-3 rounded-xl border-2 border-mountain-mist-200 bg-shark-50 px-4 py-3 text-left transition hover:border-curious-blue-300 hover:shadow-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-curious-blue-400 dark:border-shark-700 dark:bg-shark-800 dark:hover:border-curious-blue-500"
+                                        className="flex w-full items-center gap-3 rounded-xl border-2 border-mountain-mist-200 bg-shark-50 px-4 py-3 text-left transition hover:border-curious-blue-300 hover:shadow-xs focus:outline-hidden focus-visible:ring-4 focus-visible:ring-curious-blue-400 dark:border-shark-700 dark:bg-shark-800 dark:hover:border-curious-blue-500"
                                     >
                                         <img
                                             src={project.kind === 'blocks' ? blockIcon : pythonIcon}
@@ -336,7 +336,7 @@ function WelcomeScreen() {
                                         data-testid={`example-${example.id}`}
                                         onClick={() => void startProject('blocks', example)}
                                         disabled={isBusy}
-                                        className="flex w-full items-center gap-3 rounded-xl border-2 border-mountain-mist-200 bg-shark-50 px-4 py-3 text-left transition hover:border-curious-blue-300 hover:shadow-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-curious-blue-400 disabled:cursor-wait disabled:opacity-60 dark:border-shark-700 dark:bg-shark-800 dark:hover:border-curious-blue-500"
+                                        className="flex w-full items-center gap-3 rounded-xl border-2 border-mountain-mist-200 bg-shark-50 px-4 py-3 text-left transition hover:border-curious-blue-300 hover:shadow-xs focus:outline-hidden focus-visible:ring-4 focus-visible:ring-curious-blue-400 disabled:cursor-wait disabled:opacity-60 dark:border-shark-700 dark:bg-shark-800 dark:hover:border-curious-blue-500"
                                     >
                                         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-curious-blue-100 text-curious-blue-700 dark:bg-curious-blue-900 dark:text-curious-blue-200">
                                             <Icon size={24} aria-hidden="true" />

@@ -193,7 +193,7 @@ function FileSaveAsDialg(fileSaveAsProps: FileSaveAsProps) {
             </label>
             <div>
                 <input
-                    className={`text-md w-full rounded border p-2 text-mountain-mist-700 dark:bg-shark-500 dark:text-mountain-mist-200 dark:placeholder-mountain-mist-200 ${isFileExists ? 'border-cinnabar-800' : 'border-shark-300 dark:border-shark-600'}`}
+                    className={`text-md w-full rounded-sm border p-2 text-mountain-mist-700 dark:bg-shark-500 dark:text-mountain-mist-200 dark:placeholder-mountain-mist-200 ${isFileExists ? 'border-cinnabar-800' : 'border-shark-300 dark:border-shark-600'}`}
                     id="filenameId"
                     type="text"
                     placeholder={t('enterFilename')}

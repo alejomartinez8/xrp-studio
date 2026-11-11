@@ -13,7 +13,7 @@ function blockText(block: Blockly.Block): string {
         .join(' ');
 }
 
-/** Tests for the per-language block sentences (spec 002). */
+/** Tests for the per-language block sentences. */
 describe('Block messages', () => {
     const templates = Object.values(BLOCK_MESSAGES).map(({ key }) => key);
     let workspace: Blockly.Workspace;

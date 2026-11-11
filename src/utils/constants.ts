@@ -7,7 +7,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // See the GNU General Public License for more details.
 export class Constants {
-    static readonly APP_VERSION = '2.1.0';
+    static readonly APP_VERSION = __APP_VERSION__;
     static readonly EDITOR_TABSET_ID = 'editorTabSetId';
     static readonly SHELL_TABSET_ID = 'shellTabSetId';
     static readonly SHELL_TAB_ID = 'shellTabId';
@@ -37,16 +37,16 @@ export class FlowBiteConstants {
         // Default Tailwind white/gray utilities are not in this project's palette,
         // so Flowbite's stock menu background never applies and the list is see-through.
         floating: {
-            base: 'z-[2000] w-fit rounded-lg border border-mountain-mist-200 bg-mountain-mist-50 shadow-lg focus:outline-none dark:border-shark-600 dark:bg-shark-900',
+            base: 'z-2000 w-fit rounded-lg border border-mountain-mist-200 bg-mountain-mist-50 shadow-lg focus:outline-hidden dark:border-shark-600 dark:bg-shark-900',
             style: {
                 dark: 'bg-shark-900 text-shark-50',
                 light: 'border border-mountain-mist-200 bg-mountain-mist-50 text-shark-900',
                 auto: 'border border-mountain-mist-200 bg-mountain-mist-50 text-shark-900 dark:border-shark-600 dark:bg-shark-900 dark:text-shark-50',
             },
             item: {
-                base: 'flex w-full cursor-pointer items-center justify-start bg-mountain-mist-50 px-4 py-2 text-sm text-shark-800 hover:bg-mountain-mist-200 focus:bg-mountain-mist-200 focus:outline-none dark:bg-shark-900 dark:text-shark-50 dark:hover:bg-shark-700 dark:focus:bg-shark-700',
+                base: 'flex w-full cursor-pointer items-center justify-start bg-mountain-mist-50 px-4 py-2 text-sm text-shark-800 hover:bg-mountain-mist-200 focus:bg-mountain-mist-200 focus:outline-hidden dark:bg-shark-900 dark:text-shark-50 dark:hover:bg-shark-700 dark:focus:bg-shark-700',
             },
         },
-        inlineWrapper: 'text-white bg-shark-200 hover:bg-curious-blue-300 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-shark-600 dark:hover:bg-shark-500 dark:focus:ring-blue-800',
+        inlineWrapper: 'text-white bg-shark-200 hover:bg-curious-blue-300 focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-shark-600 dark:hover:bg-shark-500 dark:focus:ring-blue-800',
   };
 }

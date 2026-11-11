@@ -60,7 +60,7 @@ export function isInstalledApp(): boolean {
 const APPLIED_GUARD_MS = 20 * 1000;
 
 /**
- * Starts the installable app (spec 001): registers the service worker, which stores the app for
+ * Starts the installable app: registers the service worker, which stores the app for
  * offline use, looks for a new version when the app opens and every hour while it is open, and
  * keeps the browser's install prompt for the Install app button (`canInstall`).
  *

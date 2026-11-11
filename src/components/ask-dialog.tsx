@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { answer, useQuestion } from '@/utils/ask';
 
 /**
- * AskDialog - shows the question asked with `ask()` (spec 005) as a modal card: title, message
+ * AskDialog - shows the question asked with `ask()` as a modal card: title, message
  * and one button per answer. There is no close button: every question needs an answer.
  */
 function AskDialog() {
@@ -13,7 +13,7 @@ function AskDialog() {
         return null;
     }
     return (
-        <div className="fixed inset-0 z-[1100] flex items-center justify-center bg-mountain-mist-500/40 p-4">
+        <div className="fixed inset-0 z-1100 flex items-center justify-center bg-mountain-mist-500/40 p-4">
             <div
                 role="alertdialog"
                 aria-modal="true"

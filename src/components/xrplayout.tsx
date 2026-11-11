@@ -9,6 +9,7 @@ import {
     Actions,
     ITabRenderValues,
     ITabSetRenderValues,
+    ILayoutApi,
 } from 'flexlayout-react';
 import React, { useEffect, useRef, useState } from 'react';
 import * as Blockly from 'blockly/core';
@@ -49,7 +50,6 @@ const layout_json: IJsonModel = {
         tabSetEnableDrag: false,
         tabSetEnableDrop: false,
         tabEnableRename: false,
-        splitterSize: 6,
     },
     borders: [
         {
@@ -119,7 +119,7 @@ const layout_json: IJsonModel = {
 const model = Model.fromJson(layout_json);
 syncShellVisibility(model);
 EditorMgr.getInstance().setLayoutModel(model);
-let layoutRef: React.RefObject<Layout | null> = {
+let layoutRef: React.RefObject<ILayoutApi | null> = {
     current: null,
 };
 
@@ -439,7 +439,7 @@ function XRPLayout({ forwardedref }: XRPLayoutProps) {
 
     /**
      * onRenderTabSet - adds the Terminal toggle below the Explorer icon in the left side bar
-     * (XRP Studio, spec 003).
+     * (XRP Studio).
      */
     const onRenderTabSet = (node: TabSetNode | BorderNode, renderValues: ITabSetRenderValues) => {
         if (node instanceof BorderNode && node.getLocation().getName() === 'left') {

@@ -1,113 +1,8 @@
 import type { Config } from 'tailwindcss';
 import typography from '@tailwindcss/typography';
-import debugScreens from 'tailwindcss-debug-screens';
-import flowbiteReact from 'flowbite-react/plugin/tailwindcss';
-import { withGitHubTheme } from './src/theme/github/tailwind';
 
 const config = {
-    // Add or update the darkMode property to 'class'
-    darkMode: 'class',    
-    content: [
-        './index.html',
-        './src/**/*.{js,ts,jsx,tsx}',
-        './node_modules/flowbite-react/**/*.{js,ts,jsx,tsx}',
-        ".flowbite-react/class-list.json",
-        ".flowbite-react\\class-list.json"
-    ],
     theme: {
-        colors: {
-            'curious-blue': {
-                50: '#f0f7ff',
-                100: '#e0effe',
-                200: '#bae0fd',
-                300: '#7cc8fb',
-                400: '#36aaf5',
-                500: '#0c8ee3',
-                600: '#0070c1',
-                700: '#005a9e',
-                800: '#004c83',
-                900: '#00416d',
-                950: '#002a47',
-            },
-            matisse: {
-                50: '#f0f8ff',
-                100: '#dff0ff',
-                200: '#b9e1fe',
-                300: '#7bcafe',
-                400: '#34affc',
-                500: '#0a96ed',
-                600: '#0076cb',
-                700: '#0066b3',
-                800: '#055087',
-                900: '#0a4270',
-                950: '#072a4a',
-            },
-            cinnabar: {
-                50: '#fff1f2',
-                100: '#ffdfe0',
-                200: '#ffc5c7',
-                300: '#ff9da1',
-                400: '#ff656b',
-                500: '#fe353d',
-                600: '#ed1c24',
-                700: '#c70e15',
-                800: '#a41016',
-                900: '#881418',
-                950: '#4a0508',
-            },
-            shark: {
-                50: '#f8f7f8',
-                100: '#f0eeee',
-                200: '#ded9da',
-                300: '#c1b8bb',
-                400: '#9f9196',
-                500: '#847379',
-                600: '#6c5d62',
-                700: '#584c50',
-                800: '#4b4144',
-                900: '#41393b',
-                950: '#231f20',
-            },
-            'mountain-mist': {
-                50: '#f6f6f7',
-                100: '#e3e3e5',
-                200: '#c6c6ca',
-                300: '#a2a2a8',
-                400: '#7e7e86',
-                500: '#63636a',
-                600: '#4f4f55',
-                700: '#414145',
-                800: '#38383b',
-                900: '#313133',
-                950: '#1a1a1b',
-            },
-            ecstasy: {
-                50: '#fff7ed',
-                100: '#feeed6',
-                200: '#fcd8ac',
-                300: '#fabc77',
-                400: '#f79540',
-                500: '#f57e25',
-                600: '#e65d10',
-                700: '#be4610',
-                800: '#973715',
-                900: '#7a3014',
-                950: '#421608',
-            },
-            'chateau-green': {
-                50: '#edfff5',
-                100: '#d6ffea',
-                200: '#afffd5',
-                300: '#71ffb6',
-                400: '#2dfb90',
-                500: '#02e570',
-                600: '#00bf59',
-                700: '#00a651',
-                800: '#06753d',
-                900: '#085f34',
-                950: '#00361b',
-            },
-        },
         fontFamily: {},
         extend: {
             typography: {
@@ -370,10 +265,8 @@ const config = {
         },
     },
     plugins: [
-        debugScreens,
         typography,
-        flowbiteReact,
     ],
 } satisfies Config;
 
-export default withGitHubTheme(config);
+export default config;

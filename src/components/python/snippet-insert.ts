@@ -1,7 +1,7 @@
 import type { PythonSnippet } from '@components/python/snippets';
 
 /**
- * Where a snippet of the snippet panel goes in a Python file (spec 003, part 7), worked out on the
+ * Where a snippet of the snippet panel goes in a Python file, worked out on the
  * text alone so it can be tested without the editor. The snippet's missing import and setup lines
  * go at the top (imports after the last import, setup after the last setup line), and its code
  * goes at the cursor:

@@ -142,7 +142,7 @@ function DashboardHeader() {
 
         <button
           onClick={handleReset}
-          className="rounded p-2 text-mountain-mist-600 transition-colors duration-200 hover:bg-mountain-mist-200 hover:text-shark-800 dark:text-mountain-mist-300 dark:hover:bg-shark-800 dark:hover:text-shark-50"
+          className="rounded-sm p-2 text-mountain-mist-600 transition-colors duration-200 hover:bg-mountain-mist-200 hover:text-shark-800 dark:text-mountain-mist-300 dark:hover:bg-shark-800 dark:hover:text-shark-50"
           title={'Reset Dashboard'}
         >
           <FaUndo size={18} />

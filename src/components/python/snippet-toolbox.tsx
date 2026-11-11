@@ -37,7 +37,7 @@ type Pressed = { snippet: PythonSnippet; title: string; colour: string; x: numbe
 /** The coloured chip's code, highlighted as in the Python view. */
 function SnippetCode({ code }: { code: string }) {
     return (
-        <pre className="font-mono m-0 whitespace-pre-wrap break-words text-xs font-semibold leading-5 text-shark-800 dark:text-mountain-mist-100">
+        <pre className="text-shark-800 dark:text-mountain-mist-100 m-0 font-mono text-xs leading-5 font-semibold break-words whitespace-pre-wrap">
             {highlightPython(code).map((token, i) => (
                 <span key={i} className={PYTHON_TOKEN_CLASS[token.type]}>
                     {token.text}
@@ -48,7 +48,7 @@ function SnippetCode({ code }: { code: string }) {
 }
 
 /**
- * SnippetToolbox - the code toolbox of a Python file (spec 003, part 7), laid out like MakeCode's
+ * SnippetToolbox - the code toolbox of a Python file, laid out like MakeCode's
  * Python editor: a column of coloured categories (icons only on phones) with a Search entry, and a
  * flyout over the code with the snippets of the chosen category as coloured chips.
  * - A chip expands on click or focus: explanation, code and an "Add to code" button.
@@ -221,7 +221,7 @@ function SnippetToolbox({ onInsert, onDragMove, onDrop }: SnippetToolboxProps) {
                 data-snippet-ui
                 data-testid="snippet-toolbox"
                 aria-label={t('pythonSnippets.title')}
-                className="flex w-12 shrink-0 flex-col gap-1 overflow-y-auto border-r border-mountain-mist-200 bg-mountain-mist-50 p-1 dark:border-shark-700 dark:bg-shark-900 md:w-28"
+                className="border-mountain-mist-200 bg-mountain-mist-50 dark:border-shark-700 dark:bg-shark-900 flex w-12 shrink-0 flex-col gap-1 overflow-y-auto border-r p-1 md:w-28"
             >
                 {entries.map(({ id, search }) => {
                     const Icon = search ? TbSearch : CATEGORY_ICONS[id];
@@ -235,7 +235,7 @@ function SnippetToolbox({ onInsert, onDragMove, onDrop }: SnippetToolboxProps) {
                             aria-label={name}
                             aria-expanded={isOpen}
                             title={name}
-                            className="flex flex-col items-center gap-1 rounded-md px-1 py-1.5 text-center text-[11px] font-semibold leading-tight text-shark-800 hover:bg-mountain-mist-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-curious-blue-500 dark:text-mountain-mist-100 dark:hover:bg-shark-700"
+                            className="text-shark-800 hover:bg-mountain-mist-200 focus-visible:outline-curious-blue-500 dark:text-mountain-mist-100 dark:hover:bg-shark-700 flex flex-col items-center gap-1 rounded-md px-1 py-1.5 text-center text-[11px] leading-tight font-semibold focus-visible:outline focus-visible:outline-2"
                             style={
                                 isOpen
                                     ? { backgroundColor: colourOf(id), color: '#fff' }
@@ -272,7 +272,7 @@ function SnippetToolbox({ onInsert, onDragMove, onDrop }: SnippetToolboxProps) {
                     style={{ backgroundColor: openColour }}
                     onKeyDown={(event) => onFlyoutKey(event)}
                 >
-                    <div className="flex items-center gap-2 px-4 pb-1 pt-3 text-xl font-semibold">
+                    <div className="flex items-center gap-2 px-4 pt-3 pb-1 text-xl font-semibold">
                         {(() => {
                             const Icon = openId === SEARCH_ID ? TbSearch : CATEGORY_ICONS[openId];
                             return Icon ? <Icon size={24} aria-hidden="true" /> : null;
@@ -286,7 +286,7 @@ function SnippetToolbox({ onInsert, onDragMove, onDrop }: SnippetToolboxProps) {
                             value={query}
                             placeholder={t('pythonSnippets.searchHint')}
                             aria-label={t('pythonSnippets.searchHint')}
-                            className="mx-4 mb-2 rounded-md border-0 bg-[#ffffff] px-3 py-1.5 text-sm text-shark-900 placeholder:text-mountain-mist-500 focus:ring-2 focus:ring-[#ffffffb3] dark:bg-shark-950 dark:text-mountain-mist-100"
+                            className="text-shark-900 placeholder:text-mountain-mist-500 dark:bg-shark-950 dark:text-mountain-mist-100 mx-4 mb-2 rounded-md border-0 bg-[#ffffff] px-3 py-1.5 text-sm focus:ring-2 focus:ring-[#ffffffb3]"
                             onChange={(event) => setQuery(event.target.value)}
                             onKeyDown={(event) => {
                                 if (event.key === 'ArrowDown') {
@@ -315,9 +315,9 @@ function SnippetToolbox({ onInsert, onDragMove, onDrop }: SnippetToolboxProps) {
                                     data-testid={`snippet-${snippet.id}`}
                                     tabIndex={0}
                                     title={text(snippet)}
-                                    className={`group relative mb-2 cursor-grab touch-pan-y select-none rounded-md px-3 py-2 outline-none focus-visible:ring-2 focus-visible:ring-[#ffffff] active:cursor-grabbing ${
+                                    className={`group relative mb-2 cursor-grab touch-pan-y rounded-md px-3 py-2 outline-none select-none focus-visible:ring-2 focus-visible:ring-[#ffffff] active:cursor-grabbing ${
                                         expanded
-                                            ? 'bg-[#ffffff] text-shark-800 shadow dark:bg-shark-900 dark:text-mountain-mist-100'
+                                            ? 'text-shark-800 dark:bg-shark-900 dark:text-mountain-mist-100 bg-[#ffffff] shadow'
                                             : 'bg-[#ffffff33] hover:bg-[#ffffff4d]'
                                     }`}
                                     style={
@@ -349,7 +349,7 @@ function SnippetToolbox({ onInsert, onDragMove, onDrop }: SnippetToolboxProps) {
                                     {expanded && (
                                         <div className="mt-2 flex flex-col gap-2">
                                             <p className="m-0 text-sm">{text(snippet)}</p>
-                                            <div className="rounded bg-mountain-mist-100 px-2 py-1.5 dark:bg-shark-950">
+                                            <div className="bg-mountain-mist-100 dark:bg-shark-950 rounded px-2 py-1.5">
                                                 <SnippetCode code={snippet.code} />
                                             </div>
                                             <div className="flex items-center justify-between gap-2">
@@ -362,7 +362,7 @@ function SnippetToolbox({ onInsert, onDragMove, onDrop }: SnippetToolboxProps) {
                                                 >
                                                     {t('pythonSnippets.add')}
                                                 </button>
-                                                <span className="text-xs text-mountain-mist-600 dark:text-shark-300">
+                                                <span className="text-mountain-mist-600 dark:text-shark-300 text-xs">
                                                     {t('pythonSnippets.drag')}
                                                 </span>
                                             </div>
@@ -378,7 +378,7 @@ function SnippetToolbox({ onInsert, onDragMove, onDrop }: SnippetToolboxProps) {
             {dragging && (
                 <div
                     data-testid="snippet-ghost"
-                    className="pointer-events-none fixed z-[1000] touch-none whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-semibold text-[#ffffff] shadow-lg"
+                    className="pointer-events-none fixed z-[1000] touch-none rounded-md px-3 py-1.5 text-sm font-semibold whitespace-nowrap text-[#ffffff] shadow-lg"
                     style={{
                         backgroundColor: dragging.colour,
                         left: dragging.x + 8,
