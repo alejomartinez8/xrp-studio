@@ -76,9 +76,6 @@ const PYTHON_SETUP: Record<string, string[]> = {
     randomInt: ['import random'],
 };
 
-/** Drag data type of a snippet, so the editor tells it apart from other dropped text. */
-export const SNIPPET_MIME = 'application/x-xrp-snippet';
-
 const IMPORT_LINE = /^(from\s+\S+\s+)?import\s+\S+/;
 
 type ToolboxNode = {
@@ -178,9 +175,28 @@ export function knownSetupLines(): Set<string> {
     );
 }
 
-/** The snippet with this id, for a snippet dropped on the editor. */
-export function findSnippet(id: string): PythonSnippet | undefined {
-    return getSnippetCategories()
-        .flatMap((category) => category.snippets)
-        .find((snippet) => snippet.id === id);
+/** A search hit: the snippet and the category it lives in. */
+export interface SnippetHit {
+    category: string;
+    snippet: PythonSnippet;
+}
+
+/**
+ * Find the snippets whose title, explanation or code contain every word of the query, ignoring
+ * case. `textOf` gives the title and explanation in the current language.
+ */
+export function searchSnippets(
+    query: string,
+    textOf: (snippet: PythonSnippet) => string,
+): SnippetHit[] {
+    const words = query.toLowerCase().split(/\s+/).filter(Boolean);
+    if (words.length === 0) return [];
+    return getSnippetCategories().flatMap((category) =>
+        category.snippets
+            .filter((snippet) => {
+                const haystack = `${textOf(snippet)} ${snippet.code}`.toLowerCase();
+                return words.every((word) => haystack.includes(word));
+            })
+            .map((snippet) => ({ category: category.id, snippet })),
+    );
 }

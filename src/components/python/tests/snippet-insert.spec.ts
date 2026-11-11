@@ -132,4 +132,27 @@ describe('planSnippetInsert', () => {
         expect(result.edits).toBe(2);
         expect(result.cursor).toEqual({ line: 4, column: 16 });
     });
+
+    it('inserts above a line of code when the cursor is in its first column', () => {
+        const text = 'import time\n\ntime.sleep(1)';
+        const result = insert(text, 3, 1, wait);
+        expect(result.text).toBe('import time\n\ntime.sleep(0.5)\ntime.sleep(1)');
+        expect(result.cursor).toEqual({ line: 3, column: 16 });
+        expect(insert('import time\n\n    time.sleep(1)', 3, 1, wait).text).toBe(
+            'import time\n\n    time.sleep(0.5)\n    time.sleep(1)',
+        );
+        expect(insert(text, 3, 1, whileTrue).text).toBe(
+            'import time\n\nwhile True:\n    pass\n\ntime.sleep(1)',
+        );
+    });
+
+    it('never puts code above the imports and setup lines', () => {
+        const text = `${IMPORT}\n${SETUP}\n\nprint()`;
+        expect(insert(text, 1, 1, straight).text).toBe(
+            `${IMPORT}\n${SETUP}\ndifferentialDrive.straight(20, 0.5)\n\nprint()`,
+        );
+        expect(insert(text, 2, 1, wait).text).toBe(
+            `${IMPORT}\nimport time\n${SETUP}\ntime.sleep(0.5)\n\nprint()`,
+        );
+    });
 });

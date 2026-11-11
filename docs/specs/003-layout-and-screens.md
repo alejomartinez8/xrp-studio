@@ -619,84 +619,109 @@ program.
 
 ### Solution
 
-- **Snippet panel:** a Python file shows a "Code" panel on the left of the editor. It lists code
-  snippets grouped like the block toolbox: DriveTrain, Individual Motors, Servos, Sensors, Control
-  Board, Logic, Loops, Math, Text, Variables and Functions, each with the colour and icon of its
-  block category. A category opens with a click; one is open at a time.
-- **Each snippet** shows its code, coloured as in the Python view, and a short explanation for
-  children ("Drives straight for 20 cm at half power. Use a negative distance to go backwards.").
-  The texts are in English and Spanish; the code stays Python.
-- **Click or drag to insert:** a click puts the snippet at the cursor; dragging it drops it where
-  it is released. On an empty line the code starts at the cursor's column, so the indentation is
-  the one the child chose; a statement on a line holding only `pass` (the placeholder of the `if`,
-  `while` and `def` snippets) takes its place; on another line with code, a statement goes on a new line below it
-  and a value (such as `rangefinder.distance()`) goes right at the cursor, so it can complete an
-  `if` or a `print(...)`. One Undo removes the whole insertion.
-- **Blocks stand apart:** a snippet of several lines (`if`, `while`, `for`, `def`) gets an empty
-  line between it and the code above and below it, unless it goes right under a line that ends
-  with `:` or there is already an empty line. Single statements (straight, turn, wait) stay on
-  consecutive lines.
+The toolbox works like the one of MakeCode's Python editor, so a child who knows MakeCode finds
+the same moves here.
+
+- **Toolbox column:** a Python file shows a column of coloured categories on the left of the
+  editor: DriveTrain, Individual Motors, Servos, Sensors, Control Board, Logic, Loops, Math, Text,
+  Variables, Functions and Search, each with the colour and icon of its block category. Phones
+  (below 768 px) show only the icons.
+- **Flyout:** choosing a category opens a panel over the code, in the colour of the category, with
+  its snippets as coloured chips named in plain words ("Drive straight", "Turn", "Repeat for
+  ever"). It closes with Escape, with the same category, or by pressing anywhere outside it.
+- **Chips explain themselves:** clicking (or focusing) a chip opens it: a short explanation for
+  children, its Python code coloured as in the Python view, and an "Add to code" button. Texts
+  are in English and Spanish; the code stays Python.
+- **Add or drag:** "Add to code" (or Enter) puts the snippet at the cursor. Dragging a chip with
+  the mouse, a pen or a finger drops it where it is released: the flyout hides, a coloured label
+  follows the pointer and the cursor follows it through the code, so the child sees where it will
+  land. On a touch screen, a vertical move scrolls the list and a horizontal move drags. On
+  phones the flyout closes after "Add to code".
+- **Search:** the Search entry opens a flyout with a text field that finds snippets by title,
+  explanation or code, in the current language.
+- **Keyboard:** Up and Down move between categories or chips; Enter or Right opens a category;
+  Enter on a chip adds it; Left or Escape goes back and closes.
+- **Where the code goes (as in MakeCode):** with the cursor in the first column of a line of code,
+  a statement goes on a new line above it; anywhere else on a line of code, on a new line below
+  it (one level deeper after a line that ends with `:`). A value (such as `rangefinder.distance()`)
+  goes right at the cursor, so it can complete an `if` or a `print(...)`. A statement never goes
+  above the imports and setup lines.
+- **Fork refinements:** on an empty line the code starts at the cursor's column, so the child
+  chooses the indentation; a statement on a line holding only `pass` (the placeholder of the
+  `if`, `while` and `def` snippets) takes its place; a snippet of several lines (`if`, `while`,
+  `for`, `def`) gets an empty line between it and the code around it, unless it goes right under
+  a line that ends with `:` or an empty line is already there. One Undo removes the whole
+  insertion.
 - **Imports and setup are added for you:** a robot snippet needs its import and its setup line
   (`from XRPLib.differential_drive import DifferentialDrive`,
-  `differentialDrive = DifferentialDrive.get_default_differential_drive()`). Any of those lines
-  missing from the file is added at the top, imports first, as the blocks do. Lines already in
-  the file are not repeated.
-- **Same code as the blocks:** the robot snippets are not written by hand. They are made from the
-  blocks of the toolbox, with their default values, by the same code that turns blocks into
-  Python, so a snippet is exactly what the matching block would write. The plain Python ones
-  (`if`, `while True`, `for`, `print`, variables, functions) are written in the app.
-- **Collapsible:** a button at the top of the panel hides it and gives the whole width to the
-  code; a "Code" button on the left edge of the editor brings it back. On computers and tablets
-  the panel starts open. On phones (below 768 px) it starts closed and opens as a drawer over the
-  code, which closes after a snippet is inserted.
-- The panel only adds text to the file: the file saves itself as usual, and Run sends it to the
+  `differentialDrive = DifferentialDrive.get_default_differential_drive()`). Lines missing from
+  the file are added at the top (imports first, as the blocks do); lines already there are not
+  repeated.
+- **Same code as the blocks:** the robot snippets are made from the toolbox blocks, with their
+  default values, by the same code that turns blocks into Python, so a snippet is exactly what the
+  matching block writes. The plain Python ones (`if`, `while True`, `for`, `print`, variables,
+  functions) are written in the app.
+- The toolbox only adds text to the file: the file saves itself as usual, and Run sends it to the
   robot as before.
 
-| | Light | Dark |
-| --- | --- | --- |
-| Computer | ![Snippets, light](images/python-snippets-desktop-light.png) | ![Snippets, dark](images/python-snippets-desktop-dark.png) |
-| Phone (drawer) | ![Snippets on a phone, light](images/python-snippets-phone-light.png) | ![Snippets on a phone, dark](images/python-snippets-phone-dark.png) |
+Not copied from MakeCode: the full API list (about 30 snippets here, from the XRPLib calls the
+blocks use), links to documentation from a chip, and the grouping of chips under sub-headings.
 
 Later (backlog): an editable Python mirror of the blocks, where changing the Python changes the
 blocks (MakeCode's two-way switch). That needs a Python-to-blocks converter and stays a later
 part.
 
+| | Light | Dark |
+| --- | --- | --- |
+| Computer | ![Toolbox, light](images/python-snippets-desktop-light.png) | ![Toolbox, dark](images/python-snippets-desktop-dark.png) |
+| Phone | ![Toolbox on a phone, light](images/python-snippets-phone-light.png) | ![Toolbox on a phone, dark](images/python-snippets-phone-dark.png) |
+
 ### Files
 
-- New: `src/components/python/snippet-panel.tsx` (the panel),
-  `src/components/python/snippets.ts` (the snippet list, made from the toolbox blocks with the
-  Python generator), `src/components/python/snippet-insert.ts` (where the code and the missing
-  imports and setup lines go).
-- Changed: `src/components/MonacoEditor.tsx` (shows the panel and inserts into the editor),
-  `src/components/blockly/toolbox-ui.ts` (shares the category icons),
+- New: `src/components/python/snippet-toolbox.tsx` (column, flyout, chips, search, keyboard,
+  pointer drag), `src/components/python/snippets.ts` (the snippet list, made from the toolbox
+  blocks with the Python generator, and the search), `src/components/python/snippet-insert.ts`
+  (where the code and the missing imports and setup lines go).
+- Changed: `src/components/MonacoEditor.tsx` (shows the toolbox, inserts into the editor and moves
+  the cursor while dragging), `src/components/blockly/toolbox-ui.ts` (shares the category icons),
   `src/utils/python-highlight.ts` (shares the code colours of the Python view), en/es texts
   (`pythonSnippets`).
 - Unit tests: `src/components/python/tests/snippets.spec.ts`,
   `src/components/python/tests/snippet-insert.spec.ts`,
-  `src/components/python/tests/snippet-panel.spec.tsx`; browser test
+  `src/components/python/tests/snippet-toolbox.spec.tsx`; browser test
   `e2e/python-snippets.spec.ts`.
 
 ### How to test
 
-1. Open a Python file on a computer: the Code panel is on the left of the editor, with the
-   categories in the colours and icons of the blocks.
-2. Open DriveTrain and click the "straight" snippet in an empty file: the file gets the
-   DifferentialDrive import, the setup line, an empty line and `differentialDrive.straight(20, 0.5)`.
-   Click "turn": only `differentialDrive.turn(90, 0.5)` is added, on the next line.
-3. Insert `while True:` from Loops, put the cursor on the `pass` line and click "Wait": it takes
-   the place of `pass`, inside the loop. Press Undo once: `pass` is back.
-4. Type `print(` and click Sensors > distance with the cursor after the bracket: the expression
+1. Open a Python file on a computer: the column of coloured categories is on the left of the
+   editor, with icons and names, and Search at the end. Nothing is open yet.
+2. Choose DriveTrain: a red panel opens over the code with chips. Click "Drive straight": it opens
+   with its explanation and code. Press "Add to code" in an empty file: the file gets the
+   DifferentialDrive import, the setup line, an empty line and
+   `differentialDrive.straight(20, 0.5)`. Open "Turn" and add it: only
+   `differentialDrive.turn(90, 0.5)` is added, on the next line. Undo once: the turn is gone.
+3. Loops > "Repeat for ever" > Add: an empty line separates `while True:` from the line above. On
+   its `pass` line, add "Wait": it takes the place of `pass`, inside the loop.
+4. Put the cursor on an empty line at column 5 and add "Wait": it starts at column 5; at column 1,
+   at column 1.
+5. Put the cursor in the first column of a line of code and add a statement: it goes above that
+   line. Put it at the end of the line: it goes below.
+6. Type `print(` and add Sensors > "Distance" with the cursor after the bracket: the expression
    goes there, and the Rangefinder import and setup lines are added at the top.
-5. Drag a snippet onto a line of the code: it is inserted where it was dropped.
-6. Put the cursor at the end of `differentialDrive.straight(20, 0.5)` and click Loops >
-   `while True:`: an empty line separates it from the line above. On an empty line, move the
-   cursor to column 5 and click "Wait": it starts at column 5; at column 1 it starts at column 1.
-7. Hide the panel with its button and bring it back with "Code" on the left edge.
-8. Make the window phone-sized and reload: the panel is closed; "Code" opens it over the code, and
-   it closes after a snippet is inserted.
-9. Switch the language to Spanish: the categories and explanations are in Spanish.
-10. Run the program on a robot: the inserted code drives the robot as the matching blocks do
-   (needs a real robot).
+7. Drag a chip from the panel into the code with the mouse: the panel hides, a label follows the
+   pointer, the cursor follows it and the snippet is inserted where it is released. Release
+   outside the editor: nothing is inserted.
+8. On a tablet or phone, drag a chip with a finger: a horizontal move drags, a vertical move
+   scrolls the list.
+9. Search for "light": the light snippets of Control Board appear. Search for a word that is
+   nowhere: "No snippets found."
+10. With the keyboard: focus a category, press Down to move, Enter to open, Down and Enter to add a
+    chip, Left to go back.
+11. Make the window phone-sized: only icons show in the column; the panel opens over the code and
+    closes after "Add to code".
+12. Switch the language to Spanish: categories, titles and explanations are in Spanish.
+13. Run the program on a robot: the inserted code drives the robot as the matching blocks do
+    (needs a real robot).
 
 ### Upstream
 

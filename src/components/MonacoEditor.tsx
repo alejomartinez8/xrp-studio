@@ -23,8 +23,8 @@ import { useTranslation } from 'react-i18next';
 import { whenReady } from '@codingame/monaco-vscode-python-default-extension';
 import { scheduleAutosave } from '@/utils/autosave';
 import ZoomControls from '@components/python/zoom-controls';
-import SnippetPanel from '@components/python/snippet-panel';
-import { findSnippet, knownSetupLines, PythonSnippet, SNIPPET_MIME } from '@components/python/snippets';
+import SnippetToolbox from '@components/python/snippet-toolbox';
+import { knownSetupLines, PythonSnippet } from '@components/python/snippets';
 import { planSnippetInsert } from '@components/python/snippet-insert';
 
 const languageId = 'python';
@@ -246,21 +246,26 @@ const MonacoEditor = ({
         ed.focus();
     };
 
-    /** Let a snippet be dropped on the code, instead of the editor's own text drop. */
-    const onSnippetDragOver = (event: React.DragEvent) => {
-        if (!event.dataTransfer.types.includes(SNIPPET_MIME)) return;
-        event.preventDefault();
-        event.stopPropagation();
-        event.dataTransfer.dropEffect = 'copy';
+    const lastDragMove = useRef(0);
+
+    /**
+     * Follow a dragged snippet with the cursor, as MakeCode does, so the child sees where it will
+     * land. Throttled, since moving the cursor scrolls and repaints the editor.
+     */
+    const onSnippetDragMove = (x: number, y: number) => {
+        const now = performance.now();
+        if (now - lastDragMove.current < 100) return;
+        lastDragMove.current = now;
+        const target = editor.current?.getTargetAtClientPoint(x, y);
+        if (target?.position) editor.current?.setPosition(target.position);
+        editor.current?.focus();
     };
 
-    /** Insert a dropped snippet at the line and column under the pointer. */
-    const onSnippetDrop = (event: React.DragEvent) => {
-        const snippet = findSnippet(event.dataTransfer.getData(SNIPPET_MIME));
-        if (!snippet) return;
-        event.preventDefault();
-        event.stopPropagation();
-        const target = editor.current?.getTargetAtClientPoint(event.clientX, event.clientY);
+    /** Insert a snippet dropped over the editor at the line and column under the pointer. */
+    const onSnippetDrop = (snippet: PythonSnippet, x: number, y: number) => {
+        const box = editorRef.current?.getBoundingClientRect();
+        if (!box || x < box.left || x > box.right || y < box.top || y > box.bottom) return;
+        const target = editor.current?.getTargetAtClientPoint(x, y);
         insertSnippet(snippet, target?.position);
     };
 
@@ -442,13 +447,12 @@ const MonacoEditor = ({
 
     return (
         <div className="relative flex h-full w-full">
-            <SnippetPanel onInsert={(snippet) => insertSnippet(snippet)} />
-            <div
-                ref={containerRef}
-                className="relative h-full min-w-0 flex-1 overflow-hidden"
-                onDragOverCapture={onSnippetDragOver}
-                onDropCapture={onSnippetDrop}
-            >
+            <SnippetToolbox
+                onInsert={(snippet) => insertSnippet(snippet)}
+                onDragMove={onSnippetDragMove}
+                onDrop={onSnippetDrop}
+            />
+            <div ref={containerRef} className="relative h-full min-w-0 flex-1 overflow-hidden">
                 <div ref={editorRef} style={{ width: childWidth, height: childHeight }} className={className} />
                 <ZoomControls />
             </div>

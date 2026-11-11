@@ -8,7 +8,11 @@ import type { PythonSnippet } from '@components/python/snippets';
  * - on an empty line, from the cursor's column, so the child chooses the indentation;
  * - in place of a lone `pass`, with its indentation;
  * - a value inside a line of code, right at the cursor;
- * - a statement on a line of code, on a new line below it (one level deeper after a `:`).
+ * - a statement with the cursor in the first column of a line of code, on a new line above it,
+ *   like MakeCode;
+ * - a statement elsewhere on a line of code, on a new line below it (one level deeper after a
+ *   `:`);
+ * - never above the imports and setup lines: a cursor inside them counts as being below them.
  * A block (a snippet of several lines, such as `while True:`) gets an empty line between it and
  * the code above and below it, unless it opens a block (`:` above) or is already apart.
  * Positions are 1-based lines and columns, as in Monaco.
@@ -66,7 +70,8 @@ export function planSnippetInsert(
     knownSetup: Set<string>,
 ): InsertPlan {
     const lines = text.split('\n').map((line) => line.replace(/\r$/, ''));
-    const lineIndex = Math.min(Math.max(position.line, 1), lines.length) - 1;
+    let lineIndex = Math.min(Math.max(position.line, 1), lines.length) - 1;
+    let column = position.column;
     const present = new Set(lines.map((line) => line.trim()));
     const missing = snippet.setup.filter((line) => !present.has(line.trim()));
     const missingImports = missing.filter((line) => IMPORT_LINE.test(line));
@@ -95,6 +100,12 @@ export function planSnippetInsert(
         if (missingSetup.length > 0) headerEdits.push({ index: setupAt, lines: missingSetup });
     }
 
+    const headerEnd = Math.max(lastImport, lastSetup);
+    if (!snippet.expression && hasCode(lines[lineIndex]) && lineIndex <= headerEnd) {
+        lineIndex = headerEnd;
+        column = lines[headerEnd].length + 1;
+    }
+
     const current = lines[lineIndex];
     const isEmpty = current.trim() === '';
     const isPass = current.trim() === 'pass' && !snippet.expression;
@@ -107,7 +118,7 @@ export function planSnippetInsert(
     if (isEmpty || isPass) {
         indent = isPass
             ? indentOf(current)
-            : current.slice(0, Math.min(Math.max(position.column, 1) - 1, current.length));
+            : current.slice(0, Math.min(Math.max(column, 1) - 1, current.length));
         startColumn = 1;
         const gapAbove = isBlock && !isPass && needsGapAfter(lines[lineIndex - 1]);
         prefix = (gapAbove ? '\n' : '') + indent;
@@ -119,9 +130,22 @@ export function planSnippetInsert(
             endColumn: current.length + 1,
             text: '',
         };
+    } else if (column === 1 && !snippet.expression) {
+        indent = indentOf(current);
+        startColumn = 1;
+        const gapAbove = isBlock && needsGapAfter(lines[lineIndex - 1]);
+        prefix = (gapAbove ? '\n' : '') + indent;
+        suffix = isBlock ? '\n\n' : '\n';
+        edit = {
+            startLine: lineIndex + 1,
+            startColumn,
+            endLine: lineIndex + 1,
+            endColumn: startColumn,
+            text: '',
+        };
     } else if (snippet.expression) {
         indent = indentOf(current);
-        startColumn = Math.min(Math.max(position.column, 1), current.length + 1);
+        startColumn = Math.min(Math.max(column, 1), current.length + 1);
         edit = {
             startLine: lineIndex + 1,
             startColumn,

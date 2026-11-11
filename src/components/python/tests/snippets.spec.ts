@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import en from '@/utils/i18n/locales/en/en.json';
 import es from '@/utils/i18n/locales/es/es.json';
-import { getSnippetCategories, snippetFromBlock } from '@components/python/snippets';
+import {
+    getSnippetCategories,
+    searchSnippets,
+    snippetFromBlock,
+} from '@components/python/snippets';
 import { activeBlockTheme } from '@/theme';
 
 /** Tests for the snippets made from the toolbox blocks with the Python generator. */
@@ -47,16 +51,35 @@ describe('snippets', () => {
         ]);
         const items = [en, es].map(
             (lang) =>
-                (lang as { pythonSnippets: { items: Record<string, string> } }).pythonSnippets
-                    .items,
+                (
+                    lang as {
+                        pythonSnippets: { items: Record<string, { title: string; text: string }> };
+                    }
+                ).pythonSnippets.items,
         );
         for (const category of categories) {
             expect(activeBlockTheme.categories[category.id]).toMatch(/^#/);
             expect(category.snippets.length).toBeGreaterThan(0);
             for (const snippet of category.snippets) {
                 expect(snippet.code).not.toBe('');
-                for (const texts of items) expect(texts[snippet.id]).toBeTruthy();
+                for (const texts of items) {
+                    expect(texts[snippet.id]?.title).toBeTruthy();
+                    expect(texts[snippet.id]?.text).toBeTruthy();
+                }
             }
         }
+    });
+
+    it('searches titles, explanations and code', () => {
+        const textOf = (snippet: { id: string }) =>
+            (en as { pythonSnippets: { items: Record<string, { title: string; text: string }> } })
+                .pythonSnippets.items[snippet.id].title;
+        expect(searchSnippets('repeat', textOf).map((hit) => hit.snippet.id)).toEqual([
+            'whileTrue',
+            'forRange',
+        ]);
+        expect(searchSnippets('RANGEFINDER', textOf)[0]).toMatchObject({ category: 'sensors' });
+        expect(searchSnippets('   ', textOf)).toEqual([]);
+        expect(searchSnippets('zzzz', textOf)).toEqual([]);
     });
 });
