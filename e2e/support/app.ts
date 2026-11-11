@@ -71,7 +71,7 @@ export async function shortenIdleSignOut(context: BrowserContext): Promise<void>
 
 /** Open the Explorer panel when it is closed, and return the folder tree. */
 export async function showTree(page: Page) {
-    const tree = page.getByRole('tree');
+    const tree = page.getByRole('tabpanel', { name: 'folders' }).getByRole('tree');
     if (!(await tree.isVisible())) {
         await page.getByTitle('Explorer').first().click();
     }

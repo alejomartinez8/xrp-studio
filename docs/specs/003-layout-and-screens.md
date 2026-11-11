@@ -651,3 +651,58 @@ After:
 ### Upstream
 
 Fork-only (the phone menu belongs to the kids UI).
+
+## Part 8 — The Python view of older blocks files
+
+### Problem
+
+With "Python" chosen in the top bar, blocks files created before the selector (for example
+"Follow a line.blocks" or "Drive and turn.blocks" in My projects) could show an empty Python view,
+or the selector said "Python" while the blocks canvas still showed.
+
+Two causes:
+
+- The blocks of a file arrive a moment after its tab opens, and they are loaded without telling the
+  workspace's listeners. The Python was generated when Python was chosen (or when the workspace
+  was created) and never again, so it stayed empty for a file whose blocks came later.
+- The tab forgot its choice when the editor component was taken down (the layout can rebuild a
+  hidden tab), while the selector kept saying "Python".
+
+Files saved by older versions only hold the blocks JSON (a project created from an example and not
+edited yet is stored the same way), with or without the `##XRPBLOCKS` line and the date line. The
+Python and the date in a saved file are never read: the Python always comes from the blocks.
+
+### Solution
+
+- The Python view is generated again every time the blocks of the tab are loaded, so it matches the
+  blocks whenever Python is chosen: before the file finishes opening, after it, after switching tabs,
+  and after reopening the file.
+- The tab keeps its choice until the tab is closed.
+- The Python is the same text the generator gives for the file's blocks, so Run and the upload to
+  the robot send the same program for an old file as for a new one.
+- The screen looks as before (no new screenshots).
+
+### Files
+
+- New: `src/components/blockly/hooks/usePythonView.tsx` (the view hook, with the reload after each load),
+  `e2e/python-view-old-files.spec.ts`, `src/components/blockly/tests/usePythonView.spec.tsx`.
+- Changed: `src/components/blockly.tsx` (tells the hook when blocks were loaded; reads the blocks
+  with `extractBlocksJson`), `src/components/blockly/blocks-content.ts` (`extractBlocksJson`),
+  `src/managers/editormgr.ts` (forgets the choice when the tab closes), `e2e/support/app.ts`
+  (the folder tree is found when a blocks tab is open too),
+  `src/components/blockly/tests/blocks-content.spec.ts`.
+
+### How to test
+
+1. In My projects create a blocks project from an example ("Follow a line") and close it. Open it
+   again and choose Python in the top bar: the Python of the blocks shows, never an empty view.
+2. Open a blocks file, choose Python right away while it is still opening: the Python appears when
+   the blocks have loaded.
+3. Choose Python, switch to another tab and back, or reopen the file: Python is still chosen and
+   shows the code.
+4. Choose Blocks: the canvas is back where it was. Run the file: the robot gets the same program as
+   before.
+
+### Upstream
+
+Fork-only (the Python selector belongs to the fork).
