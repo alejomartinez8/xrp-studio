@@ -50,7 +50,7 @@ paths stay in place and are skipped when the flag is on.
 3. Open a blocks file and drag a block: Blockly's sounds and cursors load from the app itself.
 4. The Help menu shows "(online)" next to external links; the AI chat is not in the menu.
 
-Automated: `src/utils/tests/offline-locales.spec.ts` checks that offline overrides only replace
+Automated: `src/utils/i18n/offline-locales.spec.ts` checks that offline overrides only replace
 existing keys and that English and Spanish have the same keys.
 
 ### Upstream
@@ -107,7 +107,7 @@ Production offline build, first visit, JavaScript downloaded:
 
 - New: `src/components/python/lazy-monaco-editor.tsx`,
   `src/components/python/prefetch-python-editor.ts`, `src/utils/idle-prefetch.ts`,
-  `src/utils/loaded-content.ts`, tests in `src/utils/tests/{loaded-content,idle-prefetch}.spec.ts`.
+  `src/utils/loaded-content.ts`, tests in `src/utils/{loaded-content,idle-prefetch}.spec.ts`.
 - Changed: `src/App.tsx` (starts the background download), `src/components/xrplayout.tsx` and `src/components/dialogs/view-pythondlg.tsx`
   (import), `src/components/navbar.tsx` (`storeLoadedContent` in `loadGoogleEditor` and
   `loadXRPEditor`), `vite.config.ts`, `src/utils/i18n/locales/{en,es}/{en,es}.json`
@@ -187,11 +187,11 @@ open without internet.
 ### Files
 
 - New: `pwa-plugin.ts`, `src/utils/pwa.ts`,
-  `public/icons/*.png`, tests in `src/utils/tests/pwa.spec.ts` with the stub
-  `src/utils/tests/stubs/pwa-register.ts`.
+  `public/icons/*.png`, tests in `src/utils/pwa.spec.ts` with the stub
+  `src/test-utils/pwa-register.ts`.
 - Changed: `vite.config.ts`, `vitest.config.ts` (stub alias), `tsconfig.node.json`,
   `src/vite-env.d.ts`, `src/main.tsx`, `src/App.tsx`, `src/components/navbar/quick-settings.tsx`,
-  `src/components/status-bar.tsx` (Update button), tests `src/components/tests/status-bar-update.spec.tsx`,
+  `src/components/status-bar/status-bar.tsx` (Update button), tests `src/components/status-bar/status-bar-update.spec.tsx`,
   `index.html`, `src/utils/i18n/locales/{en,es}/{en,es}.json` (`pwa`), `package.json` and
   `package-lock.json` (dev dependency `vite-plugin-pwa`).
 

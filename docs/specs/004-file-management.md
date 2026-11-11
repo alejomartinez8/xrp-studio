@@ -52,7 +52,7 @@ Projects are kept in the browser (IndexedDB), with no account and no robot requi
 3. Add a block, File → Save File, reload the page: the file and the block are still there.
 4. Rename, move and delete files and folders from the tree.
 
-Automated: `src/services/tests/local-drive.spec.ts` (create/read/update, folder tree, rename, move,
+Automated: `src/services/local-drive.spec.ts` (create/read/update, folder tree, rename, move,
 recursive delete, persistence, single root folder under concurrent calls).
 
 ### When My projects is used, and the robot's memory
@@ -104,7 +104,7 @@ With a robot (**not tested yet**; needs a real XRP):
    New and Save write to the robot, as in XRPWeb.
 4. Disconnect the robot while showing its memory: the switch goes back to My projects.
 
-Automated: `src/components/tests/storage-switch.spec.tsx` (disabled without a robot, switching,
+Automated: `src/components/storage-switch.spec.tsx` (disabled without a robot, switching,
 return to My projects on disconnect, follows sign-in events) and the locale override tests.
 
 #### Screenshots
@@ -254,12 +254,12 @@ Measured on a dev build, 4× slower CPU (Chrome DevTools throttling), toolbox wi
 
 - Single tap: new `src/utils/folder-tree-options.ts`; hook in `src/components/folder-tree.tsx`
   (`Node` click handler).
-- Reopen: new `src/utils/last-project.ts`, `src/utils/tests/last-project.spec.ts`; hooks in
+- Reopen: new `src/utils/last-project.ts`, `src/utils/last-project.spec.ts`; hooks in
   `src/utils/localstorage.ts` (`LAST_PROJECT`), `src/managers/editormgr.ts` (`RemoveEditor`),
   `src/components/folder-tree.tsx` (`EVENT_FILESYS`), `src/components/navbar.tsx`
   (`loadGoogleEditor`).
 - Faster opening: new `src/components/blockly/block-search.ts`, `toolbox-search-category.ts`,
-  `blocks-content.ts`, and tests in `src/components/blockly/tests/`; changed
+  `blocks-content.ts`, and tests next to them in `src/components/blockly/`; changed
   `src/components/blockly/toolbox-ui.ts` (registers the search field), `src/components/blockly.tsx`
   (two calls to `parseBlocksJson`; loading state before the workspace is built), `src/utils/i18n/locales/{en,es}/blockly.json` (`searchHint`,
   `searchNone`, `loadingBlocks`), `package.json` and `package-lock.json` (plugin removed).
@@ -368,12 +368,12 @@ Hooks in upstream files:
 ### Files
 
 - New: `src/utils/autosave.ts`, tests in
-  `src/utils/tests/autosave.spec.ts`.
+  `src/utils/autosave.spec.ts`.
 - Changed: `src/managers/editormgr.ts`, `src/components/blockly.tsx`,
   `src/components/MonacoEditor.tsx`, `src/components/xrplayout.tsx`, `src/components/navbar.tsx`,
   `src/main.tsx`, `src/utils/i18n/locales/{en,es}/{en,es}.json` (`autosave`).
 - Drive fix: `src/utils/autosave.ts`, `src/services/google-auth.ts`, `src/widgets/login.tsx`, tests
-  in `src/utils/tests/autosave.spec.ts` and `src/services/tests/google-auth.spec.ts`.
+  in `src/utils/autosave.spec.ts` and `src/services/google-auth.spec.ts`.
 
 ### How to test
 
@@ -439,13 +439,13 @@ trash, but they could only be restored from Drive, which children do not use.
 ### Files
 
 - New: `src/components/trash.tsx` (Trash row and dialog), tests in
-  `src/components/tests/trash.spec.tsx`.
+  `src/components/trash.spec.tsx`.
 - `src/services/local-drive.ts`: `trashFile`, `trashItems` (also deletes items older than 30
   days), `restoreFile`; trashed items are hidden from the tree. Tests in
-  `src/services/tests/local-drive.spec.ts`.
+  `src/services/local-drive.spec.ts`.
 - `src/services/drive-sync.ts` and `src/services/drive-api.ts`: trash state in both directions,
-  permanent delete in Drive. Tests in `src/services/tests/drive-sync.spec.ts` and
-  `src/services/tests/drive-api.spec.ts`.
+  permanent delete in Drive. Tests in `src/services/drive-sync.spec.ts` and
+  `src/services/drive-api.spec.ts`.
 - `src/components/folder-tree.tsx` (upstream, small hooks): Delete moves to the trash in My
   projects, the Trash row, and Rename and Delete on the selected row. Test in
   `src/components/tests/folder-tree.spec.tsx`.
@@ -513,14 +513,14 @@ gone for good.
 ### Files
 
 - New: `src/components/archived.tsx` (Archived row and dialog), tests in
-  `src/components/tests/archived.spec.tsx`.
+  `src/components/archived.spec.tsx`.
 - New: `src/components/item-icon.tsx` and `src/utils/hidden-items.ts`, shared by the Trash and
   Archived rows (moved out of `src/components/trash.tsx`).
 - `src/services/local-drive.ts`: `archiveFile`, `archivedItems`, `unarchiveFile`; archived
-  projects are hidden from the tree. Tests in `src/services/tests/local-drive.spec.ts`.
+  projects are hidden from the tree. Tests in `src/services/local-drive.spec.ts`.
 - `src/services/drive-sync.ts` and `src/services/drive-api.ts`: the archived state in both
-  directions, as an app property in Drive. Tests in `src/services/tests/drive-sync.spec.ts` and
-  `src/services/tests/drive-api.spec.ts`.
+  directions, as an app property in Drive. Tests in `src/services/drive-sync.spec.ts` and
+  `src/services/drive-api.spec.ts`.
 - `src/components/folder-tree.tsx` (upstream, small hook): the Archive button and the Archived row.
 - `src/utils/i18n/locales/{en,es}/{en,es}.json` (`archived`).
 - Browser tests: `e2e/accounts.spec.ts` (archive and bring back with a signed-in account; a project

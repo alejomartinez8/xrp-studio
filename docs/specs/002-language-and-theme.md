@@ -34,7 +34,7 @@ Language support (English by default, several languages) and a friendly look in 
 2. Settings shows Spanish selected; blocks read "Motor: Izquierdo Esfuerzo" instead of
    "Motor: Left Effort".
 
-Automated: `src/utils/tests/i18n-locales.spec.ts` (English/Spanish key parity, regional locales,
+Automated: `src/utils/i18n/i18n-locales.spec.ts` (English/Spanish key parity, regional locales,
 fallback for unsupported languages).
 
 ### Upstream
@@ -117,8 +117,8 @@ later; `src/components/blockly/block-theme.ts` applies any block theme to Blockl
    (or use the + / - buttons): the blocks zoom in and out; the toolbox and the block list do not
    change size. Open "Motores Individuales" in Spanish: every block shows whole.
 
-Automated: `src/components/tests/block-theme.spec.ts` (category and subcategory colours, block
-colouring, built-in styles) and `src/components/tests/toolbox-ui.spec.ts` (Advanced grouping,
+Automated: `src/components/blockly/block-theme.spec.ts` (category and subcategory colours, block
+colouring, built-in styles) and `src/components/blockly/toolbox-ui.spec.ts` (Advanced grouping,
 search entry).
 
 ### Screenshots
@@ -170,7 +170,7 @@ Two bugs when switching between light and dark:
 
 ### Files
 
-- New: `src/utils/swap-stylesheet.ts`, `src/utils/tests/swap-stylesheet.spec.ts`.
+- New: `src/utils/swap-stylesheet.ts`, `src/utils/swap-stylesheet.spec.ts`.
 - Hooks: `src/components/xrplayout.tsx` (`changeTheme`), `src/managers/editormgr.ts`
   (`RemoveEditor`).
 
@@ -257,7 +257,7 @@ simpler measures for kids are a separate change.
 ### Files
 
 - New: `src/components/blockly/block-messages.ts` (sentence templates),
-  `src/components/blockly/tests/block-messages.spec.ts`.
+  `src/components/blockly/block-messages.spec.ts`.
 - Changed: `src/components/blockly/toolbox-ui.ts` (registers the templates at startup),
   `src/utils/i18n/locales/{en,es}/blockly.json` (templates; Spanish texts, help texts and
   categories), `src/utils/i18n/locales/es/es.json` (View menu: Depurar).
@@ -353,7 +353,7 @@ agree with them. The Motors group, search and Advanced group stay in the fork.
   `src/theme/github/blocks.ts` (group colour), `src/utils/i18n/locales/{en,es}/blockly.json`
   (group name), `src/index.css` (app box sized by the visible area, clear of the system bars),
   `index.html` (`viewport-fit=cover`), `pwa-plugin.ts` (full screen).
-- Tests: `src/components/tests/toolbox-ui.spec.ts`; the visual tests' toolbox and block editor
+- Tests: `src/components/blockly/toolbox-ui.spec.ts`; the visual tests' toolbox and block editor
   images (spec 007, part 1) show the new group and the phone icon column.
 - Images: `docs/specs/images/002-phone-panel-{before,after}-{light,dark}.png`.
 

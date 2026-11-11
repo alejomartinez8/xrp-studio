@@ -27,6 +27,10 @@ block editor, a simple UI for kids, multilingual (English by default); desktop a
 
 ## Architecture
 
+- Structure: group by feature, not by type. A feature with more than one file gets a folder
+  (`src/components/status-bar/`); tests sit next to the code (`foo.tsx` + `foo.spec.tsx`);
+  test helpers go in `src/test-utils/`; shared hooks in `src/hooks/` (`@hooks/`), feature hooks in
+  their feature folder; no `index.ts` barrels. Upstream files keep their place and names.
 - Entry: `src/main.tsx` (providers, i18n) → `src/App.tsx` → `src/components/xrplayout.tsx`
   (tab layout with flexlayout-react) and `navbar.tsx` (menus and Run button).
 - Singleton managers in `src/managers/` talk through events (`AppMgr.emit/on`, mitt):
@@ -69,7 +73,7 @@ Google sign-in only syncs (spec 005, `isDriveSyncEnabled`: builds with `GOOGLE_A
 not offline). `authService.isLogin` still means "projects session open"; the Google account is
 tracked in `src/utils/accounts.ts` (one IndexedDB space per account, own or shared device, guest
 projects, sign-out). `src/services/drive-sync.ts` copies the account's space to the Drive `XRPCode`
-folder through `src/services/drive-api.ts`; the status bar (`src/components/status-bar.tsx`) shows
+folder through `src/services/drive-api.ts`; the status bar (`src/components/status-bar/status-bar.tsx`) shows
 its cloud. The UI never says "Drive": it is the backend.
 
 Text overrides: `local-projects.json` (Drive wording → My projects) when My projects is enabled,
@@ -125,6 +129,9 @@ tooling (no npm or test commands, no hosting previews). Unit tests are listed un
   `//` comments in code we add; put the explanation in the doc comment. Comments never mention
   specs or parts (the spec lists the files, not the other way round). Leave upstream comments as
   they are.
+- File names the fork creates are kebab-case (`status-bar.tsx`, `use-python-view.tsx`,
+  `status-bar.spec.tsx`), enforced by lint; upstream files are exceptions and are never renamed
+  or moved, so the merge stays clean. e2e tests stay in `e2e/`.
 - Minimal changes to upstream files: prefer new files, flags and small hooks over rewrites.
   Do not delete upstream code; disable it behind a flag.
 - Pull upstream changes: `git fetch upstream && git merge upstream/main` on `main`.
@@ -143,5 +150,5 @@ tooling (no npm or test commands, no hosting previews). Unit tests are listed un
   same branch can later be sent to Open-STEM/XRPWeb unchanged.
 - Fork-only changes (kids UI, branding, offline-only glue): branch from the fork's `main`.
 - Prettier: 4 spaces, single quotes, 100 columns. Import aliases: `@/`, `@components/`,
-  `@utils/`, `@connections/`, `@assets/`.
+  `@hooks/`, `@utils/`, `@connections/`, `@assets/`.
 - License GPL: the fork stays GPL.

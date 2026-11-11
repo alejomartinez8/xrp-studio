@@ -151,6 +151,10 @@ export default defineConfig(({ mode, command }) => {
                     replacement: fileURLToPath(new URL('./src/components', import.meta.url)),
                 },
                 {
+                    find: '@hooks',
+                    replacement: fileURLToPath(new URL('./src/hooks', import.meta.url)),
+                },
+                {
                     find: '@connections',
                     replacement: fileURLToPath(new URL('./src/connections', import.meta.url)),
                 },
