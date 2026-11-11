@@ -29,7 +29,11 @@ function ZoomControls() {
             className="absolute bottom-6 right-8 z-10 flex flex-col items-center gap-2"
         >
             {button(t('zoomIn'), FontSize.INCREASE, <FiPlusCircle size={30} strokeWidth={1.5} />)}
-            {button(t('zoomOut'), FontSize.DESCREASE, <FiMinusCircle size={30} strokeWidth={1.5} />)}
+            {button(
+                t('zoomOut'),
+                FontSize.DESCREASE,
+                <FiMinusCircle size={30} strokeWidth={1.5} />,
+            )}
         </div>
     );
 }

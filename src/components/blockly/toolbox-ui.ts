@@ -38,7 +38,7 @@ import '@components/blockly/toolbox-ui.css';
  */
 
 /** Icon shown next to each category, keyed by the toolbox `categoryId`. */
-const CATEGORY_ICONS: Record<string, IconType> = {
+export const CATEGORY_ICONS: Record<string, IconType> = {
     individualMotors: TbSettings,
     driveTrain: TbSteeringWheel,
     servos: TbRotateClockwise,

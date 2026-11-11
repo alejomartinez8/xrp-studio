@@ -23,6 +23,9 @@ import { useTranslation } from 'react-i18next';
 import { whenReady } from '@codingame/monaco-vscode-python-default-extension';
 import { scheduleAutosave } from '@/utils/autosave';
 import ZoomControls from '@components/python/zoom-controls';
+import SnippetToolbox from '@components/python/snippet-toolbox';
+import { knownSetupLines, PythonSnippet } from '@components/python/snippets';
+import { planSnippetInsert } from '@components/python/snippet-insert';
 import {
     pythonTokenColours,
     registerPythonObjectNames,
@@ -234,6 +237,60 @@ const MonacoEditor = ({
         });
     };
 
+    /**
+     * Insert a snippet of the snippet panel at the cursor, or at `at` when it
+     * was dropped there, with its missing import and setup lines, as one Undo step.
+     */
+    const insertSnippet = (snippet: PythonSnippet, at?: monaco.IPosition | null) => {
+        const ed = editor.current;
+        const model = ed?.getModel();
+        if (!ed || !model || ed.getOption(monaco.editor.EditorOption.readOnly)) return;
+        const position = at ?? ed.getPosition() ?? { lineNumber: 1, column: 1 };
+        const plan = planSnippetInsert(
+            model.getValue(),
+            { line: position.lineNumber, column: position.column },
+            snippet,
+            knownSetupLines(),
+        );
+        ed.pushUndoStop();
+        ed.executeEdits(
+            'snippet',
+            plan.edits.map((edit) => ({
+                range: new monaco.Range(edit.startLine, edit.startColumn, edit.endLine, edit.endColumn),
+                text: edit.text,
+                forceMoveMarkers: true,
+            })),
+        );
+        ed.pushUndoStop();
+        const cursor = { lineNumber: plan.cursor.line, column: plan.cursor.column };
+        ed.setPosition(cursor);
+        ed.revealPositionInCenterIfOutsideViewport(cursor);
+        ed.focus();
+    };
+
+    const lastDragMove = useRef(0);
+
+    /**
+     * Follow a dragged snippet with the cursor, as MakeCode does, so the child sees where it will
+     * land. Throttled, since moving the cursor scrolls and repaints the editor.
+     */
+    const onSnippetDragMove = (x: number, y: number) => {
+        const now = performance.now();
+        if (now - lastDragMove.current < 100) return;
+        lastDragMove.current = now;
+        const target = editor.current?.getTargetAtClientPoint(x, y);
+        if (target?.position) editor.current?.setPosition(target.position);
+        editor.current?.focus();
+    };
+
+    /** Insert a snippet dropped over the editor at the line and column under the pointer. */
+    const onSnippetDrop = (snippet: PythonSnippet, x: number, y: number) => {
+        const box = editorRef.current?.getBoundingClientRect();
+        if (!box || x < box.left || x > box.right || y < box.top || y > box.bottom) return;
+        const target = editor.current?.getTargetAtClientPoint(x, y);
+        insertSnippet(snippet, target?.position);
+    };
+
     useEffect(() => {
         let mounted = true;
         console.log('[MonacoEditor] useEffect mounting');
@@ -407,12 +464,17 @@ const MonacoEditor = ({
     }, [language, value, t, childWidth, childHeight, tabId, isReady]);
 
     return (
-        <>
-            <div ref={containerRef} className='relative w-full h-full'>
+        <div className="relative flex h-full w-full">
+            <SnippetToolbox
+                onInsert={(snippet) => insertSnippet(snippet)}
+                onDragMove={onSnippetDragMove}
+                onDrop={onSnippetDrop}
+            />
+            <div ref={containerRef} className="relative h-full min-w-0 flex-1 overflow-hidden">
                 <div ref={editorRef} style={{ width: childWidth, height: childHeight }} className={className} />
                 <ZoomControls />
             </div>
-        </>
+        </div>
     );
 };
 

@@ -398,6 +398,141 @@
         "confirmEmpty_other": "¿Eliminar {{count}} elementos para siempre? No se puede deshacer.",
         "emptyNow": "Eliminar para siempre"
     },
+    "pythonSnippets": {
+        "title": "Código",
+        "hint": "Haz clic en un fragmento para ver cómo funciona. Añádelo o arrástralo a tu código.",
+        "items": {
+            "xrp_straight_effort": {
+                "title": "Avanzar recto",
+                "text": "Avanza en línea recta 20 cm a media potencia. Usa una distancia negativa para ir hacia atrás."
+            },
+            "xrp_turn_effort": {
+                "title": "Girar",
+                "text": "Gira el robot 90 grados sin moverse del sitio. Usa un ángulo negativo para girar al otro lado."
+            },
+            "xrp_seteffort": {
+                "title": "Potencia de las ruedas",
+                "text": "Pone la potencia de la rueda izquierda y la derecha, de -1 (atrás a tope) a 1 (adelante a tope)."
+            },
+            "xrp_arcade": {
+                "title": "Conducir como con un mando",
+                "text": "Conduce como con un mando: el primer número avanza y el segundo gira."
+            },
+            "xrp_stop_motors": {
+                "title": "Detener",
+                "text": "Detiene las dos ruedas."
+            },
+            "xrp_getleftencoder": {
+                "title": "Distancia de la rueda izquierda",
+                "text": "Cuánto ha girado la rueda izquierda, en centímetros."
+            },
+            "xrp_getrightencoder": {
+                "title": "Distancia de la rueda derecha",
+                "text": "Cuánto ha girado la rueda derecha, en centímetros."
+            },
+            "xrp_motor_effort": {
+                "title": "Potencia del motor",
+                "text": "Pone la potencia de un motor, de -1 a 1. Cambia el 1 para elegir otro motor."
+            },
+            "xrp_motor_speed": {
+                "title": "Velocidad del motor",
+                "text": "Hace girar un motor a una velocidad fija, en vueltas por minuto."
+            },
+            "xrp_motor_get_position": {
+                "title": "Vueltas del motor",
+                "text": "Cuántas vueltas ha dado el motor."
+            },
+            "xrp_motor_reset_position": {
+                "title": "Reiniciar vueltas del motor",
+                "text": "Vuelve a poner a cero el contador de vueltas del motor."
+            },
+            "xrp_servo_deg": {
+                "title": "Mover el servo",
+                "text": "Mueve el brazo del servo a 90 grados (de 0 a 180)."
+            },
+            "xrp_getsonardist": {
+                "title": "Distancia",
+                "text": "La distancia a lo que tiene delante el robot, en centímetros."
+            },
+            "xrp_l_refl": {
+                "title": "Sensor de línea izquierdo",
+                "text": "Cuánta luz recibe el sensor de línea izquierdo: 0 es blanco, 1 es negro."
+            },
+            "xrp_r_refl": {
+                "title": "Sensor de línea derecho",
+                "text": "Cuánta luz recibe el sensor de línea derecho: 0 es blanco, 1 es negro."
+            },
+            "xrp_yaw": {
+                "title": "Dirección",
+                "text": "Hacia dónde mira el robot, en grados."
+            },
+            "xrp_led_on": {
+                "title": "Encender la luz",
+                "text": "Enciende la luz de la placa del robot."
+            },
+            "xrp_led_off": {
+                "title": "Apagar la luz",
+                "text": "Apaga la luz de la placa del robot."
+            },
+            "xrp_button_pressed": {
+                "title": "¿Botón pulsado?",
+                "text": "True mientras el botón de la placa está pulsado."
+            },
+            "xrp_wait_for_button_press": {
+                "title": "Esperar el botón",
+                "text": "Espera hasta que alguien pulse el botón de la placa."
+            },
+            "if": {
+                "title": "Si",
+                "text": "Ejecuta el código de dentro solo si la condición es True. Cambia True por una pregunta."
+            },
+            "ifElse": {
+                "title": "Si / si no",
+                "text": "Ejecuta la primera parte si la condición es True, y la parte de else si no lo es."
+            },
+            "compare": {
+                "title": "Comparar",
+                "text": "Una pregunta que es True o False. También puedes usar >, <=, >=, == y !=."
+            },
+            "whileTrue": {
+                "title": "Repetir siempre",
+                "text": "Repite el código de dentro para siempre."
+            },
+            "forRange": {
+                "title": "Repetir 4 veces",
+                "text": "Repite el código de dentro 4 veces. i cuenta 0, 1, 2, 3."
+            },
+            "xrp_sleep": {
+                "title": "Esperar",
+                "text": "Espera medio segundo antes de la siguiente línea."
+            },
+            "randomInt": {
+                "title": "Número al azar",
+                "text": "Un número entero al azar del 1 al 10."
+            },
+            "print": {
+                "title": "Mostrar un mensaje",
+                "text": "Muestra un mensaje en el Terminal."
+            },
+            "comment": {
+                "title": "Nota",
+                "text": "Una nota para quien lea el código. El robot se salta las líneas que empiezan con #."
+            },
+            "variable": {
+                "title": "Variable",
+                "text": "Guarda un valor con un nombre, para usarlo otra vez y cambiarlo en un solo sitio."
+            },
+            "function": {
+                "title": "Función",
+                "text": "Pone nombre a unos pasos. Escribe my_function() para ejecutarlos."
+            }
+        },
+        "search": "Buscar",
+        "searchHint": "Buscar fragmentos",
+        "searchNone": "No se encontró ningún fragmento.",
+        "add": "Añadir al código",
+        "drag": "Arrástralo a tu código"
+    },
     "archived": {
         "row": "Archivados",
         "title": "Proyectos archivados",

@@ -8,6 +8,15 @@ export type PythonTokenType = 'keyword' | 'string' | 'number' | 'comment' | 'tex
 
 export type PythonToken = { type: PythonTokenType; text: string };
 
+/** Tailwind classes for each kind of token, in the light and dark themes. */
+export const PYTHON_TOKEN_CLASS: Record<PythonTokenType, string> = {
+    keyword: 'font-semibold text-curious-blue-800 dark:text-curious-blue-300',
+    string: 'text-chateau-green-800 dark:text-chateau-green-400',
+    number: 'text-ecstasy-700 dark:text-ecstasy-400',
+    comment: 'italic text-mountain-mist-500 dark:text-mountain-mist-400',
+    text: '',
+};
+
 const KEYWORDS = new Set([
     'False',
     'None',
