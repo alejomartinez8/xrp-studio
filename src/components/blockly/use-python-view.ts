@@ -36,11 +36,11 @@ export function usePythonView(
 ): string | null {
     const isPython = useIsPythonView(tabId);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     return useMemo(() => {
         if (!isPython) {
             return null;
         }
         return workspace ? pythonGenerator.workspaceToCode(workspace) : '';
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isPython, workspace, loadRevision]);
 }
