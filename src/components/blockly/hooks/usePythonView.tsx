@@ -29,7 +29,7 @@ function useIsPythonView(tabId: string): boolean {
  * Blocks load with Blockly events off, so nothing tells the workspace's listeners that they
  * arrived; the editor bumps `loadRevision` after each load and the Python is generated again.
  */
-export function usePythonCode(
+export function usePythonView(
     tabId: string,
     workspace: Workspace | null,
     loadRevision = 0,

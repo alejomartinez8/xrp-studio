@@ -684,8 +684,8 @@ Python and the date in a saved file are never read: the Python always comes from
 
 ### Files
 
-- New: `src/components/blockly/python-code.ts` (the view hook, with the reload after each load),
-  `e2e/python-view-old-files.spec.ts`, `src/components/blockly/tests/python-code.spec.ts`.
+- New: `src/components/blockly/hooks/usePythonView.tsx` (the view hook, with the reload after each load),
+  `e2e/python-view-old-files.spec.ts`, `src/components/blockly/tests/usePythonView.spec.tsx`.
 - Changed: `src/components/blockly.tsx` (tells the hook when blocks were loaded; reads the blocks
   with `extractBlocksJson`), `src/components/blockly/blocks-content.ts` (`extractBlocksJson`),
   `src/managers/editormgr.ts` (forgets the choice when the tab closes), `e2e/support/app.ts`
