@@ -5,10 +5,12 @@ import type { PythonSnippet } from '@components/python/snippets';
  * text alone so it can be tested without the editor. The snippet's missing import and setup lines
  * go at the top (imports after the last import, setup after the last setup line), and its code
  * goes at the cursor:
- * - on an empty line, or in place of a lone `pass`, with that line's indentation (or one level
- *   more than the line above when it ends with `:`);
+ * - on an empty line, from the cursor's column, so the child chooses the indentation;
+ * - in place of a lone `pass`, with its indentation;
  * - a value inside a line of code, right at the cursor;
- * - a statement on a line of code, on a new line below it.
+ * - a statement on a line of code, on a new line below it (one level deeper after a `:`).
+ * A block (a snippet of several lines, such as `while True:`) gets an empty line between it and
+ * the code above and below it, unless it opens a block (`:` above) or is already apart.
  * Positions are 1-based lines and columns, as in Monaco.
  */
 
@@ -35,15 +37,14 @@ function indentOf(line: string): string {
     return /^[ \t]*/.exec(line)?.[0] ?? '';
 }
 
-/** Indentation for new code on line `index`, from the nearest line with code above it. */
-function indentFromAbove(lines: string[], index: number): string {
-    for (let i = index - 1; i >= 0; i--) {
-        if (lines[i].trim() !== '') {
-            const above = indentOf(lines[i]);
-            return lines[i].trimEnd().endsWith(':') ? above + INDENT : above;
-        }
-    }
-    return '';
+/** True when the line holds code (not empty or only spaces). */
+function hasCode(line: string | undefined): boolean {
+    return line !== undefined && line.trim() !== '';
+}
+
+/** True when the line holds code that does not open a block with `:`. */
+function needsGapAfter(line: string | undefined): boolean {
+    return hasCode(line) && !line!.trimEnd().endsWith(':');
 }
 
 /** Indent every line of the code after the first one. */
@@ -97,14 +98,20 @@ export function planSnippetInsert(
     const current = lines[lineIndex];
     const isEmpty = current.trim() === '';
     const isPass = current.trim() === 'pass' && !snippet.expression;
+    const isBlock = !snippet.expression && snippet.code.includes('\n');
+    let suffix = '';
     let edit: TextEdit;
     let indent: string;
     let startColumn: number;
     let prefix = '';
     if (isEmpty || isPass) {
-        indent = isPass || current !== '' ? indentOf(current) : indentFromAbove(lines, lineIndex);
+        indent = isPass
+            ? indentOf(current)
+            : current.slice(0, Math.min(Math.max(position.column, 1) - 1, current.length));
         startColumn = 1;
-        prefix = indent;
+        const gapAbove = isBlock && !isPass && needsGapAfter(lines[lineIndex - 1]);
+        prefix = (gapAbove ? '\n' : '') + indent;
+        suffix = isBlock && hasCode(lines[lineIndex + 1]) ? '\n' : '';
         edit = {
             startLine: lineIndex + 1,
             startColumn,
@@ -125,7 +132,8 @@ export function planSnippetInsert(
     } else {
         indent = current.trimEnd().endsWith(':') ? indentOf(current) + INDENT : indentOf(current);
         startColumn = current.length + 1;
-        prefix = '\n' + indent;
+        prefix = (isBlock && needsGapAfter(current) ? '\n\n' : '\n') + indent;
+        suffix = isBlock && hasCode(lines[lineIndex + 1]) ? '\n' : '';
         edit = {
             startLine: lineIndex + 1,
             startColumn,
@@ -135,7 +143,7 @@ export function planSnippetInsert(
         };
     }
     const code = indentCode(snippet.code, indent);
-    edit.text = prefix + code;
+    edit.text = prefix + code + suffix;
 
     const edits: TextEdit[] = [];
     let linesBefore = 0;

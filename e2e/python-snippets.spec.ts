@@ -50,6 +50,20 @@ test('inserts snippets with their imports and setup', async ({ page, context }) 
     await page.keyboard.press('ControlOrMeta+Z');
     await expect.poll(async () => (await editorLines(page)).length).toBe(4);
 
+    await panel.getByRole('button', { name: 'Loops' }).click();
+    await panel.getByTestId('snippet-whileTrue').click();
+    await expect
+        .poll(() => editorLines(page))
+        .toEqual([
+            'from XRPLib.differential_drive import DifferentialDrive',
+            'differentialDrive = DifferentialDrive.get_default_differential_drive()',
+            '',
+            'differentialDrive.straight(20, 0.5)',
+            '',
+            'while True:',
+            '    pass',
+        ]);
+
     await panel.getByRole('button', { name: 'Hide code snippets' }).click();
     await expect(panel).toBeHidden();
     await page.getByRole('button', { name: 'Show code snippets' }).click();

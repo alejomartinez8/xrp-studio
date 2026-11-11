@@ -79,10 +79,31 @@ describe('planSnippetInsert', () => {
         expect(result.cursor).toEqual({ line: 6, column: 29 });
     });
 
-    it('indents code under a line that ends with a colon', () => {
-        const text = 'import time\n\nwhile True:\n';
-        expect(insert(text, 4, 1, wait).text).toBe(
+    it('starts the code at the cursor column on an empty line', () => {
+        const text = 'import time\n\nwhile True:\n        ';
+        expect(insert(text, 4, 5, wait).text).toBe(
             'import time\n\nwhile True:\n    time.sleep(0.5)',
+        );
+        expect(insert('import time\n\nwhile True:\n', 4, 1, wait).text).toBe(
+            'import time\n\nwhile True:\ntime.sleep(0.5)',
+        );
+    });
+
+    it('puts an empty line between a block and the code around it', () => {
+        const text = 'import time\n\ntime.sleep(1)\n\ntime.sleep(2)';
+        const result = insert(text, 3, 14, whileTrue);
+        expect(result.text).toBe(
+            'import time\n\ntime.sleep(1)\n\nwhile True:\n    pass\n\ntime.sleep(2)',
+        );
+        expect(result.cursor).toEqual({ line: 6, column: 9 });
+        expect(insert('time.sleep(1)\ntime.sleep(2)', 1, 14, whileTrue).text).toBe(
+            'time.sleep(1)\n\nwhile True:\n    pass\n\ntime.sleep(2)',
+        );
+    });
+
+    it('keeps single statements on consecutive lines', () => {
+        expect(insert('import time\n\ntime.sleep(1)', 3, 14, wait).text).toBe(
+            'import time\n\ntime.sleep(1)\ntime.sleep(0.5)',
         );
     });
 

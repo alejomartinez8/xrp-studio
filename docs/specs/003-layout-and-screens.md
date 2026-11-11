@@ -627,11 +627,15 @@ program.
   children ("Drives straight for 20 cm at half power. Use a negative distance to go backwards.").
   The texts are in English and Spanish; the code stays Python.
 - **Click or drag to insert:** a click puts the snippet at the cursor; dragging it drops it where
-  it is released. On an empty line the code takes that line's indentation (or one level more
-  after a line that ends with `:`); a statement on a line holding only `pass` (the placeholder of
-  the `if`, `while` and `def` snippets) takes its place; on another line with code, a statement goes on a new line below it
+  it is released. On an empty line the code starts at the cursor's column, so the indentation is
+  the one the child chose; a statement on a line holding only `pass` (the placeholder of the `if`,
+  `while` and `def` snippets) takes its place; on another line with code, a statement goes on a new line below it
   and a value (such as `rangefinder.distance()`) goes right at the cursor, so it can complete an
   `if` or a `print(...)`. One Undo removes the whole insertion.
+- **Blocks stand apart:** a snippet of several lines (`if`, `while`, `for`, `def`) gets an empty
+  line between it and the code above and below it, unless it goes right under a line that ends
+  with `:` or there is already an empty line. Single statements (straight, turn, wait) stay on
+  consecutive lines.
 - **Imports and setup are added for you:** a robot snippet needs its import and its setup line
   (`from XRPLib.differential_drive import DifferentialDrive`,
   `differentialDrive = DifferentialDrive.get_default_differential_drive()`). Any of those lines
@@ -684,11 +688,14 @@ part.
 4. Type `print(` and click Sensors > distance with the cursor after the bracket: the expression
    goes there, and the Rangefinder import and setup lines are added at the top.
 5. Drag a snippet onto a line of the code: it is inserted where it was dropped.
-6. Hide the panel with its button and bring it back with "Code" on the left edge.
-7. Make the window phone-sized and reload: the panel is closed; "Code" opens it over the code, and
+6. Put the cursor at the end of `differentialDrive.straight(20, 0.5)` and click Loops >
+   `while True:`: an empty line separates it from the line above. On an empty line, move the
+   cursor to column 5 and click "Wait": it starts at column 5; at column 1 it starts at column 1.
+7. Hide the panel with its button and bring it back with "Code" on the left edge.
+8. Make the window phone-sized and reload: the panel is closed; "Code" opens it over the code, and
    it closes after a snippet is inserted.
-8. Switch the language to Spanish: the categories and explanations are in Spanish.
-9. Run the program on a robot: the inserted code drives the robot as the matching blocks do
+9. Switch the language to Spanish: the categories and explanations are in Spanish.
+10. Run the program on a robot: the inserted code drives the robot as the matching blocks do
    (needs a real robot).
 
 ### Upstream
