@@ -58,8 +58,8 @@ One friendly top bar for everyone (no separate "kids mode"):
 4. File → New File works (the local session signs in from the top bar).
 5. At 1024 px the bar fits on one line.
 
-Automated: `src/widgets/tests/compact-account.spec.tsx` (sign-in button, avatar menu, sign out),
-`src/components/tests/language-dlg.spec.tsx`, `src/components/tests/theme-dlg.spec.tsx` and `src/utils/tests/theme.spec.ts`. The real Google sign-in needs the auth backend and was not run.
+Automated: `src/widgets/compact-account.spec.tsx` (sign-in button, avatar menu, sign out),
+`src/components/dialogs/language-dlg.spec.tsx`, `src/components/dialogs/theme-dlg.spec.tsx` and `src/utils/theme.spec.ts`. The real Google sign-in needs the auth backend and was not run.
 
 ### Screenshots
 
@@ -122,7 +122,7 @@ which children often use alongside other platforms, always offers something to c
 #### Files
 
 - New: `src/components/welcome/welcome-screen.tsx`, `src/utils/new-project.ts`, tests in
-  `src/components/welcome/tests/` and `src/utils/tests/new-project.spec.ts`.
+  `src/components/welcome/welcome-screen.spec.tsx` and `src/utils/new-project.spec.ts`.
 - Hooks: `src/components/xrplayout.tsx` (`onTabSetPlaceHolder`), `src/components/navbar.tsx`
   (`createNewFile`, `EVENT_NEW_PROJECT`), `src/managers/appmgr.ts` (`EVENT_NEW_PROJECT`,
   `getFolderData`), `src/utils/i18n/locales/{en,es}/{en,es}.json` (`welcome.*`).
@@ -169,7 +169,7 @@ had to find it in the Explorer, among many files and folders.
 
 #### Files
 
-- New: `src/utils/recent-projects.ts`, `src/utils/tests/recent-projects.spec.ts`.
+- New: `src/utils/recent-projects.ts`, `src/utils/recent-projects.spec.ts`.
 - Changed: `src/components/welcome/welcome-screen.tsx` and its tests, `src/managers/appmgr.ts`
   (`removeHandler`), `src/utils/i18n/locales/{en,es}/{en,es}.json` (`welcome.recentTitle`,
   `welcome.justNow`, `welcome.moreHint`).
@@ -215,7 +215,7 @@ blocks make it move. Working programs to start from and change are the quickest 
 
 #### Files
 
-- New: `src/utils/examples.ts`, `src/utils/tests/examples.spec.ts`.
+- New: `src/utils/examples.ts`, `src/utils/examples.spec.ts`.
 - Changed: `src/components/welcome/welcome-screen.tsx` and its tests, `src/components/navbar.tsx`
   (`createNewFile` uses `data.content`), `src/utils/i18n/locales/{en,es}/{en,es}.json`
   (`welcome.examplesTitle`, `welcome.examples.*`).
@@ -257,7 +257,7 @@ child it is an empty black box with no purpose.
 
 #### Files
 
-- New: `src/utils/shell-visibility.ts`, `src/utils/tests/shell-visibility.spec.ts`.
+- New: `src/utils/shell-visibility.ts`, `src/utils/shell-visibility.spec.ts`.
 - Changed: `src/components/xrplayout.tsx` (3 lines).
 
 #### How to test
@@ -313,7 +313,7 @@ example in the power switch and battery dialogs).
 
 ### Files
 
-- New: `src/components/dialogs/dialog-close.ts`, `src/components/tests/dialog-close.spec.tsx`.
+- New: `src/components/dialogs/dialog-close.ts`, `src/components/dialogs/dialog-close.spec.tsx`.
 - Changed: `dialog.tsx`, `dialog-footer.tsx`, `ble-reconnect-faileddlg.tsx`,
   `backup-restoredlg.tsx`, `backupdlg.tsx`, `restoredlg.tsx`, `firmware-backup-promptdlg.tsx`,
   `connectiondlg.tsx` (one line each, plus the import).
@@ -437,15 +437,15 @@ page also drew at desktop width, because the viewport tag was commented out in `
   one colour per card.
 - `src/components/folder-header.tsx`: new file and new folder icons.
 - `src/components/xrpshell.tsx`: the terminal uses the card colour.
-- `src/components/status-bar.tsx`, `src/App.tsx`: the status bar (and the dark top bar) use the
+- `src/components/status-bar/status-bar.tsx`, `src/App.tsx`: the status bar (and the dark top bar) use the
   frame colour; no line above the status bar.
 - `src/components/blockly/toolbox-ui.css`: no lines between toolbox rows or at separators.
 - `src/utils/i18n/locales/{en,es}/*.json`: `explorer`, `terminal`; the Shell tab is "Terminal";
   the panel header is "Explorer" ("Explorador").
 - `src/components/navbar/mobile-menu.tsx` (new), `src/components/navbar.tsx`, `src/App.tsx`,
   `index.html`: the narrow-screen menu, the fixed bar, the viewport tag. i18n: `menu`.
-- Tests: `src/utils/tests/shell-visibility.spec.ts`,
-  `src/components/tests/side-bar-icon.spec.tsx`, `src/components/tests/mobile-menu.spec.tsx`.
+- Tests: `src/utils/shell-visibility.spec.ts`,
+  `src/components/side-bar-icon.spec.tsx`, `src/components/navbar/mobile-menu.spec.tsx`.
 
 ### How to test
 
@@ -580,8 +580,8 @@ explanations, as MakeCode's Python editor has.
   (Explorer open at start on wider screens), en/es texts (`zoomIn`, `zoomOut`).
 - Unchanged and still there: `src/components/dialogs/view-pythondlg.tsx` and the conversion code
   in `navbar.tsx`.
-- Unit tests: `src/utils/tests/editor-view.spec.ts`, `src/utils/tests/python-highlight.spec.ts`,
-  `src/components/tests/editor-switch.spec.tsx`, `src/components/tests/zoom-controls.spec.tsx`.
+- Unit tests: `src/utils/editor-view.spec.ts`, `src/utils/python-highlight.spec.ts`,
+  `src/components/editor-switch.spec.tsx`, `src/components/python/zoom-controls.spec.tsx`.
 
 ### How to test
 
@@ -684,13 +684,13 @@ Python and the date in a saved file are never read: the Python always comes from
 
 ### Files
 
-- New: `src/components/blockly/hooks/usePythonView.tsx` (the view hook, with the reload after each load),
-  `e2e/python-view-old-files.spec.ts`, `src/components/blockly/tests/usePythonView.spec.tsx`.
+- New: `src/components/blockly/use-python-view.tsx` (the view hook, with the reload after each load),
+  `e2e/python-view-old-files.spec.ts`, `src/components/blockly/use-python-view.spec.tsx`.
 - Changed: `src/components/blockly.tsx` (tells the hook when blocks were loaded; reads the blocks
   with `extractBlocksJson`), `src/components/blockly/blocks-content.ts` (`extractBlocksJson`),
   `src/managers/editormgr.ts` (forgets the choice when the tab closes), `e2e/support/app.ts`
   (the folder tree is found when a blocks tab is open too),
-  `src/components/blockly/tests/blocks-content.spec.ts`.
+  `src/components/blockly/blocks-content.spec.ts`.
 
 ### How to test
 

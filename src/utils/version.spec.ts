@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { changelogUrl, formatVersion } from '../version';
+import { changelogUrl, formatVersion } from './version';
 
 describe('formatVersion', () => {
     it('joins version and commit', () => {

@@ -137,7 +137,7 @@ loads the profile and finishes the sign-in as usual (same `finalizeLogin` path a
 - `src/widgets/login.tsx`: one effect that restores the session on mount (`isRestoring`).
 - `src/widgets/compact-account.tsx`: `isRestoring` placeholder.
 - `src/utils/localstorage.ts`: `GOOGLE_SESSION` key.
-- Test: `src/services/tests/google-auth.spec.ts`.
+- Test: `src/services/google-auth.spec.ts`.
 
 #### How to test
 
@@ -148,8 +148,8 @@ loads the profile and finishes the sign-in as usual (same `finalizeLogin` path a
    one `refresh-token` request (401), clears the hint and shows the sign-in button (checked with
    Playwright).
 
-Automated: `src/services/tests/google-auth.spec.ts` (no hint, restore once, backend refusal,
-sign-out) and `src/widgets/tests/compact-account.spec.tsx` (placeholder while restoring).
+Automated: `src/services/google-auth.spec.ts` (no hint, restore once, backend refusal,
+sign-out) and `src/widgets/compact-account.spec.tsx` (placeholder while restoring).
 
 #### Screenshots
 
@@ -258,15 +258,15 @@ A thin bar at the bottom of the screen, like MakeCode's. It has one indicator: a
 
 - New: `src/services/drive-api.ts` (Drive requests), `src/services/drive-sync.ts` (push, pull
   every minute, newer edit wins), `src/utils/accounts.ts` (accounts on a device), `src/utils/ask.ts` and
-  `src/components/ask-dialog.tsx` (questions), `src/components/status-bar.tsx`.
+  `src/components/ask-dialog.tsx` (questions), `src/components/status-bar/status-bar.tsx`.
 - Changed: `src/services/local-drive.ts` (one store per account, sync fields, deleted files kept
   until uploaded), `src/utils/offline.ts`, `src/managers/appmgr.ts`, `src/widgets/login.tsx`,
   `src/utils/session.ts`, `src/utils/local-projects.ts`, `src/services/google-auth.ts`,
   `src/utils/localstorage.ts`, `src/main.tsx`, `src/App.tsx`,
   `src/utils/i18n/locales/{en,es}/{en,es,local-projects}.json` (`account`, `sync`, `statusBar`).
-- Tests: `src/services/tests/drive-sync.spec.ts`, `src/services/tests/drive-api.spec.ts`,
-  `src/services/tests/local-drive.spec.ts`, `src/utils/tests/accounts.spec.ts`,
-  `src/components/tests/ask-dialog.spec.tsx`, `src/components/tests/status-bar.spec.tsx`.
+- Tests: `src/services/drive-sync.spec.ts`, `src/services/drive-api.spec.ts`,
+  `src/services/local-drive.spec.ts`, `src/utils/accounts.spec.ts`,
+  `src/components/ask-dialog.spec.tsx`, `src/components/status-bar/status-bar.spec.tsx`.
 
 ### How to test
 

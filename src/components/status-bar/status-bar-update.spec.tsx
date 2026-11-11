@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import '@/utils/i18n';
-import StatusBar from '@components/status-bar';
+import StatusBar from '@components/status-bar/status-bar';
 
 const state = vi.hoisted(() => ({ updateReady: true }));
 const applyUpdate = vi.hoisted(() => vi.fn());

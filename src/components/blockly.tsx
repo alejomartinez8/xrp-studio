@@ -16,7 +16,7 @@ import { activeBlockTheme } from '@/theme';
 import { kidFriendlyToolbox, registerToolboxUi } from '@components/blockly/toolbox-ui';
 import { isMaxMd, MAX_MD_QUERY } from '@/utils/breakpoints';
 import { extractBlocksJson, parseBlocksJson } from '@components/blockly/blocks-content';
-import { usePythonView } from '@components/blockly/hooks/usePythonView';
+import { usePythonView } from '@components/blockly/use-python-view';
 import { scheduleAutosave } from '@/utils/autosave';
 import PythonView from '@components/blockly/python-view';
 

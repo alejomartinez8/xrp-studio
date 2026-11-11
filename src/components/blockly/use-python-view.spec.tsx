@@ -7,7 +7,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import '@components/blockly/xrp_blocks';
 import '@components/blockly/xrp_blocks_python';
 import { extractBlocksJson, parseBlocksJson } from '@components/blockly/blocks-content';
-import { usePythonView } from '@components/blockly/hooks/usePythonView';
+import { usePythonView } from '@components/blockly/use-python-view';
 import { forgetEditorView, setEditorView } from '@/utils/editor-view';
 import { EXAMPLES, exampleContent } from '@/utils/examples';
 

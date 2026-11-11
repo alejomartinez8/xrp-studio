@@ -230,7 +230,7 @@ measured two elements, which `usehooks-ts`, already a dependency, also does (and
 - `package.json`, `package-lock.json`, `docs/specs/pending-upgrades.md`.
 - `src/utils/blocks-date.ts` (new), `src/components/blockly.tsx`.
 - `src/components/folder-tree.tsx`, `src/components/dialogs/busydlg.tsx`.
-- Unit tests: `src/utils/tests/blocks-date.spec.ts` (the strings moment gave for a set of dates).
+- Unit tests: `src/utils/blocks-date.spec.ts` (the strings moment gave for a set of dates).
 
 ### How to test
 
@@ -351,7 +351,7 @@ Python. It fails the same way with Blockly 12; it is listed under known issues i
 
 - `package.json`, `package-lock.json`.
 - `src/components/blockly/toolbox-search-category.ts`.
-- Tests: `src/components/blockly/tests/python-generator.spec.ts` (new, with its snapshot),
+- Tests: `src/components/blockly/python-generator.spec.ts` (new, with its snapshot),
   `e2e/block-search.spec.ts` (new, typing in the search field), `e2e/visual/screens.spec.ts`
   (the search screenshot now searches for "effort", which shows blocks) and the approved
   screenshots in `e2e/visual/__screenshots__`.
@@ -412,7 +412,7 @@ After (recharts 3), light and dark:
 ### Files
 
 - `package.json`, `package-lock.json`.
-- Unit tests: `src/components/tests/sensor-widget-chart.spec.tsx` (new).
+- Unit tests: `src/components/dashboard/sensors/sensor-widget-chart.spec.tsx` (new).
 - Visual test: `e2e/visual/screens.spec.ts` (dashboard charts), `e2e/support/dashboard.ts` (new:
   opens the dashboard, adds and resizes widgets, sends fake readings),
   `e2e/visual/__screenshots__/dashboard-{light,dark}.png`.
@@ -651,10 +651,10 @@ The status bar and the Change Log, light and dark.
 
 - `package.json` (`version`, `xrpwebBase`), `package-lock.json`, `vite.config.ts` (injected
   values), `src/vite-env.d.ts`, `src/utils/version.ts` (text and Change Log file),
-  `src/utils/constants.ts`, `src/components/status-bar.tsx`,
+  `src/utils/constants.ts`, `src/components/status-bar/status-bar.tsx`,
   `src/components/dialogs/changelog.tsx`, `public/changelog/{en,es}.md`,
   `src/utils/i18n/locales/{en,es}`, `.github/workflows/release.yml`.
-- Tests: `src/utils/tests/version.spec.ts`, `e2e/version.spec.ts`. The visual tests hide the
+- Tests: `src/utils/version.spec.ts`, `e2e/version.spec.ts`. The visual tests hide the
   version text, because the commit changes every time.
 
 ### How to test
@@ -699,3 +699,54 @@ Nothing visible changes in the app.
 ### Upstream
 
 Not applicable: it only concerns the fork's own comments.
+
+## Part 13 — Structure: tests next to the code, a folder per feature, kebab-case names
+
+### Problem
+
+Tests lived in a `tests/` folder beside each source folder, so a change to a component touched
+two distant places. Feature code was spread by type, one hook sat alone in a `hooks/` folder, and
+one hook file was named in camelCase (`usePythonView.tsx`) while the rest of the fork's files use
+kebab-case.
+
+### Solution
+
+Rules for the files the fork created:
+
+- File names are kebab-case: components (`status-bar.tsx`), hooks (`use-python-view.tsx`) and
+  tests (`status-bar.spec.tsx`). Names inside the code do not change. A lint rule enforces it.
+- A test sits next to the code it tests (`foo.tsx` and `foo.spec.tsx`; snapshots in
+  `__snapshots__` beside the spec). Browser tests stay in `e2e/`. Helpers that are not tests go to
+  `src/test-utils/`.
+- A feature with more than one source file gets its own folder (the status bar is now
+  `src/components/status-bar/`); a single component with only its test stays flat.
+- No `index.ts` barrel files: imports name the file.
+- Hooks shared by several features go in `src/hooks/` (new alias `@hooks/*`); a hook used by one
+  feature lives in that feature's folder. `usePythonView` moved to
+  `src/components/blockly/use-python-view.tsx` because only the block editor uses it.
+
+Files that come from XRPWeb are not moved or renamed, so that merging upstream stays clean. That
+includes the dashboard hooks, the upstream tests (`src/components/tests/`, `src/managers/tests/`,
+`src/utils/tests/rememberedxrp.spec.ts`, `src/widgets/tests/`) and the camelCase components. The
+lint rule lists them as exceptions. The server tests in `server/google-auth/tests/` also stay: they
+skip the `tests` folder when checking imports. Only two import lines in upstream files changed
+(`App.tsx`, `blockly.tsx`) to follow the moved files.
+
+### Files
+
+- Moved with `git mv` (history follows): every test of the fork from `tests/` folders to its
+  code, `src/components/status-bar.tsx` to `src/components/status-bar/status-bar.tsx`,
+  `blockly/hooks/usePythonView.tsx` to `blockly/use-python-view.tsx`, and
+  `src/utils/tests/stubs/pwa-register.ts` to `src/test-utils/pwa-register.ts`.
+- Config: `eslint.config.js` (filename rule and upstream exceptions), `tsconfig*.json`,
+  `vite.config.ts` and `vitest.config.ts` (alias `@hooks`, the stub path).
+- Paths in the other specs and in `CLAUDE.md`.
+
+### How to test
+
+Nothing visible changes in the app. Run the unit tests, the lint and the build: all pass as before,
+and the visual comparison images do not change.
+
+### Upstream
+
+Not applicable: it only concerns files created by the fork.

@@ -4,7 +4,7 @@ import Navbar from '@components/navbar';
 import XRPLayout from '@components/xrplayout';
 import AppMgr from '@/managers/appmgr';
 import { prefetchPythonEditor } from '@components/python/prefetch-python-editor';
-import StatusBar from '@components/status-bar';
+import StatusBar from '@components/status-bar/status-bar';
 import AskDialog from '@components/ask-dialog';
 
 function App() {
