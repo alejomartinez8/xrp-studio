@@ -71,7 +71,7 @@ function GoogleLoginButton({ logoutCallback, onSuccess, compact }: LoginProps) {
     const restoreStarted = useRef(false);
     const authService = AppMgr.getInstance().authService;
     /**
-     * Whether a Google account is signed in. With Drive sync (spec 005) `authService.isLogin`
+     * Whether a Google account is signed in. With Drive sync `authService.isLogin`
      * means "My projects is open", so the account comes from `getActiveAccount()`.
      */
     const googleSignedIn = () =>
@@ -365,7 +365,7 @@ function GoogleLoginButton({ logoutCallback, onSuccess, compact }: LoginProps) {
 }
 
 /**
- * Google sign-in button. With Drive sync (spec 005), My projects opens right away
+ * Google sign-in button. With Drive sync, My projects opens right away
  * (`LocalSession`) and the button only signs in to sync with the account's Drive. Held back until the OAuth client ID has been fetched -
  * useGoogleLogin throws on an empty ID, which would take down the file tree
  * that hosts this widget. In the top bar, a saved session shows the avatar placeholder during

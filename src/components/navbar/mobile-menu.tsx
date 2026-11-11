@@ -10,7 +10,7 @@ type MobileMenuProps = {
 };
 
 /**
- * MobileMenu - the hamburger menu of the top bar on narrow screens (spec 003). One button at the
+ * MobileMenu - the hamburger menu of the top bar on narrow screens. One button at the
  * right opens a full-screen panel with every entry of the bar (File, View, Help, settings) and, at the
  * bottom, the account. On wide screens the button and the entries are hidden and the footer is
  * laid out inline in the bar, so the account widget is mounted once in both cases (its session

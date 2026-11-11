@@ -5,18 +5,18 @@ import LocalDriveService, { FOLDER_MIME_TYPE, LocalDriveRecord } from '@/service
 import { Constants } from '@/utils/constants';
 
 /**
- * Drive sync (spec 005): projects live in the browser (LocalDriveService); while a Google account
+ * Drive sync: projects live in the browser (LocalDriveService); while a Google account
  * is signed in, its space is copied to the XRPCode folder of that account's Drive.
  *
  * - Push: every change made in the app is uploaded a moment later. Folders go first. The trash is
  *   the Drive trash: items moved to it or restored in the app are moved there or back in Drive,
- *   and items deleted for good are deleted in Drive too (spec 004, part 5).
+ *   and items deleted for good are deleted in Drive too.
  * - Pull (on sign-in, when the network comes back, when the app is shown again and every minute
  *   while it is visible): files added or changed in Drive by another device are downloaded. A
  *   file that is open in an editor is left as it is until its tab is closed. When the same file changed here and there, the newer edit
  *   wins and there is a single file, without copies. Items trashed or restored on another device
  *   are trashed or restored here too, unless that changed here as well since the last sync.
- * - Archived projects (spec 004, part 6) carry an app property in Drive and follow the same rule
+ * - Archived projects carry an app property in Drive and follow the same rule
  *   as the trash, in both directions.
  */
 

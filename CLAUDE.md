@@ -122,7 +122,8 @@ tooling (no npm or test commands, no hosting previews). Unit tests are listed un
   messages and branch names. Translations live only in `src/utils/i18n/locales/<lang>/`.
 - User-facing text always goes through i18n (en and es).
 - Comments: documentation comments only (`/** */` on modules, classes, functions). No inline
-  `//` comments in code we add; put the explanation in the doc comment. Leave upstream comments as
+  `//` comments in code we add; put the explanation in the doc comment. Comments never mention
+  specs or parts (the spec lists the files, not the other way round). Leave upstream comments as
   they are.
 - Minimal changes to upstream files: prefer new files, flags and small hooks over rewrites.
   Do not delete upstream code; disable it behind a flag.

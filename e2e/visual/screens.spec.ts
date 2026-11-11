@@ -10,7 +10,7 @@ import {
 } from '../support/dashboard';
 
 /**
- * Visual regression (spec 007, part 1): key screens compared with the approved screenshots in
+ * Visual regression: key screens compared with the approved screenshots in
  * `__screenshots__`, in light and dark, at desktop, tablet and phone sizes. A difference fails the
  * test and the report shows the expected image, the new one and the difference. Run inside the
  * Playwright Docker image only (see `playwright.config.ts`).

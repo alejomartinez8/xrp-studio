@@ -5,7 +5,7 @@ import { FontSize } from '@/utils/types';
 
 /**
  * ZoomControls - round "+" and "-" buttons in the bottom right corner of the Python editor, like
- * the zoom buttons of the blocks (spec 003, part 6). They make the code bigger or smaller with the
+ * the zoom buttons of the blocks. They make the code bigger or smaller with the
  * font change the View menu used to offer, which is now hidden (`showFontMenu`).
  */
 function ZoomControls() {

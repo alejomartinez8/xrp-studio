@@ -1,8 +1,8 @@
 import type { BrowserContext, Route } from '@playwright/test';
 
 /**
- * Fake Google for the end-to-end tests (spec 005, part "Testing accounts and sync without
- * Google"). It answers, inside one browser context and without touching the network:
+ * Fake Google for the end-to-end tests (sign-in and sync without
+ * the real Google). It answers, inside one browser context and without touching the network:
  *
  * - the Google Identity script (`accounts.google.com/gsi/client`): the sign-in "popup" returns an
  *   authorization code at once, as if the account had been picked;

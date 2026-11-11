@@ -1,5 +1,5 @@
 /**
- * Version of XRP Studio (spec 006, part 6). The values are injected at build time from
+ * Version of XRP Studio. The values are injected at build time from
  * package.json and the host; `formatVersion` builds the text shown in the status bar.
  */
 

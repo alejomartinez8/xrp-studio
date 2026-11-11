@@ -5,7 +5,7 @@ import { StorageKeys } from '@/utils/localstorage';
 /** The terminal choice each model was last synced to. */
 const lastState = new WeakMap<Model, boolean>();
 
-/** Whether the user turned the terminal on (spec 003); off until they do. */
+/** Whether the user turned the terminal on; off until they do. */
 export function isTerminalOn(): boolean {
     try {
         return localStorage.getItem(StorageKeys.TERMINAL) === 'on';
@@ -36,7 +36,7 @@ export function isShellVisible(model: Model): boolean {
 }
 
 /**
- * Shows the shell only while the terminal is turned on (XRP Studio, spec 003), with or without a
+ * Shows the shell only while the terminal is turned on (XRP Studio), with or without a
  * project open, like a code editor's panel. Otherwise the editor tabset is maximized, which hides
  * the shell tabset without unmounting the terminal, so its output is kept. It only acts when the
  * terminal choice changes, so a maximize or restore chosen by the user is kept.

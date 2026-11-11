@@ -116,7 +116,7 @@ const VARIABLES_AND_FUNCTIONS = {
 /**
  * Golden tests for the Python generator: the code generated for every welcome example, every
  * toolbox block and a program with variables and functions is kept in a snapshot, so a Blockly
- * upgrade (spec 006) that changes the Python a child's program sends to the robot fails here.
+ * upgrade that changes the Python a child's program sends to the robot fails here.
  */
 describe('Python generator', () => {
     Blockly.setLocale(En as unknown as Record<string, string>);

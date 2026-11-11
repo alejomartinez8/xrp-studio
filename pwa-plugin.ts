@@ -8,7 +8,7 @@ const HEADER_COLOR = '#24292f';
 const MAX_CACHED_FILE_BYTES = 20 * 1024 * 1024;
 
 /**
- * Installable app that works offline (spec 018). The service worker stores every file of the
+ * Installable app that works offline. The service worker stores every file of the
  * build in the background after the first visit (blocks, Python editor, firmware, drivers), so
  * the app opens without internet and can be installed on tablets and computers. Source maps and
  * SCSS sources are left out. A new version waits until the user chooses Reload

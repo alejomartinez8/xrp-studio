@@ -193,7 +193,7 @@ function NavBar({ layoutref }: NavBarProps) {
     const [activeTab, setActiveTab] = useLocalStorage(StorageKeys.ACTIVETAB, '');
     /**
      * Whether a top-bar menu has no entry to show for the active tab, like View for a blocks file
-     * now that its Python entries moved to the editor switch (spec 003, part 6).
+     * now that its Python entries moved to the editor switch.
      */
     const menuIsEmpty = (item: MenuDataItem) =>
         !!item.children &&

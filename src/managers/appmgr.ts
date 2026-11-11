@@ -155,7 +155,7 @@ export default class AppMgr {
     }
 
     /**
-     * The signed-in account's Google Drive, which My projects syncs with (spec 005). The app's
+     * The signed-in account's Google Drive, which My projects syncs with. The app's
      * files go through {@link driveService}; this one is only used by sign-in and sync.
      */
     public get remoteDriveService(): DriveApi {

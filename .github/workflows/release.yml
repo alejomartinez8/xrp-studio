@@ -18,8 +18,8 @@ jobs:
             # Same staging as deploy.yml: the /firmware-loader/boards content
             # is never checked in, so pull it from the firmware repo before
             # the build or the released site 404s on all firmware loader data.
-            # The tag must match package.json, the single source of the app version
-            # (docs/specs/006-maintenance.md, part 6), or the released build would show another number.
+            # The tag must match package.json, the single source of the app version,
+            # or the released build would show another number.
             - name: Check the tag matches package.json
               run: |
                   VERSION=$(node -p "require('./package.json').version")

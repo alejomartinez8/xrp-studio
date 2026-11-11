@@ -15,7 +15,7 @@ export type RemoteItem = {
     appProperties?: Record<string, string>;
 };
 
-/** App property set to `'true'` on archived projects (spec 004, part 6). */
+/** App property set to `'true'` on archived projects. */
 export const ARCHIVED_PROPERTY = 'xrpArchived';
 
 /** Whether a Drive item is an archived project. */
@@ -40,7 +40,7 @@ const FIELDS = 'id,name,mimeType,parents,modifiedTime,explicitlyTrashed,trashedT
 type Fetch = typeof fetch;
 
 /**
- * DriveApi - the requests Drive sync needs (spec 005), on top of XRPWeb's GoogleDriveService
+ * DriveApi - the requests Drive sync needs, on top of XRPWeb's GoogleDriveService
  * (still used by the sign-in widget to create the XRPCode folder). Unlike that service, every
  * method throws a {@link DriveApiError} when Drive refuses or cannot be reached, so sync keeps
  * the change and tries again.
