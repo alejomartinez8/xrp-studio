@@ -750,3 +750,41 @@ and the visual comparison images do not change.
 ### Upstream
 
 Not applicable: it only concerns files created by the fork.
+
+## Part 13 — Change Log grouped by theme, and versions before 0.1.0
+
+### Problem
+
+The first Change Log entry (0.1.0) was a flat list, and everything built before it was one
+block. A teacher could not tell what each stage of the app added, and a list with one line per
+change would be too long to read.
+
+### Solution
+
+- Each entry has a one-line summary and short headings that follow the themes of the specs merged
+  since the previous tag (for example Look, Editor, Projects, Phones and tablets). Under each
+  heading, a few bullets say what a kid or a teacher can now do. Changes that only affect the code
+  (dependency upgrades, tests, build speed, folder structure) go in one "Under the hood" line.
+  Both languages have the same structure.
+- Versions before 0.1.0 were added afterwards, cut by date from the history of `main`:
+  0.0.1 (offline, My projects, top bar, login server, install), 0.0.2 (installable app,
+  automatic saving, sync, Explorer and Terminal), 0.0.3 (phones, faster builds, automatic tests),
+  0.0.4 (plain Spanish blocks, Trash, Archive, Blocks | Python selector, upgrades). The history
+  of `main` begins at the first of these, so 0.0.1 also holds the work that came before it.
+- Their tags are pushed by hand on the commits listed in the pull request. Pushing an old tag
+  runs the release workflow that existed at that commit, which builds that commit and creates a
+  GitHub Release without notes; the notes are then pasted from the Change Log.
+
+### Files
+
+`public/changelog/{en,es}.md`, `CLAUDE.md`.
+
+### How to test
+
+1. Open Help → What's new: the entries are listed from the newest, each with headings.
+2. Switch the language to Spanish: the same entries and headings appear in Spanish.
+
+### Upstream
+
+Not for XRPWeb.
+
