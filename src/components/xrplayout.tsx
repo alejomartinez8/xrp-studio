@@ -38,6 +38,7 @@ import { swapStylesheet } from '@/utils/swap-stylesheet';
 import WelcomeScreen from '@components/welcome/welcome-screen';
 import { isShellVisible, syncShellVisibility, toggleTerminal } from '@/utils/shell-visibility';
 import { SideBarIcon } from '@components/side-bar-icon';
+import { ClosePanelButton } from '@/components/close-panel-button';
 import { VscFiles, VscTerminal } from 'react-icons/vsc';
 import { isMaxMd } from '@/utils/breakpoints';
 
@@ -444,8 +445,8 @@ function XRPLayout({ forwardedref }: XRPLayoutProps) {
     };
 
     /**
-     * onRenderTabSet - adds the Terminal toggle below the Explorer icon in the left side bar
-     * (XRP Studio).
+     * onRenderTabSet - adds the Terminal toggle below the Explorer icon in the left side bar and the
+     * close button in the Terminal panel header (XRP Studio).
      */
     const onRenderTabSet = (node: TabSetNode | BorderNode, renderValues: ITabSetRenderValues) => {
         if (node instanceof BorderNode && node.getLocation().getName() === 'left') {
@@ -457,6 +458,15 @@ function XRPLayout({ forwardedref }: XRPLayoutProps) {
                     selected={shellVisible}
                     onClick={() => toggleTerminal(model)}
                     testId="terminal-toggle"
+                />,
+            );
+        }
+        if (node instanceof TabSetNode && node.getId() === Constants.SHELL_TABSET_ID) {
+            renderValues.buttons.push(
+                <ClosePanelButton
+                    key="close-panel"
+                    label={t('closePanel')}
+                    onClick={() => toggleTerminal(model)}
                 />,
             );
         }

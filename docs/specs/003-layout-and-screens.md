@@ -826,3 +826,45 @@ part.
 ### Upstream
 
 Fork-only (kids UI). XRPWeb's Python editor has no toolbox; the panel could be offered later.
+
+## Part 10 — Close button on the Terminal panel
+
+### Problem
+
+The Terminal panel could only be hidden with the Terminal icon in the side bar. A child looking
+at the panel itself, with nothing but a maximize button in its header, has no obvious way to
+close it; code editors put an X there.
+
+### Solution
+
+- The header of the Terminal panel has an X at its right end, after the maximize button. It hides
+  the panel exactly like the Terminal icon does: the output is kept, the choice is remembered on
+  the device, and the Terminal icon stops being highlighted.
+- To open the panel again, use the Terminal icon below the Explorer icon, as before.
+- The button is named "Close panel" ("Cerrar panel" in Spanish) in its tooltip and for screen
+  readers. It can be reached with the Tab key and pressed with Enter or Space, shows a focus
+  outline, and is larger on touch screens (44 px) so a finger can hit it. It is readable in the
+  light and dark themes.
+
+| Light | Dark |
+| --- | --- |
+| ![Terminal panel with the X, light](images/003-close-panel-light.png) | ![Terminal panel with the X, dark](images/003-close-panel-dark.png) |
+
+### Files
+
+- `src/components/close-panel-button.tsx` (and its test): the X button.
+- `src/components/xrplayout.tsx`: adds it to the Terminal panel header.
+- `src/utils/i18n/locales/{en,es}/*.json`: `closePanel`.
+- `e2e/close-panel.spec.ts`: close with the keyboard, reopen with the Terminal icon.
+
+### How to test
+
+1. Click the Terminal icon: the panel opens and its header shows maximize and the X.
+2. Hover the X: the tooltip reads "Close panel". Press it: the panel hides and the Terminal icon is
+   no longer highlighted.
+3. Click the Terminal icon: the panel is back with its earlier output.
+4. Tab to the X and press Enter: it closes too. Check it in the dark theme and on a tablet.
+
+### Upstream
+
+Fork-only (the Terminal toggle belongs to the fork).
