@@ -63,7 +63,7 @@ function MobileMenu({ children, footer }: MobileMenuProps) {
                 className={`fixed inset-x-0 bottom-0 top-14 z-100 flex-col overflow-y-auto bg-curious-blue-700 py-2 shadow-md dark:bg-mountain-mist-950 md:static md:inset-auto md:contents ${isOpen ? 'flex' : 'hidden'}`}
             >
                 <div className="flex flex-col md:hidden">{children(close)}</div>
-                <div className="mt-2 flex items-center justify-center border-t border-matisse-400 px-4 pt-3 dark:border-shark-600 md:mt-0 md:border-0 md:p-0">
+                <div className="account-slot mt-2 flex items-center justify-center border-t border-matisse-400 px-4 pt-3 dark:border-shark-600 md:mt-0 md:border-0 md:p-0">
                     {footer}
                 </div>
             </div>

@@ -444,6 +444,15 @@ selector.
   `#6a9955`). The extra colours for calls, attributes and constants use the same palettes.
 - **Blocks.** The category colours of the blocks do not change. Only the surfaces around them follow
   the neutral palette: workspace, grid, toolbox and flyout.
+- **Tabs and terminal.** Editor tabs are flat and side by side with a thin separator: the active
+  tab has the editor colour, the others a slightly darker grey. The Terminal title is plain text
+  on a rounded tint, without an icon, like a VS Code panel title.
+- **Canvas dots.** The grid of the block canvas is made of dots instead of crosses.
+- **Account.** On wide screens the Google sign-in is only an icon, at the bottom of the left icon
+  strip (or the profile picture once signed in; its menu opens to the right). On narrow screens it
+  stays in the menu with its text.
+- **Font.** The system font stack of VS Code (the platform's UI font) with its 13px size for tabs
+  and the Explorer; the rest of the app keeps its size so it stays easy to read on tablets.
 - **Light title bar and menus.** The navbar and its menus are light grey with dark text in the light
   variant; the menu icons are darkened to match.
 - **Contrast.** Checked against WCAG AA (4.5:1) for the status bar, tabs, disabled text, the
@@ -462,6 +471,8 @@ affected.
 - Replaced: `src/theme/github/` by `src/theme/vscode/` (`tailwind.css`, `app.css`, `blocks.ts`);
   `src/theme/index.ts`, `src/theme/app-themes.ts`, `src/index.css`, `src/main.tsx`.
 - Updated: `src/components/status-bar/status-bar.tsx` (blue status bar),
+  `src/components/xrplayout.tsx` (terminal tab class), `src/components/blockly.tsx` (dot grid),
+  `src/components/navbar/mobile-menu.tsx` and `src/widgets/compact-account.tsx` (account icon),
   `src/components/MonacoEditor.tsx` and `src/components/python/python-colours.ts` (theme ids),
   `src/components/blockly/toolbox-ui.css` (search box), `src/components/xrpshell.tsx` (terminal
   colours).
@@ -479,7 +490,8 @@ affected.
 3. Open a blocks file: the block colours are the same as before; only the area around them is grey.
 4. Open the Python editor and a Python view of a blocks file: colours follow VS Code in both
    variants.
-5. Open the settings menu in light mode: light menu, dark icons, dark text.
+5. With Google sign-in available, check the icon at the bottom of the left strip and its menu.
+6. Open the settings menu in light mode: light menu, dark icons, dark text.
 
 Screenshots (English, light and dark):
 `docs/specs/images/002-vscode-blocks-{light,dark}.png` (My projects and a blocks file),

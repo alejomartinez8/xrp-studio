@@ -676,7 +676,7 @@ function BlocklyEditor({ tabId, tabName }: BlocklyEditorProps) {
                 media: 'node_modules/blockly/media/',
                 grid: {
                     spacing: 40,
-                    length: 7,
+                    length: 2,
                     colour: activeBlockTheme.surfaces[
                         AppMgr.getInstance().getTheme() === Themes.DARK ? 'dark' : 'light'
                     ].grid,
