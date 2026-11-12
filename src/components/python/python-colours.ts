@@ -20,7 +20,7 @@ import { ExtensionHostKind, registerExtension } from '@codingame/monaco-vscode-a
  * them where they are used, so their uses stay plain.
  */
 export const pythonTokenColours = {
-    '[Light Modern]': {
+    '[Light+]': {
         textMateRules: [
             { scope: 'meta.function-call.generic.python', settings: { foreground: '#795E26' } },
             { scope: 'meta.attribute.python', settings: { foreground: '#001080' } },
@@ -28,7 +28,7 @@ export const pythonTokenColours = {
             { scope: 'variable.other.object.python', settings: { foreground: '#267F99' } },
         ],
     },
-    '[Dark Modern]': {
+    '[Dark+]': {
         textMateRules: [
             { scope: 'meta.function-call.generic.python', settings: { foreground: '#DCDCAA' } },
             { scope: 'meta.attribute.python', settings: { foreground: '#9CDCFE' } },

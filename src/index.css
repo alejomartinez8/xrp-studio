@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-@import './theme/github/tailwind.css';
+@import './theme/vscode/tailwind.css';
 @import 'flowbite-react/plugin/tailwindcss';
 @import './debug-screens.css';
 @source '../.flowbite-react/class-list.json';

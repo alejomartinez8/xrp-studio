@@ -1,11 +1,11 @@
 import type { BlockTheme } from '@/theme/types';
 
 /**
- * GitHub block theme: one vivid colour per category, taken from GitHub's Primer data visualization
- * palette, with GitHub's canvas, border and text colours for the editor surfaces.
+ * Block theme of the VS Code default themes: one vivid colour per category, kept cheerful on
+ * purpose, with the neutral greys of Default Light+ and Default Dark+ for the editor surfaces.
  */
-export const githubBlockTheme: BlockTheme = {
-    name: 'github',
+export const vscodeBlockTheme: BlockTheme = {
+    name: 'vscode',
     categories: {
         motors: '#d43511',
         individualMotors: '#df0c24',
@@ -24,22 +24,22 @@ export const githubBlockTheme: BlockTheme = {
         lists: '#64762d',
         variables: '#ce2c85',
         functions: '#a830e8',
-        advanced: '#57606a',
+        advanced: '#616161',
     },
     surfaces: {
         light: {
-            workspace: '#f6f8fa',
-            grid: '#d0d7de',
-            toolbox: '#ffffff',
-            toolboxText: '#1f2328',
-            flyout: '#eaeef2',
+            workspace: '#ffffff',
+            grid: '#dcdcdc',
+            toolbox: '#f3f3f3',
+            toolboxText: '#333333',
+            flyout: '#e8e8e8',
         },
         dark: {
-            workspace: '#0d1117',
-            grid: '#30363d',
-            toolbox: '#161b22',
-            toolboxText: '#e6edf3',
-            flyout: '#21262d',
+            workspace: '#1e1e1e',
+            grid: '#3d3d3d',
+            toolbox: '#252526',
+            toolboxText: '#cccccc',
+            flyout: '#2c2c2d',
         },
     },
 };
