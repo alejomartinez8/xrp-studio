@@ -6,6 +6,13 @@ on:
         branches: ['main']
     # Allows you to run this workflow manually from the Actions tab
     workflow_dispatch:
+    # Called by release.yml to deploy the release commit
+    workflow_call:
+        inputs:
+            ref:
+                description: 'Commit to deploy'
+                type: string
+                default: ''
     # Sets the GITHUB_TOKEN permissions to allow deployment to GitHub Pages
 permissions:
     contents: read
@@ -22,6 +29,8 @@ jobs:
         steps:
             - name: Checkout
               uses: actions/checkout@v4
+              with:
+                  ref: ${{ inputs.ref }}
             - name: Resolve latest XRP_Firmware release
               id: firmware
               env:

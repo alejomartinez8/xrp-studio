@@ -630,7 +630,8 @@ told the story of XRPWeb, not of the fork.
   "what's new" window. It opens the first time and whenever the version changes, and stays in the
   Help menu. The window also shows the version and the XRPWeb base. XRPWeb's `CHANGELOG.md` stays
   in the site, untouched and unused.
-- Releases: a release is a pull request that bumps the version in `package.json` (and adds an
+- Releases (replaced by part 14: releases are now automatic; this is the manual flow used for
+  0.0.1 to 0.2.0): a release is a pull request that bumps the version in `package.json` (and adds an
   entry to both Change Logs); once merged, the tag `vX.Y.Z` is pushed on `main`. The tag creates
   the GitHub Release with notes built from the titles of the pull requests merged since the
   previous tag, and attaches the build. The release stops if the tag does not match
@@ -788,3 +789,70 @@ change would be too long to read.
 
 Not for XRPWeb.
 
+## Part 14 — One version per merged pull request, automatically
+
+### Problem
+
+A release was a manual pull request (bump the version, write the Change Log) plus a tag that
+someone had to remember to push. Versions came late and in big, hand-written steps, and a
+merged fix could wait weeks before anyone could tell which version carried it.
+
+### Solution
+
+- Every pull request merged into `main` that changes what users get makes one version, with
+  nothing to remember. The title of the pull request decides the number (Conventional Commits):
+
+  | Title starts with | Release |
+  | --- | --- |
+  | `feat:` | minor (0.3.0) |
+  | `fix:`, `perf:`, `style:` | patch (0.2.1) |
+  | `type!:` or "BREAKING CHANGE" in the description | major; while the version is 0.x, minor. 1.0.0 stays a manual decision |
+  | `docs:`, `test:`, `chore:`, `refactor:`, `ci:`, `build:` | none |
+
+  If several pull requests are waiting (for example two merged in a row), they make one version
+  with the highest bump among them.
+- The description of the pull request carries the Change Log: `Change Log (en): ...` and
+  `Change Log (es): ...` (one sentence for kids and teachers each, repeat the pair for more than
+  one change) and optionally `Change Log (theme): Editor`. A check on every pull request fails with
+  a clear message when the title has no type, or when a `feat`/`fix` has no pair of lines.
+  `docs`, `chore` and the like are never blocked. A new minor version groups its lines under the
+  theme headings, as before; a patch is a short list of lines. If a merged pull request has no
+  lines, its title is written in both languages with "(PR #N has no Change Log line)", so the gap is
+  visible and the release still happens.
+- What happens after a merge: a workflow looks at the pull requests merged since the last tag, works
+  out the version, and opens and merges a small `chore(release): vX.Y.Z` pull request that changes
+  `package.json`, `package-lock.json` and both Change Logs (the repository only accepts changes
+  through pull requests, so the workflow does the same as a person would). It then tags that commit
+  `vX.Y.Z`, builds, creates the GitHub Release (the notes are the new Change Log entry; the build
+  is attached as a zip) and deploys the page again so the hosted app shows the new version. Two
+  merges in a row wait for each other, and the second starts from the updated `main`.
+- The workflow's own commits do not start other workflows, so the page is deployed by the release
+  workflow itself. A merge that releases deploys the page twice (the second one wins); a merge that
+  does not release deploys once, as before.
+- Rolling back: disable the "Release" workflow in the Actions tab. Pushes to `main` keep deploying
+  the page as before; versions go back to being made by hand (bump, Change Log, tag).
+
+### Files
+
+`.github/workflows/release.yml` (replaces the tag-triggered release), `.github/workflows/pr-check.yml`,
+`.github/workflows/deploy.yml` (can be called by the release), `.github/pull_request_template.md`,
+`scripts/release-lib.mjs`, `scripts/release.mjs`, `CLAUDE.md`, `.claude/skills/xrp-pr/SKILL.md`.
+Tests: `scripts/release-lib.spec.mjs` (titles, bumps, Change Log lines, file updates).
+
+### How to test
+
+1. Open a pull request titled "Fix colours" and no type: the check "PR title and Change Log" fails
+   and says what to write. Rename it "fix: Fix colours" without Change Log lines: it fails again.
+   Add the English and Spanish lines: it passes. A "docs: ..." pull request passes with no lines.
+2. Run the "Release" workflow by hand from the Actions tab with "dry run" on: it prints the next
+   version and the Change Log text without changing anything.
+3. Merge a `fix:` pull request: a few minutes later `main` has a "chore(release): v…" commit, the
+   tag and a GitHub Release exist, and the Help → What's new window lists the new version in both
+   languages. The version in the status bar of the hosted app is the new one.
+4. Merge a `docs:` pull request: no new version, the page deploys as usual.
+5. Merge two pull requests in a row: one version covers both, or two versions one after the other,
+   never a failed run.
+
+### Upstream
+
+Not for XRPWeb: the fork's own numbering.

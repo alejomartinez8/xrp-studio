@@ -1,92 +1,130 @@
-# github workflow to make a release
-name: Create release based on a tag
+# Automatic release: every push to main that holds a feat/fix/perf/style change makes one version.
+# It opens a "chore(release): vX.Y.Z" PR (version, lockfile, both Change Logs), merges it, tags the
+# merge commit, builds, creates the GitHub Release and deploys the page again with the new
+# version. Rules: scripts/release-lib.mjs. Roll back by disabling this workflow in the Actions tab.
+name: Release
 on:
     push:
-        tags:
-            - 'v*' # Trigger when a tag like v1.0.0 is pushed
+        branches: ['main']
+    workflow_dispatch:
+        inputs:
+            dry_run:
+                description: 'Only print the next version and the Change Log, change nothing'
+                type: boolean
+                default: true
 permissions:
-    contents: write # Grants write permission to repository contents
+    contents: read
+# One release at a time: a second merge waits and then starts from the updated main.
+concurrency:
+    group: release
+    cancel-in-progress: false
 
 jobs:
     release:
-        name: Release pushed tag
+        name: Version, tag and Release
         runs-on: ubuntu-latest
-
+        if: ${{ !startsWith(github.event.head_commit.message, 'chore(release):') }}
+        permissions:
+            contents: write
+            pull-requests: write
+        outputs:
+            released: ${{ steps.plan.outputs.released }}
+            sha: ${{ steps.merge.outputs.sha }}
+        env:
+            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-            # Same staging as deploy.yml: the /firmware-loader/boards content
-            # is never checked in, so pull it from the firmware repo before
-            # the build or the released site 404s on all firmware loader data.
-            # The tag must match package.json, the single source of the app version,
-            # or the released build would show another number.
-            - name: Check the tag matches package.json
-              run: |
-                  VERSION=$(node -p "require('./package.json').version")
-                  if [ "v$VERSION" != "${{ github.ref_name }}" ]; then
-                      echo "Tag ${{ github.ref_name }} does not match package.json version $VERSION"
-                      exit 1
-                  fi
-            - name: Resolve latest XRP_Firmware release
-              id: firmware
-              env:
-                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              run: |
-                  TAG=$(gh release view --repo Open-STEM/XRP_Firmware --json tagName --jq .tagName)
-                  echo "tag=$TAG" >> "$GITHUB_OUTPUT"
-                  echo "Using XRP_Firmware release $TAG"
-            - name: Checkout firmware-loader content (XRP_Firmware)
+            - name: Checkout the latest main
               uses: actions/checkout@v4
               with:
-                  # Pull the latest published release. To ship unreleased firmware, override
-                  # repository/ref to a fork or branch.
-                  repository: Open-STEM/XRP_Firmware
-                  ref: ${{ steps.firmware.outputs.tag }}
-                  path: xrp-firmware
-            - name: Stage firmware-loader boards content
-              run: |
-                  rm -rf public/firmware-loader/boards
-                  cp -r xrp-firmware/boards public/firmware-loader/boards
+                  ref: main
+                  fetch-depth: 0
             - name: Set up Node
               uses: actions/setup-node@v4
               with:
                   node-version: 22
-                  cache: 'npm'
+            - name: Plan the release
+              id: plan
+              run: node scripts/release.mjs plan
+            - name: Apply the release to a branch
+              if: ${{ steps.plan.outputs.released == 'true' && inputs.dry_run != true }}
+              id: apply
+              run: |
+                  node scripts/release.mjs apply
+                  VERSION="${{ steps.plan.outputs.version }}"
+                  git config user.name "github-actions[bot]"
+                  git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+                  git checkout -b "release/v$VERSION"
+                  git add package.json package-lock.json public/changelog
+                  git commit -m "chore(release): v$VERSION"
+                  git push --force origin "release/v$VERSION"
+            - name: Merge the release PR and tag the result
+              if: ${{ steps.plan.outputs.released == 'true' && inputs.dry_run != true }}
+              id: merge
+              run: |
+                  VERSION="${{ steps.plan.outputs.version }}"
+                  PR=$(gh api "repos/$GITHUB_REPOSITORY/pulls" -f title="chore(release): v$VERSION" \
+                      -f head="release/v$VERSION" -f base=main \
+                      -f body="Automatic release: version and Change Log." --jq .number)
+                  gh api -X PUT "repos/$GITHUB_REPOSITORY/pulls/$PR/merge" -f merge_method=squash \
+                      -f commit_title="chore(release): v$VERSION (#$PR)"
+                  git push origin --delete "release/v$VERSION" || true
+                  git fetch origin main
+                  SHA=$(git rev-parse origin/main)
+                  git checkout --detach "$SHA"
+                  git tag "v$VERSION"
+                  git push origin "v$VERSION"
+                  echo "sha=$SHA" >> "$GITHUB_OUTPUT"
+            # Same staging as deploy.yml: the /firmware-loader/boards content is never checked in.
+            - name: Resolve latest XRP_Firmware release
+              if: ${{ steps.merge.outputs.sha != '' }}
+              id: firmware
+              run: |
+                  TAG=$(gh release view --repo Open-STEM/XRP_Firmware --json tagName --jq .tagName)
+                  echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+            - name: Checkout firmware-loader content (XRP_Firmware)
+              if: ${{ steps.merge.outputs.sha != '' }}
+              uses: actions/checkout@v4
+              with:
+                  repository: Open-STEM/XRP_Firmware
+                  ref: ${{ steps.firmware.outputs.tag }}
+                  path: xrp-firmware
+            - name: Stage firmware-loader boards content
+              if: ${{ steps.merge.outputs.sha != '' }}
+              run: |
+                  rm -rf public/firmware-loader/boards
+                  cp -r xrp-firmware/boards public/firmware-loader/boards
             - name: Install dependencies
-              run: npm install
-            - name: test
-              run: npm run test
+              if: ${{ steps.merge.outputs.sha != '' }}
+              run: npm ci
+            - name: Test
+              if: ${{ steps.merge.outputs.sha != '' }}
+              run: npx vitest run
             - name: Build
+              if: ${{ steps.merge.outputs.sha != '' }}
               run: npm run build
               env:
                   GOOGLE_AUTH_URL: ${{ vars.GOOGLE_AUTH_URL }}
                   GOOGLE_CHATAPI_PROXY_TARGET: ${{ vars.GOOGLE_CHATAPI_PROXY_TARGET }}
                   GOOGLE_REDIRECT_URI: ${{ vars.GOOGLE_REDIRECT_URI }}
-            - name: Archive site content
-              uses: thedoctor0/zip-release@master
-              with:
-                  type: 'zip'
-                  directory: './dist'
-                  filename: ../xrpweb-v${{ github.run_number }}.zip
-            - name: Debug - List files
+            - name: Create the GitHub Release
+              if: ${{ steps.merge.outputs.sha != '' }}
               run: |
-                  ls -la
-                  ls -la dist/
-            - name: Create Release
-              id: create_new_release
-              uses: softprops/action-gh-release@v2.3.3
-              with:
-                  tag_name: ${{ github.ref_name }}
-                  name: Release ${{ github.ref_name }}
-                  # Notes list the titles of the PRs merged since the previous tag.
-                  generate_release_notes: true
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            - name: Upload Build artifacts
-              uses: svenstaro/upload-release-action@v2
-              with:
-                  repo_token: ${{ secrets.GITHUB_TOKEN }}
-                  file: xrpweb-v${{ github.run_number }}.zip
-                  asset_name: artifacts.zip
-                  tag: ${{ github.ref }}
-                  overwrite: true
+                  VERSION="${{ steps.plan.outputs.version }}"
+                  (cd dist && zip -qr "../xrp-studio-v$VERSION.zip" .)
+                  gh release create "v$VERSION" "xrp-studio-v$VERSION.zip" \
+                      --title "Release v$VERSION" --notes-file release-notes.md --verify-tag
+
+    # The push that merged the release PR does not start other workflows, so the page is
+    # deployed here, from the release commit, with the new version.
+    deploy:
+        name: Deploy the released version
+        needs: release
+        if: ${{ needs.release.outputs.released == 'true' && needs.release.outputs.sha != '' }}
+        permissions:
+            contents: read
+            id-token: write
+            pages: write
+            deployments: write
+        uses: ./.github/workflows/deploy.yml
+        with:
+            ref: ${{ needs.release.outputs.sha }}
