@@ -1,5 +1,10 @@
 # What's new in XRP Studio
 
+## Version 0.3.0
+
+### Under the hood
+* Every merged change now gets its own version number and Change Log entry automatically.
+
 ## Version 0.2.0
 
 A new look and an easier Python editor.
