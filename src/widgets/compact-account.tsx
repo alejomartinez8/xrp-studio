@@ -40,7 +40,7 @@ export function AccountPlaceholder() {
             title={t('googleSigningIn')}
             className="flex h-11 w-11 items-center justify-center"
         >
-            <span className="h-9 w-9 animate-pulse rounded-full bg-shark-200 dark:bg-shark-600" />
+            <span className="bg-shark-200 dark:bg-shark-600 h-9 w-9 animate-pulse rounded-full" />
         </span>
     );
 }
@@ -75,10 +75,12 @@ function CompactAccount({
                 onClick={onSignIn}
                 disabled={isSigningIn}
                 title={t('googleLoginTooltip')}
-                className="flex h-11 items-center gap-2 whitespace-nowrap rounded-full bg-shark-200 px-4 text-matisse-900 hover:bg-curious-blue-300 disabled:opacity-60 dark:bg-shark-600 dark:text-shark-100 dark:hover:bg-shark-500"
+                className="bg-shark-200 text-matisse-900 hover:bg-curious-blue-300 dark:bg-shark-600 dark:text-shark-100 dark:hover:bg-shark-500 md:bg-shark-100 md:hover:bg-shark-300 md:dark:bg-shark-100 md:dark:hover:bg-shark-300 flex h-11 items-center gap-2 rounded-full px-4 whitespace-nowrap disabled:opacity-60 md:h-8 md:w-8 md:justify-center md:p-0"
             >
                 <img src={GoogleLogo} alt="" className="h-5 w-5" />
-                <span>{isSigningIn ? t('googleSigningIn') : t('gooSignIn')}</span>
+                <span className="md:sr-only">
+                    {isSigningIn ? t('googleSigningIn') : t('gooSignIn')}
+                </span>
             </button>
         );
     }
@@ -92,7 +94,7 @@ function CompactAccount({
             onError={onPictureError}
         />
     ) : (
-        <span className="text-white flex h-9 w-9 items-center justify-center rounded-full bg-curious-blue-600 text-sm font-semibold">
+        <span className="bg-curious-blue-600 flex h-9 w-9 items-center justify-center rounded-full text-sm font-semibold text-white">
             {initials(profile)}
         </span>
     );
@@ -100,7 +102,7 @@ function CompactAccount({
     return (
         <NavDropdown id="accountBtn" label={profile.email} icon={avatar}>
             {(close) => (
-                <div className="text-neutral-200 flex flex-col gap-2 px-4 py-2">
+                <div className="flex flex-col gap-2 px-4 py-2 text-neutral-200">
                     <div className="flex flex-col">
                         <span className="font-semibold">{profile.name}</span>
                         <span className="text-sm opacity-80">{profile.email}</span>
@@ -108,7 +110,7 @@ function CompactAccount({
                     <button
                         type="button"
                         role="menuitem"
-                        className="rounded-md py-1 text-left hover:bg-matisse-400 dark:hover:bg-shark-500"
+                        className="hover:bg-matisse-400 dark:hover:bg-shark-500 rounded-md py-1 text-left"
                         onClick={() => {
                             close();
                             onSignOut();

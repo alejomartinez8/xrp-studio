@@ -30,8 +30,8 @@
 }
 
 #toolbox-search-input input:focus {
-    border-color: #0969da;
-    box-shadow: 0 0 0 1px #0969da;
+    border-color: #0066b8;
+    box-shadow: 0 0 0 1px #0066b8;
     outline: none;
 }
 
@@ -42,15 +42,15 @@
 }
 
 .dark #toolbox-search-input input {
-    background: #21262d;
+    background: #3c3c3c;
     background-image: none;
-    color: #e6edf3;
-    border-color: #30363d;
+    color: #cccccc;
+    border-color: #4b4b4b;
 }
 
 .dark #toolbox-search-input input:focus {
-    border-color: #388bfd;
-    box-shadow: 0 0 0 1px #388bfd;
+    border-color: #007acc;
+    box-shadow: 0 0 0 1px #007acc;
 }
 
 .dark .blocklyToolboxCategoryIconClosed,
@@ -93,9 +93,9 @@ div#toolbox-search-input.blocklyToolboxCategory {
 .xrpFlyoutTitle .blocklyFlyoutLabelText {
     font-size: 16px;
     font-weight: 700;
-    fill: #1f2328;
+    fill: #333333;
 }
 
 .dark .xrpFlyoutTitle .blocklyFlyoutLabelText {
-    fill: #e6edf3;
+    fill: #cccccc;
 }

@@ -433,7 +433,7 @@ page also drew at desktop width, because the viewport tag was commented out in `
 - `src/utils/shell-visibility.ts`: the shell shows with a project open and the terminal on;
   `toggleTerminal` and the remembered choice.
 - `src/utils/localstorage.ts`: `Terminal` key.
-- `src/theme/github/app.css`: side bar icon buttons; the frame colour, gaps, rounded cards and
+- `src/theme/vscode/app.css`: side bar icon buttons; the frame colour, gaps, rounded cards and
   one colour per card.
 - `src/components/folder-header.tsx`: new file and new folder icons.
 - `src/components/xrpshell.tsx`: the terminal uses the card colour.

@@ -72,7 +72,7 @@ const applyEditorTheme = (theme: string) =>
         JSON.stringify({
             'editor.fontSize': Constants.DEFAULT_FONTSIZE,
             'editor.tokenColorCustomizations': pythonTokenColours,
-            'workbench.colorTheme': theme === Themes.DARK ? 'Dark Modern' : 'Light Modern',
+            'workbench.colorTheme': theme === Themes.DARK ? 'Dark+' : 'Light+',
         }),
     );
 

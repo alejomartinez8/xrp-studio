@@ -260,7 +260,7 @@ and how the app follows:
 
 - **Theme variables are renamed.** The colours, font and sizes are now set through
   `--flexlayout-*` variables (for example `--flexlayout-color-text`, `--flexlayout-font-family`)
-  instead of `--color-*` and `--font-family`. The GitHub theme (`src/theme/github/app.css`) sets the
+  instead of `--color-*` and `--font-family`. The GitHub theme (`src/theme/vscode/app.css`) sets the
   new names; without them the layout fell back to the library's own colours and font.
 - **The splitter size moved from the layout settings to CSS** (`--flexlayout-splitter-size: 6px`).
 - **Tab bars have a minimum height** (1.5 lines). The editor tab bar with no tabs (welcome screen)
@@ -281,7 +281,7 @@ the ones taken before the upgrade, pixel for pixel, so no image changed.
 ### Files
 
 - `package.json`, `package-lock.json`
-- `src/theme/github/app.css`, `src/components/side-bar-icon.tsx`, `src/components/xrplayout.tsx`,
+- `src/theme/vscode/app.css`, `src/components/side-bar-icon.tsx`, `src/components/xrplayout.tsx`,
   `src/utils/editorUtils.ts`, `src/components/editor-chooser.tsx`
 
 ### How to test
@@ -445,7 +445,7 @@ the backlog) needs colours that can change while the app runs.
 - **Tailwind 4.3** through its Vite plugin (`@tailwindcss/vite`); the PostCSS config and
   `autoprefixer` are gone (Tailwind 4 adds browser prefixes itself).
 - **Palette as CSS theme variables.** The GitHub palette and the 6px corners moved from
-  `src/theme/github/tailwind.ts` (and `withGitHubTheme()`) to `src/theme/github/tailwind.css`, an
+  `src/theme/vscode/tailwind.ts` (and `withGitHubTheme()`) to `src/theme/vscode/tailwind.css`, an
   `@theme` block imported by `src/index.css`. Every colour keeps its value: `shark`,
   `mountain-mist`, `curious-blue`, `matisse`, `chateau-green` and `cinnabar` with GitHub's values
   and `ecstasy` with XRPWeb's. XRPWeb's own values for the other palettes, which the GitHub theme
@@ -487,7 +487,7 @@ the backlog) needs colours that can change while the app runs.
 ### Files
 
 - `package.json`, `package-lock.json`, `vite.config.ts`, `tailwind.config.ts`, `tsconfig.node.json`,
-  `src/index.css`, `src/theme/github/tailwind.css` (new, replaces `tailwind.ts`),
+  `src/index.css`, `src/theme/vscode/tailwind.css` (new, replaces `tailwind.ts`),
   `src/debug-screens.css` (new), `.flowbite-react/` (config, init, class list); removed
   `postcss.config.js` and `tailwind-plugins.d.ts`.
 - Class renames from the upgrade tool in the components (`src/components/`, `src/widgets/`,

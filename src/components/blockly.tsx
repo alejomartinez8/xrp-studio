@@ -605,6 +605,14 @@ function BlocklyEditor({ tabId, tabName }: BlocklyEditorProps) {
             if (visible && !wasVisible) {
                 requestAnimationFrame(() => restoreViewportForTab(workspace));
             }
+            if (visible) {
+                requestAnimationFrame(() => {
+                    const svgWs = asSvgWorkspace(workspace);
+                    if (svgWs) {
+                        Blockly.svgResize(svgWs as unknown as Blockly.WorkspaceSvg);
+                    }
+                });
+            }
             wasVisible = visible;
         });
 
@@ -676,7 +684,7 @@ function BlocklyEditor({ tabId, tabName }: BlocklyEditorProps) {
                 media: 'node_modules/blockly/media/',
                 grid: {
                     spacing: 40,
-                    length: 7,
+                    length: 2,
                     colour: activeBlockTheme.surfaces[
                         AppMgr.getInstance().getTheme() === Themes.DARK ? 'dark' : 'light'
                     ].grid,

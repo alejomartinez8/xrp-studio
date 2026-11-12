@@ -1,0 +1,117 @@
+/**
+ * Palette of the VS Code default themes (Default Light+ and Default Dark+) for Tailwind, as CSS
+ * theme variables.
+ *
+ * The app's components use the named palettes below (curious-blue, matisse, shark, ...). Replacing
+ * their values here restyles the whole app without touching components:
+ * - shark, mountain-mist: the neutral greys of both variants, one scale for light (50-300 as
+ *   surfaces and borders, 600-800 as text) and dark (700-950 as surfaces and borders, 200-400 as
+ *   text): #f3f3f3 side bar, #dcdcdc frame, #333333 text, #3d3d3d frame, #252526 side bar and
+ *   #1e1e1e editor
+ * - curious-blue: VS Code's blue accent (#007acc status bar and focus, #0066b8 for buttons and
+ *   links on light surfaces); shade 100 is the light selection tint, 900 the dark selection, 700
+ *   the dark menu colour
+ * - matisse: greys used for menu hovers and buttons on dark menus
+ * - chateau-green, cinnabar: green (Run) and red (Stop)
+ * - ecstasy: XRPWeb's orange, unchanged
+ * Rounded corners are 6px; `rounded-full` stays round.
+ *
+ * `--color-*: initial` drops Tailwind's default palette, as the Tailwind 3 config did by replacing
+ * `theme.colors`: only these palettes and the ones Flowbite adds (gray, red, blue, ...) exist, so
+ * `bg-white` or `text-black` still produce no style. Tailwind writes every value as a variable on
+ * `:root` and the utilities read the variable, so a later theme can restyle the app at run time by
+ * setting the same variables under a selector (for example `[data-theme="dracula"]`).
+ */
+@theme {
+    --color-*: initial;
+
+    --color-shark-50: #f3f3f3;
+    --color-shark-100: #e8e8e8;
+    --color-shark-200: #dcdcdc;
+    --color-shark-300: #c8c8c8;
+    --color-shark-400: #a6a6a6;
+    --color-shark-500: #6c6c6c;
+    --color-shark-600: #616161;
+    --color-shark-700: #3d3d3d;
+    --color-shark-800: #333333;
+    --color-shark-900: #252526;
+    --color-shark-950: #1e1e1e;
+
+    --color-mountain-mist-50: #f3f3f3;
+    --color-mountain-mist-100: #e8e8e8;
+    --color-mountain-mist-200: #dcdcdc;
+    --color-mountain-mist-300: #c8c8c8;
+    --color-mountain-mist-400: #a6a6a6;
+    --color-mountain-mist-500: #6c6c6c;
+    --color-mountain-mist-600: #616161;
+    --color-mountain-mist-700: #3d3d3d;
+    --color-mountain-mist-800: #333333;
+    --color-mountain-mist-900: #252526;
+    --color-mountain-mist-950: #1e1e1e;
+
+    --color-curious-blue-50: #eef4fa;
+    --color-curious-blue-100: #e4e6f1;
+    --color-curious-blue-200: #c7d3ea;
+    --color-curious-blue-300: #8fb4e0;
+    --color-curious-blue-400: #3794ff;
+    --color-curious-blue-500: #007acc;
+    --color-curious-blue-600: #0066b8;
+    --color-curious-blue-700: #1e1e1e;
+    --color-curious-blue-800: #004f8c;
+    --color-curious-blue-900: #04395e;
+    --color-curious-blue-950: #022840;
+
+    --color-matisse-50: #f3f3f3;
+    --color-matisse-100: #e8e8e8;
+    --color-matisse-200: #dcdcdc;
+    --color-matisse-300: #c8c8c8;
+    --color-matisse-400: #4b4b4b;
+    --color-matisse-500: #424242;
+    --color-matisse-600: #3d3d3d;
+    --color-matisse-700: #333333;
+    --color-matisse-800: #2c2c2c;
+    --color-matisse-900: #252526;
+    --color-matisse-950: #1e1e1e;
+
+    --color-chateau-green-50: #dafbe1;
+    --color-chateau-green-100: #aceebb;
+    --color-chateau-green-200: #6fdd8b;
+    --color-chateau-green-300: #4ac26b;
+    --color-chateau-green-400: #2da44e;
+    --color-chateau-green-500: #1f883d;
+    --color-chateau-green-600: #1a7f37;
+    --color-chateau-green-700: #116329;
+    --color-chateau-green-800: #044f1e;
+    --color-chateau-green-900: #003d16;
+    --color-chateau-green-950: #002d11;
+
+    --color-cinnabar-50: #fff5f4;
+    --color-cinnabar-100: #ffebe9;
+    --color-cinnabar-200: #ffcecb;
+    --color-cinnabar-300: #ffaba8;
+    --color-cinnabar-400: #ff8182;
+    --color-cinnabar-500: #fa4549;
+    --color-cinnabar-600: #cf222e;
+    --color-cinnabar-700: #a40e26;
+    --color-cinnabar-800: #82071e;
+    --color-cinnabar-900: #660018;
+    --color-cinnabar-950: #4c0014;
+
+    --color-ecstasy-50: #fff7ed;
+    --color-ecstasy-100: #feeed6;
+    --color-ecstasy-200: #fcd8ac;
+    --color-ecstasy-300: #fabc77;
+    --color-ecstasy-400: #f79540;
+    --color-ecstasy-500: #f57e25;
+    --color-ecstasy-600: #e65d10;
+    --color-ecstasy-700: #be4610;
+    --color-ecstasy-800: #973715;
+    --color-ecstasy-900: #7a3014;
+    --color-ecstasy-950: #421608;
+
+    --radius-md: 6px;
+    --radius-lg: 6px;
+    --radius-xl: 6px;
+    --radius-2xl: 6px;
+    --radius-3xl: 6px;
+}

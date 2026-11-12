@@ -76,7 +76,7 @@ The rest of the app looks like an IDE for adults.
   become tiny once the canvas was zoomed out to fit a program). The longest blocks fit without
   being cut. The list floats over the canvas and closes when a block is picked, as in Blockly.
 
-#### App theme (GitHub colours by default)
+#### App theme (GitHub colours; replaced by the VS Code theme in part 7)
 
 - The app's components use named Tailwind palettes (`curious-blue`, `matisse`, `shark`, ...). The
   theme replaces their values with GitHub's Primer colours, so components restyle without edits:
@@ -98,7 +98,7 @@ later; `src/components/blockly/block-theme.ts` applies any block theme to Blockl
 
 ### Files
 
-- New: `src/theme/` (types, index, `github/`), `src/components/blockly/block-theme.ts`,
+- New: `src/theme/` (types, index, `vscode/`), `src/components/blockly/block-theme.ts`,
   `src/components/blockly/toolbox-ui.ts` and `.css`.
 - Hooks: `src/components/blockly.tsx` (renderer, theme options, toolbox builder, grid, zoom),
   `tailwind.config.ts`, `src/main.tsx` (theme CSS), `src/utils/i18n/locales/{en,es}/blockly.json`
@@ -350,7 +350,7 @@ agree with them. The Motors group, search and Advanced group stay in the fork.
 - Changed: `src/components/blockly/toolbox-ui.ts` (`groupMotorCategories`, `phoneToolbox`; icons
   built as SVG at once), `src/components/blockly/toolbox-ui.css` (phone icon column, panel title),
   `src/components/blockly.tsx` (rebuilds the toolbox when the screen crosses the phone width),
-  `src/theme/github/blocks.ts` (group colour), `src/utils/i18n/locales/{en,es}/blockly.json`
+  `src/theme/vscode/blocks.ts` (group colour), `src/utils/i18n/locales/{en,es}/blockly.json`
   (group name), `src/index.css` (app box sized by the visible area, clear of the system bars),
   `index.html` (`viewport-fit=cover`), `pwa-plugin.ts` (full screen).
 - Tests: `src/components/blockly/toolbox-ui.spec.ts`; the visual tests' toolbox and block editor
@@ -414,3 +414,100 @@ No behaviour change; this documents what the app does:
 ### Upstream
 
 Same detection as XRPWeb; nothing to send.
+
+## Part 7 — VS Code colours (Default Light+ and Default Dark+)
+
+### Problem
+
+The default theme took its colours from GitHub. People who already use VS Code, and the classes that
+teach with it, expect the look of its default themes: a dark grey icon strip, a light (or dark) grey
+side bar, white (or near-black grey) editor and terminal panels, and a blue status bar. The dark
+variant was also too black: every surface was a different step of near-black.
+
+### Solution
+
+The VS Code default themes, Default Light+ and Default Dark+, replace the GitHub theme. There is still
+one theme with a light and a dark variant, switched with the existing Theme setting; no new
+selector.
+
+- **Surfaces.** Light: title bar `#dddddd`, frame between panels `#dcdcdc`, icon strip `#2c2c2c`
+  (selected item `#424242`), side bar `#f3f3f3`, editor and terminal `#ffffff`. Dark: title bar and
+  frame `#3d3d3d`, icon strip `#333333` (selected `#1c1c1c`), side bar `#252526`, editor and
+  terminal `#1e1e1e`; nothing large is darker than `#1e1e1e`. The editor and terminal stay rounded
+  cards over the frame, as before.
+- **Accent.** One blue: `#007acc` for the status bar (white text), the tab accent and the focus
+  colour, `#0066b8` for buttons and links on light surfaces. The active tab and the selected file
+  use the light tint `#e4e6f1` (`#403f44` for the tab and `#04395e` for the selected file in dark).
+- **Python editor.** The editor now uses the Default Light+ and Default Dark+ themes, so keywords,
+  strings, functions, types, numbers and comments take their colours from VS Code's own theme files
+  (for example keywords `#0000ff` / `#569cd6`, strings `#a31515` / `#ce9178`, comments `#008000` /
+  `#6a9955`). The extra colours for calls, attributes and constants use the same palettes.
+- **Blocks.** The category colours of the blocks do not change. Only the surfaces around them follow
+  the neutral palette: workspace, grid, toolbox and flyout.
+- **Tabs and terminal.** Editor tabs are flat and side by side with a thin separator: the active
+  tab has the editor colour, the others a slightly darker grey. The Terminal title is plain text
+  on a rounded tint, without an icon, like a VS Code panel title.
+- **One left panel.** The icon strip (48px wide) and the Explorer are one panel with rounded
+  corners on its right side, without a gap in between. The selected icon sits on a rounded grey
+  square with a white icon, as in VS Code.
+- **Splitters.** The dividers between the panels show a grip of three dots, as in VS Code.
+- **Canvas size.** The block canvas follows the size of its panel when the terminal is dragged, so
+  no blank band is left under it.
+- **Icons and scrollbars.** In the light variant every menu icon is drawn dark grey (several
+  were white images made for the dark menus). Scrollbars follow the theme: thin grey thumbs on a
+  transparent track in both variants (`#64646466` light, `#79797966` dark), including the block
+  toolbox, the canvas and the terminal.
+- **Canvas dots.** The grid of the block canvas is made of dots instead of crosses.
+- **Account.** On wide screens the Google sign-in is only an icon, at the bottom of the left icon
+  strip (or the profile picture once signed in; its menu opens to the right). On narrow screens it
+  stays in the menu with its text.
+- **Font.** The system font stack of VS Code (the platform's UI font) with its 13px size for tabs
+  and the Explorer; the rest of the app keeps its size so it stays easy to read on tablets.
+- **Light title bar and menus.** The navbar and its menus are light grey with dark text in the light
+  variant; the menu icons are darkened to match.
+- **Contrast.** Checked against WCAG AA (4.5:1) for the status bar, tabs, disabled text, the
+  toolbox and every Python colour in both variants. The status bar blue `#007acc` with white text
+  is 4.51:1. Grey text used on the light surfaces (`#6c6c6c`, was VS Code's `#767676` placeholder
+  grey) was darkened so it stays above 4.5:1 on `#f3f3f3`. Everything else keeps VS Code's values.
+  The Light+ and Dark+ theme files in VS Code only define the editor, tab and token colours; the
+  colours of the window itself (title bar, icon strip, side bar, status bar) are VS Code's built-in
+  defaults, matched to how VS Code looks.
+
+The theme picker preview cards use the new colours. Offline builds and the installable app are not
+affected.
+
+### Files
+
+- Replaced: `src/theme/github/` by `src/theme/vscode/` (`tailwind.css`, `app.css`, `blocks.ts`);
+  `src/theme/index.ts`, `src/theme/app-themes.ts`, `src/index.css`, `src/main.tsx`.
+- Updated: `src/components/status-bar/status-bar.tsx` (blue status bar),
+  `src/components/xrplayout.tsx` (terminal tab class), `src/components/blockly.tsx` (dot grid),
+  `src/components/navbar/mobile-menu.tsx` and `src/widgets/compact-account.tsx` (account icon),
+  `src/components/MonacoEditor.tsx` and `src/components/python/python-colours.ts` (theme ids),
+  `src/components/blockly/toolbox-ui.css` (search box), `src/components/xrpshell.tsx` (terminal
+  colours).
+- Tests: `src/theme/vscode/vscode-theme.spec.ts` (every block colour and surface resolves, the
+  preview cards have all colours, contrast of the status bar, tabs and toolbox). The visual
+  baselines were regenerated.
+
+### How to test
+
+1. Open the app in light mode: the title bar and the frame between panels are light grey, the left
+   icon strip is dark grey, the file tree side bar is light grey, the editor is white and the
+   status bar is blue.
+2. Switch to dark in Settings > Theme: frame `#3d3d3d`, icon strip, side bar, editor in darker
+   steps, blue status bar; no pure black.
+3. Open a blocks file: the block colours are the same as before; only the area around them is grey.
+4. Open the Python editor and a Python view of a blocks file: colours follow VS Code in both
+   variants.
+5. With Google sign-in available, check the icon at the bottom of the left strip and its menu.
+6. Open the settings menu in light mode: light menu, dark icons, dark text.
+
+Screenshots (English, light and dark):
+`docs/specs/images/002-vscode-blocks-{light,dark}.png` (My projects and a blocks file),
+`002-vscode-python-{light,dark}.png`, `002-vscode-welcome-{light,dark}.png` and
+`002-vscode-settings-menu-{light,dark}.png` (Connect area and a menu).
+
+### Upstream
+
+Fork only (branding and colours).

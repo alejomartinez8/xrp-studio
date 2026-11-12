@@ -86,8 +86,8 @@ function XRPShell() {
     useEffect(() => {
         const fitAddon = new FitAddon();
         if (instance) {
-            const darkTheme = { foreground: '#ddd', background: '#0d1117', cursor: '#ddd' };
-            const lightTheme = { foreground: '#41393b', background: '#ffffff', cursor: '#41393b' };
+            const darkTheme = { foreground: '#cccccc', background: '#1e1e1e', cursor: '#cccccc' };
+            const lightTheme = { foreground: '#333333', background: '#ffffff', cursor: '#333333' };
 
             instance?.loadAddon(fitAddon);
             const theme = AppMgr.getInstance().getTheme() === Themes.DARK ? darkTheme : lightTheme;

@@ -1,0 +1,363 @@
+/* VS Code font and layout tabs. Loaded after index.css and the flexlayout theme. */
+:root {
+    font-family:
+        -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, Ubuntu, 'Droid Sans', sans-serif;
+}
+
+html .flexlayout__layout {
+    --flexlayout-font-family:
+        -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, Ubuntu, 'Droid Sans', sans-serif;
+    --flexlayout-color-text: #333333;
+    --flexlayout-color-background: #ffffff;
+    --flexlayout-color-1: #f3f3f3;
+    --flexlayout-color-2: #e8e8e8;
+    --flexlayout-color-3: #dcdcdc;
+    --flexlayout-color-4: #c8c8c8;
+    --flexlayout-color-tab-selected-background: #e4e6f1;
+    --flexlayout-color-tab-unselected: #616161;
+    --flexlayout-color-splitter: #dcdcdc;
+    --flexlayout-color-splitter-hover: #007acc;
+    --flexlayout-splitter-size: 6px;
+}
+
+html.dark .flexlayout__layout {
+    --flexlayout-color-text: #ffffff;
+    --flexlayout-color-background: #1e1e1e;
+    --flexlayout-color-1: #252526;
+    --flexlayout-color-2: #2c2c2d;
+    --flexlayout-color-3: #3d3d3d;
+    --flexlayout-color-4: #4b4b4b;
+    --flexlayout-color-tab-selected-background: #403f44;
+    --flexlayout-color-tab-unselected: #a6a6a6;
+    --flexlayout-color-splitter: #3d3d3d;
+    --flexlayout-color-splitter-hover: #007fd4;
+}
+
+html .flexlayout__tab_button--selected {
+    box-shadow: inset 0 2px var(--app-accent);
+}
+
+/* Left side bar: square icon buttons, the open panel marked with the accent colour. */
+html .flexlayout__border_left .flexlayout__border_button {
+    padding: 9px;
+    margin: 4px;
+    border-radius: 8px;
+    box-shadow: none;
+}
+
+html .flexlayout__border_left .flexlayout__border_button--selected,
+html .flexlayout__border_left .side-bar-icon--selected {
+    color: var(--fl-color-text);
+    box-shadow: none;
+}
+
+/*
+ * flexlayout 0.9+ draws the side bar's own buttons (the Terminal toggle) outside the rotated tabs,
+ * centred in the bar; they go right below the Explorer icon, as before.
+ */
+html .flexlayout__border_left .flexlayout__tab_toolbar_sticky_buttons_container {
+    position: absolute;
+    top: 48px;
+    left: 0;
+    padding: 0;
+}
+
+html .flexlayout__border_left .side-bar-toggle {
+    padding: 9px;
+    margin: 4px;
+    border-radius: 8px;
+    color: var(--fl-color-tab-unselected);
+    background: transparent;
+    cursor: pointer;
+}
+
+html .flexlayout__border_left .side-bar-toggle:hover {
+    color: var(--fl-color-text);
+}
+
+/*
+ * Rounded panels: the side panel, the editor and the terminal are cards of one
+ * colour floating on a frame colour with small gaps, like a modern code editor. The frame is
+ * shared with the status bar, the side bar and, in dark mode, the navbar.
+ */
+:root {
+    --app-frame: #dcdcdc;
+    --app-accent: #007acc;
+    --app-activity-bar: #2c2c2c;
+    --app-activity-selected: #424242;
+    --app-side-panel: #f3f3f3;
+    --app-status-bar: #007acc;
+    --app-status-bar-text: #ffffff;
+}
+
+html.dark {
+    --app-frame: #3d3d3d;
+    --app-accent: #007fd4;
+    --app-activity-bar: #333333;
+    --app-activity-selected: #1c1c1c;
+    --app-side-panel: #252526;
+    --app-status-bar: #007acc;
+    --app-status-bar-text: #ffffff;
+}
+
+main:has(> .flexlayout__layout) {
+    background-color: var(--app-frame);
+}
+
+html .flexlayout__layout {
+    --panel-radius: 8px;
+    --flexlayout-color-splitter: var(--app-frame);
+    --flexlayout-color-border-background: var(--app-frame);
+    --flexlayout-color-tabset-background: var(--fl-color-1);
+    --flexlayout-color-tabset-background-selected: var(--fl-color-1);
+    --flexlayout-color-tabset-background-maximized: var(--fl-color-1);
+    --flexlayout-color-tabset-divider-line: transparent;
+    --flexlayout-color-border-divider-line: transparent;
+    top: 6px;
+    right: 6px;
+    bottom: 6px;
+    background-color: var(--app-frame);
+}
+
+html.dark .flexlayout__layout {
+    --flexlayout-color-splitter: var(--app-frame);
+}
+
+html .flexlayout__tab_border_left {
+    clip-path: inset(0 round 0 var(--panel-radius) var(--panel-radius) 0);
+}
+
+/* flexlayout 0.9+ gives tab bars a minimum height; the empty editor tab bar keeps its old size. */
+html .flexlayout__tabset_tabbar_outer {
+    min-height: 0;
+}
+
+html .flexlayout__tabset_container {
+    border-radius: var(--panel-radius) var(--panel-radius) 0 0;
+}
+
+html .flexlayout__tab {
+    border-radius: 0 0 var(--panel-radius) var(--panel-radius);
+    overflow: hidden;
+    background-color: var(--flexlayout-color-background);
+}
+
+/*
+ * The side panel's rows share the panel colour, with no lines of their own. Only plain background
+ * classes match (not hover or backdrop ones), and never inside a dialog opened from the panel.
+ */
+html
+    .flexlayout__tab_border_left
+    :is([class^='bg-mountain-mist'], [class*=' bg-mountain-mist']):not(dialog, dialog *) {
+    background-color: transparent;
+    border-color: transparent;
+}
+
+/* The file tree takes the keyboard focus without a heavy outline around the selected row. */
+html .flexlayout__tab_border_left [role='tree']:focus,
+html .flexlayout__tab_border_left [role='treeitem']:focus {
+    outline: none;
+}
+
+/* The side panel is light grey (dark grey in the dark variant), next to the activity bar. */
+html .flexlayout__tab_border_left {
+    background-color: var(--app-side-panel);
+}
+
+/*
+ * Default Light+ has a light grey title bar and light menus. The navbar, its menus, the context
+ * menu and dialog headers use the dark menu colour (`bg-curious-blue-700`) with light text in both
+ * modes; in the light variant these surfaces and the palette steps their text uses are
+ * redefined, so they read as light grey with dark text.
+ */
+html:not(.dark) .bg-curious-blue-700 {
+    --color-curious-blue-700: #dddddd;
+    --color-shark-100: #333333;
+    --color-shark-200: #f3f3f3;
+    --color-shark-300: #616161;
+    --color-matisse-100: #333333;
+    --color-matisse-400: #c8c8c8;
+    --color-matisse-500: #c8c8c8;
+    --color-matisse-800: #e8e8e8;
+    --color-mountain-mist-100: #333333;
+    color: #333333;
+}
+
+/* The activity bar (the icon strip on the left) is dark grey in both variants. */
+html .flexlayout__border_left {
+    background-color: var(--app-activity-bar);
+    --fl-color-text: #ffffff;
+    --fl-color-tab-unselected: #a6a6a6;
+    border-radius: 0;
+}
+
+html .flexlayout__border_left .flexlayout__border_button--selected,
+html .flexlayout__border_left .side-bar-icon--selected,
+html .flexlayout__border_left .side-bar-toggle.side-bar-icon--selected {
+    background-color: var(--app-activity-selected);
+    color: #ffffff;
+}
+
+/* The menu icons are light images made for the dark menus; the light variant draws them dark grey. */
+html:not(.dark) .bg-curious-blue-700 img[alt='Menu Icon'] {
+    filter: brightness(0) opacity(0.8);
+}
+
+/*
+ * Editor tabs as in VS Code: flat, side by side with a thin separator; the active tab takes the
+ * editor colour and the others a slightly darker grey.
+ */
+:root {
+    --app-tab-inactive: #ececec;
+    --app-tab-border: #f3f3f3;
+}
+
+html.dark {
+    --app-tab-inactive: #2d2d2d;
+    --app-tab-border: #252526;
+}
+
+html .flexlayout__tab_button {
+    padding: 0 8px 0 12px;
+    min-height: 35px;
+    border-radius: 0;
+    border-right: 1px solid var(--app-tab-border);
+    font-size: 13px;
+}
+
+html .flexlayout__tab_button--selected {
+    background-color: var(--flexlayout-color-background);
+    box-shadow: none;
+}
+
+html .flexlayout__tab_button--unselected {
+    background-color: var(--app-tab-inactive);
+}
+
+/* The terminal tab is a panel title: text on a rounded tint, without the icon, as in VS Code. */
+html .flexlayout__tab_button.xrp-shell-tab {
+    min-height: 0;
+    margin: 4px 8px;
+    padding: 3px 8px;
+    border-right: 0;
+    border-radius: 4px;
+    background-color: var(--flexlayout-color-tab-selected-background);
+}
+
+html .xrp-shell-tab .flexlayout__tab_button_leading {
+    display: none;
+}
+
+/* The grid of the block canvas is made of dots. */
+.blocklyWorkspace pattern line {
+    stroke-width: 2.5px;
+    stroke-linecap: round;
+}
+
+/*
+ * The account sits at the bottom of the activity bar, as an icon, on wide screens. Its menu opens
+ * to the right, above the status bar.
+ */
+@media (min-width: 768px) {
+    .account-slot {
+        position: fixed;
+        left: 0;
+        bottom: 36px;
+        z-index: 101;
+        width: 48px;
+        margin: 0;
+        padding: 0;
+    }
+
+    .account-slot [role='menu'] {
+        left: 100%;
+        right: auto;
+        top: auto;
+        bottom: 0;
+    }
+}
+
+/* The side panel (Explorer) uses VS Code's 13px text. */
+html .flexlayout__tab_border_left {
+    font-size: 13px;
+}
+
+/* The activity bar and the side panel read as one panel, with rounded corners on its right. */
+html .flexlayout__border_left {
+    width: 48px;
+}
+
+/* The splitters show a grip of three dots, as VS Code does. */
+html .flexlayout__layout {
+    --flexlayout-splitter-handle-visibility: visible;
+}
+
+html .flexlayout__splitter_handle {
+    background-color: transparent;
+    background-image: radial-gradient(circle, #8a8a8a 1.3px, transparent 1.7px);
+}
+
+html .flexlayout__splitter_handle_horz {
+    width: 4px;
+    height: 18px;
+    background-size: 4px 6px;
+    background-repeat: repeat-y;
+}
+
+html .flexlayout__splitter_handle_vert {
+    width: 18px;
+    height: 4px;
+    background-size: 6px 4px;
+    background-repeat: repeat-x;
+}
+
+/*
+ * Scrollbars follow the theme: thin grey thumbs on a transparent track, as in VS Code (Light+ and
+ * Dark+), and the native controls take the colour scheme of the variant.
+ */
+:root {
+    color-scheme: light;
+    --app-scroll-thumb: #64646466;
+    --app-scroll-thumb-hover: #646464b3;
+}
+
+html.dark {
+    color-scheme: dark;
+    --app-scroll-thumb: #79797966;
+    --app-scroll-thumb-hover: #797979b3;
+}
+
+html * {
+    scrollbar-color: var(--app-scroll-thumb) transparent;
+}
+
+html .blocklyScrollbarHandle {
+    fill: var(--app-scroll-thumb);
+    opacity: 1;
+}
+
+html .blocklyScrollbarHandle:hover {
+    fill: var(--app-scroll-thumb-hover);
+}
+
+/* Browsers that ignore `scrollbar-color` get the same thin thumbs. */
+html *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+html *::-webkit-scrollbar-track,
+html *::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+html *::-webkit-scrollbar-thumb {
+    background-color: var(--app-scroll-thumb);
+    background-clip: content-box;
+    border: 2px solid transparent;
+    border-radius: 5px;
+}
+
+html *::-webkit-scrollbar-thumb:hover {
+    background-color: var(--app-scroll-thumb-hover);
+}

@@ -103,6 +103,7 @@ const layout_json: IJsonModel = {
                                 type: 'tab',
                                 id: Constants.SHELL_TAB_ID,
                                 name: 'shell',
+                                className: 'xrp-shell-tab',
                                 component: 'xterm',
                                 enableClose: false,
                                 enableDrag: false,
@@ -415,8 +416,13 @@ function XRPLayout({ forwardedref }: XRPLayoutProps) {
                 />
             );
         } else if (node.getId() === Constants.SHELL_TAB_ID) {
-            renderValues.leading = <VscTerminal size={16} aria-hidden="true" className="shrink-0" />;
-        } else if (!isLocalProjectsEnabled && EditorMgr.getInstance().getEditorSession(node.getId())?.gpath) {
+            renderValues.leading = (
+                <VscTerminal size={16} aria-hidden="true" className="shrink-0" />
+            );
+        } else if (
+            !isLocalProjectsEnabled &&
+            EditorMgr.getInstance().getEditorSession(node.getId())?.gpath
+        ) {
             // Only Google Drive files carry a real gpath (file id). New local/XRP
             // files and the Dashboard/AI Buddy tabs use an empty gpath, so a
             // truthy check keeps the Drive icon off of them.
@@ -431,7 +437,7 @@ function XRPLayout({ forwardedref }: XRPLayoutProps) {
         renderValues.content = t(node.getName());
         if (EditorMgr.getInstance().hasSessionChanged(node.getId())) {
             renderValues.buttons.push(
-                <div className={`h-2 w-2 rounded-full bg-shark-800 dark:bg-shark-200`} />,
+                <div className={`bg-shark-800 dark:bg-shark-200 h-2 w-2 rounded-full`} />,
             );
         }
         return renderValues;

@@ -55,7 +55,7 @@ function StatusBar() {
             role="status"
             aria-label={t('statusBar')}
             style={{ height: STATUS_BAR_HEIGHT_PX }}
-            className="text-mountain-mist-800 dark:text-mountain-mist-300 flex items-center gap-3 bg-(--app-frame) px-3"
+            className="flex items-center gap-3 bg-(--app-status-bar) px-3 text-(--app-status-bar-text)"
         >
             <span
                 data-testid="sync-status"
@@ -76,7 +76,7 @@ function StatusBar() {
                         data-testid="update-app"
                         title={t('pwa.updateHint')}
                         onClick={() => void applyUpdate()}
-                        className="flex items-center gap-1.5 rounded-sm px-2 text-sm font-medium text-blue-700 hover:bg-black/[0.07] dark:text-blue-300 dark:hover:bg-white/[0.12]"
+                        className="flex items-center gap-1.5 rounded-sm px-2 text-sm font-medium hover:bg-white/[0.15]"
                     >
                         <TbRefresh size={16} />
                         {t('pwa.update')}
@@ -85,7 +85,7 @@ function StatusBar() {
                 <span
                     data-testid="app-version"
                     title={t('version.basedOn', { version: APP_UPSTREAM_VERSION })}
-                    className="text-xs opacity-80"
+                    className="text-xs"
                 >
                     {APP_VERSION_TEXT}
                 </span>
