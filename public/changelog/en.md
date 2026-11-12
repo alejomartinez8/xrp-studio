@@ -4,11 +4,15 @@
 
 A new look and an easier Python editor.
 
+### Look
 * A new look inspired by VS Code, with Light+ and Dark+ themes, rounded panels and a slimmer icon strip.
-* The Terminal panel now has a close button.
+### Editor
 * Python editor: a toolbox of ready-made code snippets with colourful categories, explanations, search and drag and drop.
 * Blocks files saved with an older version now show their Python code correctly.
-* Under the hood: tidier code and tests.
+### Panels
+* The Terminal panel now has a close button.
+### Under the hood
+* Tidier code and tests.
 
 ## Version 0.1.0
 

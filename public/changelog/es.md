@@ -4,11 +4,15 @@
 
 Un aspecto nuevo y un editor de Python más fácil.
 
+### Aspecto
 * Un aspecto nuevo inspirado en VS Code, con los temas Light+ y Dark+, paneles redondeados y una barra de iconos más delgada.
-* El panel Terminal ahora tiene un botón para cerrarlo.
+### Editor
 * Editor de Python: una caja de fragmentos de código listos para usar, con categorías de colores, explicaciones, búsqueda y arrastrar y soltar.
 * Los archivos de bloques guardados con una versión anterior ahora muestran bien su código Python.
-* Por dentro: código y pruebas más ordenados.
+### Paneles
+* El panel Terminal ahora tiene un botón para cerrarlo.
+### Por dentro
+* Código y pruebas más ordenados.
 
 ## Versión 0.1.0
 
