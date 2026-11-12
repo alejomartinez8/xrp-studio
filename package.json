@@ -4,7 +4,7 @@
   "homepage": "https://experientialrobotics.org/",
   "license": "GPL-2.0-only",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "xrpwebBase": "2.1.0",
   "type": "module",
   "scripts": {

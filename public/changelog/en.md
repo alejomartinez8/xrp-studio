@@ -1,5 +1,19 @@
 # What's new in XRP Studio
 
+## Version 0.2.0
+
+A new look and an easier Python editor.
+
+### Look
+* A new look inspired by VS Code, with Light+ and Dark+ themes, rounded panels and a slimmer icon strip.
+### Editor
+* Python editor: a toolbox of ready-made code snippets with colourful categories, explanations, search and drag and drop.
+* Blocks files saved with an older version now show their Python code correctly.
+### Panels
+* The Terminal panel now has a close button.
+### Under the hood
+* Tidier code and tests.
+
 ## Version 0.1.0
 
 First version of XRP Studio, based on XRPWeb.
