@@ -453,6 +453,10 @@ selector.
 - **Splitters.** The dividers between the panels show a grip of three dots, as in VS Code.
 - **Canvas size.** The block canvas follows the size of its panel when the terminal is dragged, so
   no blank band is left under it.
+- **Icons and scrollbars.** In the light variant every menu icon is drawn dark grey (several
+  were white images made for the dark menus). Scrollbars follow the theme: thin grey thumbs on a
+  transparent track in both variants (`#64646466` light, `#79797966` dark), including the block
+  toolbox, the canvas and the terminal.
 - **Canvas dots.** The grid of the block canvas is made of dots instead of crosses.
 - **Account.** On wide screens the Google sign-in is only an icon, at the bottom of the left icon
   strip (or the profile picture once signed in; its menu opens to the right). On narrow screens it
