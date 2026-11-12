@@ -39,15 +39,16 @@ html .flexlayout__tab_button--selected {
 
 /* Left side bar: square icon buttons, the open panel marked with the accent colour. */
 html .flexlayout__border_left .flexlayout__border_button {
-    padding: 8px;
-    margin: 0;
+    padding: 9px;
+    margin: 4px;
+    border-radius: 8px;
     box-shadow: none;
 }
 
 html .flexlayout__border_left .flexlayout__border_button--selected,
 html .flexlayout__border_left .side-bar-icon--selected {
     color: var(--fl-color-text);
-    box-shadow: inset 2px 0 var(--app-accent);
+    box-shadow: none;
 }
 
 /*
@@ -56,17 +57,15 @@ html .flexlayout__border_left .side-bar-icon--selected {
  */
 html .flexlayout__border_left .flexlayout__tab_toolbar_sticky_buttons_container {
     position: absolute;
-    top: 40px;
+    top: 48px;
     left: 0;
     padding: 0;
 }
 
-html .flexlayout__border_left .side-bar-toggle.side-bar-icon--selected {
-    box-shadow: inset 2px 0 var(--app-accent);
-}
-
 html .flexlayout__border_left .side-bar-toggle {
-    padding: 8px;
+    padding: 9px;
+    margin: 4px;
+    border-radius: 8px;
     color: var(--fl-color-tab-unselected);
     background: transparent;
     cursor: pointer;
@@ -125,9 +124,7 @@ html.dark .flexlayout__layout {
 }
 
 html .flexlayout__tab_border_left {
-    border-left: 6px solid transparent;
-    background-clip: padding-box;
-    clip-path: inset(0 0 0 6px round var(--panel-radius));
+    clip-path: inset(0 round 0 var(--panel-radius) var(--panel-radius) 0);
 }
 
 /* flexlayout 0.9+ gives tab bars a minimum height; the empty editor tab bar keeps its old size. */
@@ -190,14 +187,15 @@ html:not(.dark) .bg-curious-blue-700 {
 html .flexlayout__border_left {
     background-color: var(--app-activity-bar);
     --fl-color-text: #ffffff;
-    --fl-color-tab-unselected: #c5c5c5;
+    --fl-color-tab-unselected: #a6a6a6;
+    border-radius: 0;
 }
 
 html .flexlayout__border_left .flexlayout__border_button--selected,
 html .flexlayout__border_left .side-bar-icon--selected,
 html .flexlayout__border_left .side-bar-toggle.side-bar-icon--selected {
     background-color: var(--app-activity-selected);
-    box-shadow: inset 2px 0 #ffffff;
+    color: #ffffff;
 }
 
 /* The menu icons are light images made for the dark menus; the light variant darkens them. */
@@ -266,7 +264,7 @@ html .xrp-shell-tab .flexlayout__tab_button_leading {
         left: 0;
         bottom: 36px;
         z-index: 101;
-        width: 35px;
+        width: 48px;
         margin: 0;
         padding: 0;
     }
@@ -282,4 +280,33 @@ html .xrp-shell-tab .flexlayout__tab_button_leading {
 /* The side panel (Explorer) uses VS Code's 13px text. */
 html .flexlayout__tab_border_left {
     font-size: 13px;
+}
+
+/* The activity bar and the side panel read as one panel, with rounded corners on its right. */
+html .flexlayout__border_left {
+    width: 48px;
+}
+
+/* The splitters show a grip of three dots, as VS Code does. */
+html .flexlayout__layout {
+    --flexlayout-splitter-handle-visibility: visible;
+}
+
+html .flexlayout__splitter_handle {
+    background-color: transparent;
+    background-image: radial-gradient(circle, #8a8a8a 1.3px, transparent 1.7px);
+}
+
+html .flexlayout__splitter_handle_horz {
+    width: 4px;
+    height: 18px;
+    background-size: 4px 6px;
+    background-repeat: repeat-y;
+}
+
+html .flexlayout__splitter_handle_vert {
+    width: 18px;
+    height: 4px;
+    background-size: 6px 4px;
+    background-repeat: repeat-x;
 }

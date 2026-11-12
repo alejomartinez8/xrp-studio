@@ -447,6 +447,12 @@ selector.
 - **Tabs and terminal.** Editor tabs are flat and side by side with a thin separator: the active
   tab has the editor colour, the others a slightly darker grey. The Terminal title is plain text
   on a rounded tint, without an icon, like a VS Code panel title.
+- **One left panel.** The icon strip (48px wide) and the Explorer are one panel with rounded
+  corners on its right side, without a gap in between. The selected icon sits on a rounded grey
+  square with a white icon, as in VS Code.
+- **Splitters.** The dividers between the panels show a grip of three dots, as in VS Code.
+- **Canvas size.** The block canvas follows the size of its panel when the terminal is dragged, so
+  no blank band is left under it.
 - **Canvas dots.** The grid of the block canvas is made of dots instead of crosses.
 - **Account.** On wide screens the Google sign-in is only an icon, at the bottom of the left icon
   strip (or the profile picture once signed in; its menu opens to the right). On narrow screens it

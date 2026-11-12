@@ -605,6 +605,14 @@ function BlocklyEditor({ tabId, tabName }: BlocklyEditorProps) {
             if (visible && !wasVisible) {
                 requestAnimationFrame(() => restoreViewportForTab(workspace));
             }
+            if (visible) {
+                requestAnimationFrame(() => {
+                    const svgWs = asSvgWorkspace(workspace);
+                    if (svgWs) {
+                        Blockly.svgResize(svgWs as unknown as Blockly.WorkspaceSvg);
+                    }
+                });
+            }
             wasVisible = visible;
         });
 
