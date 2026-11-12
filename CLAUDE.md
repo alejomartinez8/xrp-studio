@@ -90,16 +90,17 @@ base), injected by Vite (`src/utils/version.ts`) and shown in the status bar. Th
 Log is `public/changelog/{en,es}.md`.
 
 Releases are automatic (spec 006, part 14): `release.yml` runs on every push to `main`, takes the
-PRs merged since the last tag and, if any asks for it, bumps the version, writes both Change Logs,
-merges a `chore(release): vX.Y.Z` PR, tags it and creates the GitHub Release. Nobody opens a
+PRs merged since the last tag and, if any asks for it, bumps the version, writes the English Change Log,
+merges a `chore(release): vX.Y.Z` PR (English Change Log only), tags it and creates the GitHub Release. Nobody opens a
 release PR or pushes a tag; never push tags yourself and never edit `package.json` `version` or
 the Change Log by hand for a release. The version comes from the PR title (Conventional Commits):
 `feat:` minor, `fix:`/`perf:`/`style:` patch, `type!:` or `BREAKING CHANGE` breaking (minor while
 the version is 0.x; 1.0.0 is the user's decision), and `docs:`/`test:`/`chore:`/`refactor:`/
-`ci:`/`build:` no release. The PR body carries the Change Log lines (`Change Log (en): ...`,
-`Change Log (es): ...`, optional `Change Log (theme): Editor`), required for `feat`/`fix` and
-checked by `pr-check.yml`. Write them for kids and teachers, one sentence; internal work uses the
-theme "Under the hood".
+`ci:`/`build:` no release. The PR body carries the Change Log line in English (`Change Log (en): ...`, optional
+`Change Log (theme): Editor`), required for `feat`/`fix` and checked by `pr-check.yml`. Write it
+for kids and teachers, one sentence; internal work uses the theme "Under the hood". The release
+only writes `public/changelog/en.md`; `es.md` is optional and completed by hand in batches (the
+Spanish window shows the English entry for a version `es.md` lacks).
 
 ## Google sign-in server
 

@@ -1,5 +1,5 @@
 # Checks that the PR title has a type (feat, fix, docs, ...) and that feat/fix PRs carry the
-# Change Log lines the automatic release writes. Rules: scripts/release-lib.mjs.
+# English Change Log line the automatic release writes. Rules: scripts/release-lib.mjs.
 name: PR title and Change Log
 on:
     pull_request:

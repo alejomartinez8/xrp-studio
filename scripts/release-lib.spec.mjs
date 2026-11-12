@@ -12,7 +12,7 @@ import {
     renderSection,
 } from './release-lib.mjs';
 
-const body = `Text\n\nChange Log (en): Blocks are bigger.\nChange Log (es): Los bloques son más grandes.\nChange Log (theme): Editor\n`;
+const body = `Text\n\nChange Log (en): Blocks are bigger.\nChange Log (theme): Editor\n`;
 
 describe('parseTitle', () => {
     it('reads type, scope and breaking mark', () => {
@@ -27,14 +27,13 @@ describe('parseTitle', () => {
 });
 
 describe('parseChangeLogLines', () => {
-    it('reads both languages and the theme, tolerating bullets and bold', () => {
+    it('reads the English line and the theme, tolerating bullets and bold, and ignores Spanish lines', () => {
         expect(
             parseChangeLogLines(
                 `- **Change Log (en):** One.\n* Change Log (es): Uno.\nChange Log (theme): Look`,
             ),
         ).toEqual({
             en: ['One.'],
-            es: ['Uno.'],
             theme: 'Look',
         });
     });
@@ -53,11 +52,10 @@ describe('checkPr', () => {
         expect(checkPr('docs: a', '')).toEqual([]);
         expect(checkPr('chore(deps): a', '')).toEqual([]);
     });
-    it('requires lines for a breaking change and matching counts', () => {
+    it('requires a line for a breaking change, and only the English one', () => {
         expect(checkPr('refactor!: a', '')).toHaveLength(1);
-        expect(
-            checkPr('fix: a', 'Change Log (en): a\nChange Log (en): b\nChange Log (es): a'),
-        ).toHaveLength(1);
+        expect(checkPr('fix: a', 'Change Log (en): a')).toEqual([]);
+        expect(checkPr('fix: a', 'Change Log (es): a')).toHaveLength(1);
     });
 });
 
@@ -99,18 +97,15 @@ describe('Change Log', () => {
         const entries = collectEntries(prs);
         expect(entries[1].en).toBe('Dark mode (PR #2 has no Change Log line)');
     });
-    it('groups a minor by theme and writes Spanish headings', () => {
+    it('groups a minor by theme', () => {
         const entries = collectEntries([prs[0]]);
-        expect(renderSection('0.3.0', 'en', entries, 'minor')).toBe(
+        expect(renderSection('0.3.0', entries, 'minor')).toBe(
             '## Version 0.3.0\n\n### Editor\n* Blocks are bigger.\n',
-        );
-        expect(renderSection('0.3.0', 'es', entries, 'minor')).toBe(
-            '## Versión 0.3.0\n\n### Editor\n* Los bloques son más grandes.\n',
         );
     });
     it('writes a patch as short lines without headings', () => {
         const entries = collectEntries([prs[0]]);
-        expect(renderSection('0.2.1', 'en', entries, 'patch')).toBe(
+        expect(renderSection('0.2.1', entries, 'patch')).toBe(
             '## Version 0.2.1\n\n* Blocks are bigger.\n',
         );
     });
@@ -122,25 +117,17 @@ describe('Change Log', () => {
         );
         expect(() => insertSection(out, 'x', '0.3.0')).toThrow();
     });
-    it('inserts into the real files and keeps the format the app reads', async () => {
+    it('inserts into the real English file and keeps the older entries', async () => {
         const { readFileSync } = await import('node:fs');
-        for (const [lang, title] of [
-            ['en', '# What'],
-            ['es', '# Novedades'],
-        ]) {
-            const md = readFileSync(`public/changelog/${lang}.md`, 'utf8');
-            expect(md.startsWith(title)).toBe(true);
-            const out = insertSection(
-                md,
-                renderSection('9.9.9', lang, [{ theme: '', en: 'a', es: 'b' }], 'patch'),
-                '9.9.9',
-            );
-            expect(out.indexOf('9.9.9')).toBeLessThan(out.indexOf('0.2.0'));
-            expect(
-                out.endsWith(md.slice(md.indexOf('## '))) ||
-                    out.includes(md.slice(md.indexOf('## '))),
-            ).toBe(true);
-        }
+        const md = readFileSync('public/changelog/en.md', 'utf8');
+        expect(md.startsWith('# What')).toBe(true);
+        const out = insertSection(
+            md,
+            renderSection('9.9.9', [{ theme: '', en: 'a' }], 'patch'),
+            '9.9.9',
+        );
+        expect(out.indexOf('9.9.9')).toBeLessThan(out.indexOf('0.2.0'));
+        expect(out).toContain(md.slice(md.indexOf('## ')));
     });
 });
 

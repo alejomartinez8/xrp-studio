@@ -5,7 +5,7 @@
  *   node scripts/release.mjs plan           prints the next version and the Change Log entries
  *                                           for the commits since the last tag (dry run)
  *   node scripts/release.mjs apply          same, and writes package.json, package-lock.json,
- *                                           both Change Logs and release-notes.md
+ *                                           the English Change Log and release-notes.md
  *
  * `plan` and `apply` read the merged PRs with `gh api` (GH_TOKEN, GITHUB_REPOSITORY); with
  * `--offline` they use the commit subjects only. The decisions live in `release-lib.mjs`.
@@ -81,13 +81,11 @@ if (command === 'check') {
         setOutput('released', 'false');
     } else {
         const entries = collectEntries(release.releasing);
-        const en = renderSection(release.version, 'en', entries, release.bump);
-        const es = renderSection(release.version, 'es', entries, release.bump);
+        const en = renderSection(release.version, entries, release.bump);
         console.log(
             `Release ${release.version} (${release.bump}) from ${release.releasing.length} PR(s):\n`,
         );
         console.log(en);
-        console.log(es);
         setOutput('released', 'true');
         setOutput('version', release.version);
         if (command === 'apply') {
@@ -95,16 +93,8 @@ if (command === 'check') {
             const bumped = bumpManifests(pkg, lock, release.version);
             writeFileSync('package.json', bumped.packageJson);
             writeFileSync('package-lock.json', bumped.lock);
-            for (const [lang, section] of [
-                ['en', en],
-                ['es', es],
-            ]) {
-                const file = `public/changelog/${lang}.md`;
-                writeFileSync(
-                    file,
-                    insertSection(readFileSync(file, 'utf8'), section, release.version),
-                );
-            }
+            const file = 'public/changelog/en.md';
+            writeFileSync(file, insertSection(readFileSync(file, 'utf8'), en, release.version));
             writeFileSync('release-notes.md', en.replace(/^## .*\n+/, ''));
         }
     }

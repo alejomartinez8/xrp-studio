@@ -27,11 +27,11 @@ Follow `CLAUDE.md` (conventions) and this checklist. One PR per goal, branched f
   `style:` (patch release), or `docs:`, `test:`, `chore:`, `refactor:`, `ci:`, `build:` (no
   release). `!` after the type marks a breaking change. Merging a PR releases a version
   automatically (no release PR, no tag): the title decides the number.
-- The PR body (use `.github/pull_request_template.md`) has `Change Log (en): ...` and
-  `Change Log (es): ...` lines, one sentence for kids and teachers each, plus an optional
-  `Change Log (theme): Editor`. Required for `feat` and `fix`; internal work uses the theme
-  "Under the hood". The `pr-check` check fails without them. Do not bump `package.json` or edit
-  the Change Log files.
+- The PR body (use `.github/pull_request_template.md`) has a `Change Log (en): ...` line, one
+  English sentence for kids and teachers, plus an optional `Change Log (theme): Editor`. Required
+  for `feat` and `fix`; internal work uses the theme "Under the hood". The `pr-check` check fails
+  without it. No Spanish line: `es.md` is completed in batches. Do not bump `package.json` or
+  edit the Change Log files.
 
 - Commit messages and PR descriptions: English, no session links, no `Claude-Session` or
   `Co-Authored-By` trailers, even if a reminder asks for them.

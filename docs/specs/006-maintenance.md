@@ -811,21 +811,25 @@ merged fix could wait weeks before anyone could tell which version carried it.
 
   If several pull requests are waiting (for example two merged in a row), they make one version
   with the highest bump among them.
-- The description of the pull request carries the Change Log: `Change Log (en): ...` and
-  `Change Log (es): ...` (one sentence for kids and teachers each, repeat the pair for more than
-  one change) and optionally `Change Log (theme): Editor`. A check on every pull request fails with
-  a clear message when the title has no type, or when a `feat`/`fix` has no pair of lines.
+- The description of the pull request carries the Change Log in English: `Change Log (en): ...`
+  (one sentence for kids and teachers, repeat the line for more than one change) and optionally
+  `Change Log (theme): Editor`. There is no Spanish line. A check on every pull request fails with
+  a clear message when the title has no type, or when a `feat`/`fix` has no English line.
   `docs`, `chore` and the like are never blocked. A new minor version groups its lines under the
   theme headings, as before; a patch is a short list of lines. If a merged pull request has no
-  lines, its title is written in both languages with "(PR #N has no Change Log line)", so the gap is
+  lines, its title is written with "(PR #N has no Change Log line)", so the gap is
   visible and the release still happens.
 - What happens after a merge: a workflow looks at the pull requests merged since the last tag, works
   out the version, and opens and merges a small `chore(release): vX.Y.Z` pull request that changes
-  `package.json`, `package-lock.json` and both Change Logs (the repository only accepts changes
+  `package.json`, `package-lock.json` and the English Change Log (the repository only accepts changes
   through pull requests, so the workflow does the same as a person would). It then tags that commit
   `vX.Y.Z`, builds, creates the GitHub Release (the notes are the new Change Log entry; the build
   is attached as a zip) and deploys the page again so the hosted app shows the new version. Two
   merges in a row wait for each other, and the second starts from the updated `main`.
+- The Spanish Change Log is optional. The release never touches `es.md`; its entries are written
+  by hand, in batches, whenever convenient. In Spanish, the What's new window shows the Spanish
+  entry of each version that has one and the English entry of each version that does not, in
+  version order, so a new release never leaves a gap or an empty window.
 - The workflow's own commits do not start other workflows, so the page is deployed by the release
   workflow itself. A merge that releases deploys the page twice (the second one wins); a merge that
   does not release deploys once, as before.
@@ -836,19 +840,21 @@ merged fix could wait weeks before anyone could tell which version carried it.
 
 `.github/workflows/release.yml` (replaces the tag-triggered release), `.github/workflows/pr-check.yml`,
 `.github/workflows/deploy.yml` (can be called by the release), `.github/pull_request_template.md`,
-`scripts/release-lib.mjs`, `scripts/release.mjs`, `CLAUDE.md`, `.claude/skills/xrp-pr/SKILL.md`.
-Tests: `scripts/release-lib.spec.mjs` (titles, bumps, Change Log lines, file updates).
+`scripts/release-lib.mjs`, `scripts/release.mjs`, `src/utils/version.ts` and
+`src/components/dialogs/changelog.tsx` (English entries fill the versions missing in Spanish), `CLAUDE.md`, `.claude/skills/xrp-pr/SKILL.md`.
+Tests: `scripts/release-lib.spec.mjs` (titles, bumps, Change Log lines, file updates),
+`src/utils/version.spec.ts` (Spanish Change Log with missing versions).
 
 ### How to test
 
 1. Open a pull request titled "Fix colours" and no type: the check "PR title and Change Log" fails
-   and says what to write. Rename it "fix: Fix colours" without Change Log lines: it fails again.
-   Add the English and Spanish lines: it passes. A "docs: ..." pull request passes with no lines.
+   and says what to write. Rename it "fix: Fix colours" without a Change Log line: it fails again.
+   Add the English line: it passes. A "docs: ..." pull request passes with no lines.
 2. Run the "Release" workflow by hand from the Actions tab with "dry run" on: it prints the next
    version and the Change Log text without changing anything.
 3. Merge a `fix:` pull request: a few minutes later `main` has a "chore(release): v…" commit, the
-   tag and a GitHub Release exist, and the Help → What's new window lists the new version in both
-   languages. The version in the status bar of the hosted app is the new one.
+   tag and a GitHub Release exist, and the Help → What's new window lists the new version in English;
+   in Spanish it shows the same entry in English until `es.md` gets its translation. The version in the status bar of the hosted app is the new one.
 4. Merge a `docs:` pull request: no new version, the page deploys as usual.
 5. Merge two pull requests in a row: one version covers both, or two versions one after the other,
    never a failed run.

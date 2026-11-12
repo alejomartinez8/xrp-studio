@@ -1,5 +1,5 @@
 # Automatic release: every push to main that holds a feat/fix/perf/style change makes one version.
-# It opens a "chore(release): vX.Y.Z" PR (version, lockfile, both Change Logs), merges it, tags the
+# It opens a "chore(release): vX.Y.Z" PR (version, lockfile, English Change Log), merges it, tags the
 # merge commit, builds, creates the GitHub Release and deploys the page again with the new
 # version. Rules: scripts/release-lib.mjs. Roll back by disabling this workflow in the Actions tab.
 name: Release
