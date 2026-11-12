@@ -89,7 +89,10 @@ The version is `package.json` `version` (the fork's own SemVer; `xrpwebBase` rec
 base), injected by Vite (`src/utils/version.ts`) and shown in the status bar. The fork's Change
 Log is `public/changelog/{en,es}.md`. A release = a PR that bumps the version and adds the Change
 Log entries; after it merges, the user or orchestrator pushes the tag `vX.Y.Z` on `main` and
-`release.yml` creates the GitHub Release (spec 006, part 11). Never push tags yourself.
+`release.yml` creates the GitHub Release (spec 006, part 11). Never push tags yourself. Each
+Change Log entry is written for kids and teachers and grouped by the themes of the specs merged
+since the last tag (short `###` headings such as Look, Editor, Projects), not one line per PR;
+internal work goes in one "Under the hood" line (spec 006, part 13).
 
 ## Google sign-in server
 
