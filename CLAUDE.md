@@ -87,12 +87,20 @@ robot; see `docs/specs/004-file-management.md`.
 
 The version is `package.json` `version` (the fork's own SemVer; `xrpwebBase` records the XRPWeb
 base), injected by Vite (`src/utils/version.ts`) and shown in the status bar. The fork's Change
-Log is `public/changelog/{en,es}.md`. A release = a PR that bumps the version and adds the Change
-Log entries; after it merges, the user or orchestrator pushes the tag `vX.Y.Z` on `main` and
-`release.yml` creates the GitHub Release (spec 006, part 11). Never push tags yourself. Each
-Change Log entry is written for kids and teachers and grouped by the themes of the specs merged
-since the last tag (short `###` headings such as Look, Editor, Projects), not one line per PR;
-internal work goes in one "Under the hood" line (spec 006, part 13).
+Log is `public/changelog/{en,es}.md`.
+
+Releases are automatic (spec 006, part 14): `release.yml` runs on every push to `main`, takes the
+PRs merged since the last tag and, if any asks for it, bumps the version, writes the English Change Log,
+merges a `chore(release): vX.Y.Z` PR (English Change Log only), tags it and creates the GitHub Release. Nobody opens a
+release PR or pushes a tag; never push tags yourself and never edit `package.json` `version` or
+the Change Log by hand for a release. The version comes from the PR title (Conventional Commits):
+`feat:` minor, `fix:`/`perf:`/`style:` patch, `type!:` or `BREAKING CHANGE` breaking (minor while
+the version is 0.x; 1.0.0 is the user's decision), and `docs:`/`test:`/`chore:`/`refactor:`/
+`ci:`/`build:` no release. The PR body carries the Change Log line in English (`Change Log (en): ...`, optional
+`Change Log (theme): Editor`), required for `feat`/`fix` and checked by `pr-check.yml`. Write it
+for kids and teachers, one sentence; internal work uses the theme "Under the hood". The release
+only writes `public/changelog/en.md`; `es.md` is optional and completed by hand in batches (the
+Spanish window shows the English entry for a version `es.md` lacks).
 
 ## Google sign-in server
 
@@ -138,6 +146,8 @@ tooling (no npm or test commands, no hosting previews). Unit tests are listed un
 - Minimal changes to upstream files: prefer new files, flags and small hooks over rewrites.
   Do not delete upstream code; disable it behind a flag.
 - Pull upstream changes: `git fetch upstream && git merge upstream/main` on `main`.
+- PR titles start with a type (`feat:`, `fix:`, `docs:`, ...), see Version and releases; the PR
+  body has the Change Log lines.
 - One PR per goal: a user-visible outcome (for example "opening projects"), with a part in the
   spec of its theme. Fixes the goal needs and backlog or doc updates go in the same PR.
 - Separate PRs only for changes meant for XRPWeb (branched from `upstream/main`), dependency

@@ -5,6 +5,7 @@ import {
     APP_UPSTREAM_VERSION,
     APP_VERSION_TEXT,
     changelogUrl as forkChangelogUrl,
+    mergeChangelog,
 } from '@/utils/version';
 
 type changelogProps = {
@@ -42,7 +43,11 @@ function ChangeLogDlg({ closeDialog, changelogUrl }: changelogProps) {
                 console.error('Failed to fetch changelog:', response.statusText);
                 return;
             }
-            const text = await response.text();
+            let text = await response.text();
+            if (!changelogUrl && url !== forkChangelogUrl('en')) {
+                const english = await fetch(forkChangelogUrl('en')).catch(() => null);
+                if (english?.ok) text = mergeChangelog(text, await english.text());
+            }
             // Convert the text to HTML using markdown-it
             const html = md.render(text);
             setMarkdown(html);
