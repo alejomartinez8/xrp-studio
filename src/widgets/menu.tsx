@@ -21,14 +21,14 @@ function MenuItem({ item, isConnected, isOther }: MenuItemProps) {
                 <a href={item.link ?? '#'} target="_blank">
                     <div className={`flex flex-row gap-1 ${(item.isFile && !isConnected) || (item.isView && isOther) ? 'opacity-30': 'opacity-100'}`}>
                         {/** Image */}
-                        {item.iconImage && <img src={item.iconImage} alt={t('menuicon')} />}
+                        {item.iconImage && <img className="menu-icon" src={item.iconImage} alt={t('menuicon')} />}
                         <span className="whitespace-nowrap pl-2">{item.label}</span>
                     </div>
                 </a>
             ) : (
                 <div className={`flex flex-row gap-1 ${(item.isFile && !isConnected) || (item.isView && isOther) ? 'opacity-30': 'opacity-100'}`}>
                     {/** Image */}
-                    {item.iconImage && <img src={item.iconImage} alt={t('menuicon')} />}
+                    {item.iconImage && <img className="menu-icon" src={item.iconImage} alt={t('menuicon')} />}
                     <span className="whitespace-nowrap pl-2">{item.label}</span>
                 </div>
             )}

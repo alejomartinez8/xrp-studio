@@ -198,8 +198,11 @@ html .flexlayout__border_left .side-bar-toggle.side-bar-icon--selected {
     color: #ffffff;
 }
 
-/* The menu icons are light images made for the dark menus; the light variant draws them dark grey. */
-html:not(.dark) .bg-curious-blue-700 img[alt='Menu Icon'] {
+/*
+ * The menu icons are light images made for the dark menus; the light variant draws them dark grey.
+ * They are found by class, as their alt text is translated.
+ */
+html:not(.dark) .bg-curious-blue-700 img.menu-icon {
     filter: brightness(0) opacity(0.8);
 }
 
