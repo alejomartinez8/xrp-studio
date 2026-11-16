@@ -94,6 +94,14 @@ Change Log entry is written for kids and teachers and grouped by the themes of t
 since the last tag (short `###` headings such as Look, Editor, Projects), not one line per PR;
 internal work goes in one "Under the hood" line (spec 006, part 13).
 
+Release policy: a release is not one per merged PR. When several user-visible features have
+accumulated, the orchestrator proposes a release and the user decides. The release is a normal PR
+that bumps the version (SemVer: patch 0.0.x for fixes and cosmetic changes, minor 0.x.0 for new
+features, major only for breaking changes; 1.0.0 is the user's decision) and writes the Change Log
+in both `en.md` and `es.md`, grouped by theme. The user pushes the tag; agents never do. Pull
+request titles need no special prefix (spec 006, part 14: automatic releases were tried and
+reverted).
+
 ## Google sign-in server
 
 `server/google-auth/` implements XRPWeb's `GOOGLE_AUTH_URL` endpoints (stateless, encrypted

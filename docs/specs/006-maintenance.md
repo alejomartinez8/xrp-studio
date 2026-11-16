@@ -788,3 +788,31 @@ change would be too long to read.
 
 Not for XRPWeb.
 
+## Part 14 — Automatic releases: tried and reverted
+
+### Problem
+
+A release for every merged pull request was tried: the title of each PR decided the version, and
+a bot wrote the Change Log and the tag.
+
+### Solution
+
+It was reverted and releases are manual again (part 11). Reasons: versions became noisy, because
+internal changes also produced a number; and the Change Log was English only, so the Spanish
+window did not match the English one. A release is now prepared by hand, when several
+user-visible features have accumulated, with entries in English and Spanish grouped by theme
+(part 13). Version rules: patch for fixes and cosmetic changes, minor for new features, major
+only for breaking changes (1.0.0 is the project owner's decision). The owner pushes the tag.
+
+### Files
+
+`CLAUDE.md`, `.claude/skills/xrp-pr/SKILL.md`, `.github/workflows/release.yml` (runs only when a
+tag `v*` is pushed).
+
+### How to test
+
+Merge a pull request: the site is deployed and no version, tag or release is created.
+
+### Upstream
+
+Not for XRPWeb.
