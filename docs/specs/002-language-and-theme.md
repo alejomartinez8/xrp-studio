@@ -511,3 +511,33 @@ Screenshots (English, light and dark):
 ### Upstream
 
 Fork only (branding and colours).
+
+## Part 8 — Menu icons in the light theme, in every language
+
+### Problem
+
+In the light theme the icons of the Help menu (User Guide, API Reference, Curriculum, and so on)
+were almost invisible: very light grey on a light menu. The File, View and Settings menus had the
+same fault. The light variant draws the menu icons dark grey, but it found them by their alt text
+`Menu Icon`, which is translated, so it only worked in English.
+
+### Solution
+
+The menu icons carry a fixed class, and the light variant styles that class, so the icons are dark
+grey in every language. The dark theme is not changed: the icons stay light.
+
+### Files
+
+- Updated: `src/widgets/menu.tsx` (class on the icon), `src/theme/vscode/app.css` (selector).
+- Tests: `e2e/menu-icons.spec.ts` (the Help menu icons are dark in light and unchanged in dark, in
+  English and Spanish).
+
+### How to test
+
+1. Set the language to Español and the theme to light. Open the Help menu (top right): every icon
+   is dark grey and clearly visible. Check the File, View and Settings menus too.
+2. Switch to dark: the icons are light on the dark menus. Repeat in English.
+
+### Upstream
+
+Fork only (colours).
